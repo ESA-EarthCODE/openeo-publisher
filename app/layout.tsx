@@ -15,10 +15,6 @@ const roboto = Roboto({
     variable: '--font-roboto',
 });
 
-export const metadata: Metadata = {
-    title: 'EarthCODE - openEO Job Publisher',
-    description: 'Publishing your job results to EarthCODE',
-}
 
 export default function RootLayout({
                                        children,
