@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import {Alert, Snackbar} from '@mui/material';
+import {Alert} from '@mui/material';
 import {useToastStore} from "../store/toasts";
 import {Toast} from "../store/toasts/types";
 
@@ -9,14 +9,9 @@ export const Toasts = () => {
     const {toasts, removeToast} = useToastStore();
 
     return (
-        <>
+        <div className='absolute bottom-10 left-1/2 transform -translate-x-1/2  w-1/3 flex  flex-col items-center justify-center'>
             {toasts.map((toast: Toast) => (
-                <Snackbar
-                    key={toast.id}
-                    open={true}
-                    autoHideDuration={5000}
-                    anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-                >
+                <div className='shadow-lg mt-2 w-full' key={`toast-${toast.id}`}>
                     <Alert
                         onClose={() => removeToast(toast.id)}
                         severity={toast.severity}
@@ -24,8 +19,8 @@ export const Toasts = () => {
                     >
                         {toast.message}
                     </Alert>
-                </Snackbar>
+                </div>
             ))}
-        </>
+        </div>
     );
 };
