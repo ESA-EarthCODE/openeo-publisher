@@ -42,7 +42,7 @@ export const Authenticate = ({backend}: AuthenticateProps) => {
     const authenticate = () => {
         if (selectedProvider) {
             const redirectUrl = `${window.location.origin}/callback/${backend.id}/${selectedProvider.id}`; // Define your callback URL
-            const loginUrl = `${selectedProvider.issuer}/protocol/openid-connect/auth?client_id=${encodeURIComponent(
+            const loginUrl = `${selectedProvider.issuerInfo["token-service"]}/auth?client_id=${encodeURIComponent(
                 selectedProvider.default_clients[0].id
             )}&redirect_uri=${encodeURIComponent(redirectUrl)}&response_type=code&scope=${encodeURIComponent(selectedProvider.scopes.join(' '))}`;
 

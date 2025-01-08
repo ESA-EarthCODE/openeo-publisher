@@ -54,7 +54,7 @@ export const CallbackPage = () => {
                             const data = await response.json();
 
                             // Store the access token in localStorage or cookies
-                            localStorage.setItem('access_token', `oidc/${provider.id}/${data.access_token}`);
+                            localStorage.setItem(`access_token_${backend.id}`, `oidc/${provider.id}/${data.access_token}`);
                         } else {
                             console.error('Failed to fetch token:', await response.text());
                             addToast({
