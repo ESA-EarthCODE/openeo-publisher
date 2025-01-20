@@ -8,6 +8,7 @@ import {isAuthenticated} from "../lib/openeo/backends";
 import {Authenticate} from "@/components/Authenticate";
 import {JobTable} from "@/components/JobTable";
 import {Publish} from "@/components/Publish";
+import {useInitOpenEOStore} from "../hooks/useInitOpenEOStore";
 
 interface WizardStep {
     label: string;
@@ -18,9 +19,11 @@ interface WizardStep {
 }
 
 export const Wizard = () => {
-    const urlParams = new URLSearchParams(window.location.search);
+
+    useInitOpenEOStore();
+
     const {selectedBackend, selectedJobs} = useOpenEOStore();
-    const [activeStep, setActiveStep] = useState<number>(+(urlParams.get('step') || (selectedBackend ? 2 : 0)));
+    const [activeStep, setActiveStep] = useState<number>(0);
     const [prevStepLoading, setPrevStepLoading] = useState<boolean>(false);
     const [nextStepLoading, setNextStepLoading] = useState<boolean>(false);
 
@@ -52,6 +55,11 @@ export const Wizard = () => {
         },
 
     ]
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        setActiveStep(+(urlParams.get('step') || activeStep));
+    }, []);
 
     useEffect(() => {
         window.history.replaceState(null, `Wizard - Step ${activeStep}`, `/?step=${activeStep}`)
@@ -95,7 +103,7 @@ export const Wizard = () => {
             steps.map(({label}, idx) => {
                 return (
                     <Step key={label}>
-                        <StepButton color="inherit" onClick={() => setActiveStep(idx)}>
+                        <StepButton color="inherit" onClick={() => setActiveStep(idx)} data-testid='stepper-step'>
                             {label}
                         </StepButton>
                     </Step>
@@ -129,6 +137,7 @@ export const Wizard = () => {
             <div className='flex pt-2'>
                 <Button
                     color="inherit"
+                    data-testid='back-button'
                     disabled={activeStep === 0 || prevStepLoading}
                     onClick={handleBack}
                     sx={{mr: 1}}
@@ -138,6 +147,7 @@ export const Wizard = () => {
                 <div className='flex-1'/>
                 {activeStep < steps.length - 1 &&
                     <Button onClick={handleNext} disabled={nextStepLoading || !steps[activeStep].isValid()}
+                            data-testid='next-button'
                             variant='contained' color='primary'>
                         {!nextStepLoading ? 'Next' : <CircularProgress size={24}/>}
                     </Button>

@@ -1,0 +1,222 @@
+{
+  "_backend_deploy_metadata": {
+    "date": "2025-01-14T08:52:16Z",
+    "versions": {
+      "biopar": "1.3.0",
+      "cropsar": "1.5.3.dev20240828+16",
+      "cropsar_px": "0.1.3",
+      "geopyspark": "0.4.7+openeo",
+      "geotrellis-extensions-static": "2.4.0_2.12-SNAPSHOT 92bd1a2",
+      "nextland_services": "0.2.2.dev20240118+200",
+      "openeo": "0.36.0",
+      "openeo-geopyspark": "0.57.0a1.dev20250113+2383",
+      "openeo_driver": "0.123.0a1.dev20250113+999",
+      "openeo_r_udf": "0.5.0",
+      "openeo_udf": "1.0.0rc3"
+    }
+  },
+  "api_version": "1.2.0",
+  "backend_version": "0.57.0a1.dev20250113+2383",
+  "billing": {
+    "currency": "credits"
+  },
+  "conformsTo": [
+    "https://api.openeo.org/1.2.0",
+    "https://api.openeo.org/extensions/remote-process-definition/0.1.0"
+  ],
+  "description": "OpenEO API to the Terrascope/VITO Remote Sensing product catalog and processing services (using GeoPySpark driver).",
+  "endpoints": [
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/file_formats"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/udf_runtimes"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/credentials/basic"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/credentials/oidc"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/me"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/collections"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/collections/{collection_id}"
+    },
+    {
+      "methods": [
+        "POST"
+      ],
+      "path": "/validation"
+    },
+    {
+      "methods": [
+        "POST"
+      ],
+      "path": "/result"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/processes"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/processes/{namespace}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/processes/{namespace}/{process_id}"
+    },
+    {
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "path": "/jobs"
+    },
+    {
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "path": "/jobs/{job_id}"
+    },
+    {
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "path": "/jobs/{job_id}/results"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/results/{user_base64}/{secure_key}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/results/items/{user_base64}/{secure_key}/{item_id}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/results/items/{item_id}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/results/assets/{path:filename}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/results/assets/{user_base64}/{secure_key}/{path:filename}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/logs"
+    },
+    {
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "path": "/process_graphs/{process_graph_id}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/process_graphs"
+    }
+  ],
+  "id": "vitoremotesensingopeneoapi-0.57.0a1.dev20250113+2383",
+  "links": [
+    {
+      "href": "https://openeo.vito.be/.well-known/openeo",
+      "rel": "version-history",
+      "type": "application/json"
+    },
+    {
+      "href": "https://openeo.vito.be/openeo/1.2/collections",
+      "rel": "data",
+      "type": "application/json"
+    },
+    {
+      "href": "https://openeo.vito.be/openeo/1.2/conformance",
+      "rel": "conformance",
+      "type": "application/json"
+    },
+    {
+      "href": "https://openeo.cloud/aup",
+      "rel": "terms-of-service",
+      "type": "text/html"
+    },
+    {
+      "href": "https://terrascope.be/en/privacy-policy",
+      "rel": "privacy-policy",
+      "type": "text/html"
+    }
+  ],
+  "processing:software": {
+    "biopar": "1.3.0",
+    "cropsar": "1.5.3.dev20240828+16",
+    "cropsar_px": "0.1.3",
+    "geopyspark": "0.4.7+openeo",
+    "geotrellis-extensions-static": "2.4.0_2.12-SNAPSHOT 92bd1a2",
+    "nextland_services": "0.2.2.dev20240118+200",
+    "openeo": "0.36.0",
+    "openeo-geopyspark": "0.57.0a1.dev20250113+2383",
+    "openeo_driver": "0.123.0a1.dev20250113+999",
+    "openeo_r_udf": "0.5.0",
+    "openeo_udf": "1.0.0rc3"
+  },
+  "production": true,
+  "stac_extensions": [
+    "https://stac-extensions.github.io/processing/v1.1.0/schema.json"
+  ],
+  "stac_version": "0.9.0",
+  "title": "VITO Remote Sensing openEO API",
+  "version": "1.2.0"
+}

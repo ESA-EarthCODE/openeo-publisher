@@ -5,6 +5,7 @@ import moment from "moment/moment";
 import {useOpenEOJobs} from "../hooks/useOpenEOJobs";
 import {Loading} from "@/components/Loading";
 import {useOpenEOStore} from "../store/openeo";
+import {useRouter} from "next/navigation";
 
 interface JobTableProps {
     backend: OpenEOBackend;
@@ -75,6 +76,7 @@ export const JobTable = ({backend}: JobTableProps) => {
                 sx={{border: 0}}
                 checkboxSelection
                 onRowSelectionModelChange={handleSelectionChange}
+                data-testid='job-table'
             />
         }
     </div>

@@ -1,0 +1,235 @@
+{
+  "_backend_deploy_metadata": {
+    "date": "2025-01-17T23:16:53Z",
+    "versions": {
+      "openeo": "0.36.0",
+      "openeo_aggregator": "0.41.0a1.dev20250110+465",
+      "openeo_driver": "0.123.0a1.dev20250109+998"
+    }
+  },
+  "_partitioned_job_tracking": true,
+  "api_version": "1.2.0",
+  "backend_version": "0.41.0a1",
+  "billing": {
+    "currency": "credits"
+  },
+  "conformsTo": [
+    "https://api.openeo.org/1.2.0",
+    "https://api.openeo.org/extensions/remote-process-definition/0.1.0"
+  ],
+  "description": "Federated openEO Aggregator instance, provided by Copernicus Data Space Ecosystem.",
+  "endpoints": [
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/file_formats"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/udf_runtimes"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/credentials/oidc"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/me"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/collections"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/collections/{collection_id}"
+    },
+    {
+      "methods": [
+        "POST"
+      ],
+      "path": "/validation"
+    },
+    {
+      "methods": [
+        "POST"
+      ],
+      "path": "/result"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/processes"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/processes/{namespace}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/processes/{namespace}/{process_id}"
+    },
+    {
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "path": "/jobs"
+    },
+    {
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "path": "/jobs/{job_id}"
+    },
+    {
+      "methods": [
+        "GET",
+        "DELETE",
+        "POST"
+      ],
+      "path": "/jobs/{job_id}/results"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/results/{user_base64}/{secure_key}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/results/items/{user_base64}/{secure_key}/{item_id}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/results/items/{item_id}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/results/assets/{path:filename}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/results/assets/{user_base64}/{secure_key}/{path:filename}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/jobs/{job_id}/logs"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/service_types"
+    },
+    {
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "path": "/services"
+    },
+    {
+      "methods": [
+        "GET",
+        "DELETE"
+      ],
+      "path": "/services/{service_id}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/services/{service_id}/logs"
+    },
+    {
+      "methods": [
+        "PUT",
+        "GET",
+        "DELETE"
+      ],
+      "path": "/process_graphs/{process_graph_id}"
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "/process_graphs"
+    }
+  ],
+  "federation": {
+    "cdse": {
+      "url": "https://openeo.dataspace.copernicus.eu/openeo/1.1/"
+    },
+    "terrascope": {
+      "url": "https://openeo-cdse.vito.be/openeo/1.1/"
+    }
+  },
+  "id": "copernicusdataspaceecosystemopeneoaggregator-0.41.0a1",
+  "links": [
+    {
+      "href": "https://openeofed.dataspace.copernicus.eu/.well-known/openeo",
+      "rel": "version-history",
+      "type": "application/json"
+    },
+    {
+      "href": "https://openeofed.dataspace.copernicus.eu/openeo/1.2/collections",
+      "rel": "data",
+      "type": "application/json"
+    },
+    {
+      "href": "https://openeofed.dataspace.copernicus.eu/openeo/1.2/conformance",
+      "rel": "conformance",
+      "type": "application/json"
+    },
+    {
+      "href": "https://openeo.cloud/aup",
+      "rel": "terms-of-service",
+      "type": "text/html"
+    },
+    {
+      "href": "https://terrascope.be/en/privacy-policy",
+      "rel": "privacy-policy",
+      "type": "text/html"
+    }
+  ],
+  "processing:software": {
+    "openeo": "0.36.0",
+    "openeo_aggregator": "0.41.0a1.dev20250110+465",
+    "openeo_driver": "0.123.0a1.dev20250109+998"
+  },
+  "production": true,
+  "stac_extensions": [
+    "https://stac-extensions.github.io/processing/v1.1.0/schema.json"
+  ],
+  "stac_version": "0.9.0",
+  "title": "Copernicus Data Space Ecosystem openEO Aggregator",
+  "version": "1.2.0"
+}

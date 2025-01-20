@@ -94,7 +94,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             <div className='font-bold'>Summary</div>
             <div className='flex flex-col gap-2 my-5'>
                 {
-                    jobs.map((job, idx) => <div key={idx} className='flex items-center gap-2'>
+                    jobs.map((job, idx) => <div key={idx} className='flex items-center gap-2' data-testid='job-summary'>
                         <div>
                             {
                                 generateJobIcon(job)
@@ -104,7 +104,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                     </div>)
                 }
             </div>
-            <Button onClick={publishJobs} color='primary' variant='contained'>Publish</Button>
+            <Button onClick={publishJobs} color='primary' variant='contained' data-testid='publish-button'>Publish</Button>
         </div>
         <div className='flex flex-col flex-1 items-center justify-center mt-5'>
             <LinearProgress color={error ? 'error': (done ? 'success' : 'info')} variant="determinate" value={progress} className='w-full min-h-2 rounded-full'></LinearProgress>

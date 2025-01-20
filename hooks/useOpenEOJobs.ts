@@ -6,12 +6,17 @@ import {OpenEOBackend, OpenEOJob} from "../lib/openeo/models";
 import {getOpenEOJobs} from "../lib/openeo/jobs";
 import {useToastStore} from "../store/toasts";
 import {ResponseError} from "../lib/utils/ResponseError";
+import {useRouter} from "next/navigation";
+import { useOpenEOStore } from "store/openeo";
 
 export const useOpenEOJobs = (backend: OpenEOBackend | undefined) => {
+
+    const router = useRouter();
     const [data, setData] = useState<OpenEOJob[]>([]);
     const [error, setError] = useState<ResponseError | null>(null);
     const [loading, setLoading] = useState(true);
     const { addToast } = useToastStore();
+    const { setSelectedBackend } = useOpenEOStore();
 
     useEffect(() => {
         async function fetchData() {
@@ -36,6 +41,8 @@ export const useOpenEOJobs = (backend: OpenEOBackend | undefined) => {
                         severity: 'error',
                     });
                 }
+                setSelectedBackend(undefined);
+                router.push('/?step=0');
                 setError(err);
             } finally {
                 setLoading(false);

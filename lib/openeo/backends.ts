@@ -1,3 +1,5 @@
+'use client';
+
 import {OidcIssuerInfo, OpenEOBackend, OpenEOCredentialsProvider} from "./models";
 import {ResponseError} from "../utils/ResponseError";
 import {headers} from "next/headers";

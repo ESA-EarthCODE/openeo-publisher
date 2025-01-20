@@ -1,3 +1,5 @@
+'use client';
+
 import {GITHUB_OWNER, GITHUB_REPO, octokit} from "./index";
 
 

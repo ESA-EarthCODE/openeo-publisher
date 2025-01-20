@@ -24,7 +24,7 @@ export const BackendSelector = () => {
 
     const renderBackendOptions = () =>
         data.map((b: OpenEOBackend, idx: number) => (
-            <MenuItem key={`backend-${idx}`} value={b.id}>
+            <MenuItem key={`backend-${idx}`} value={b.id} data-testid='backend-selector-item'>
                 {b.title}
             </MenuItem>
         ));
@@ -42,6 +42,7 @@ export const BackendSelector = () => {
                         labelId="openeo-backend-label"
                         value={selectedBackend?.id || ''}
                         onChange={handleChange}
+                        data-testid='backend-selector'
                     >
                         {renderBackendOptions()}
                     </Select>

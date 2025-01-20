@@ -1,3 +1,5 @@
+'use client';
+
 import {OpenEOBackend, OpenEOJob, OpenEOJobDetails} from "./models";
 import {ResponseError} from "../utils/ResponseError";
 
