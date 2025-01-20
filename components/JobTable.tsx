@@ -1,21 +1,19 @@
 import {capitalize, Chip} from "@mui/material";
-import {OpenEOJob} from "../lib/openeo/models";
-import {
-    DataGrid,
-    GridCallbackDetails,
-    GridColDef,
-    GridRenderCellParams,
-    GridRowSelectionModel,
-    GridToolbar
-} from '@mui/x-data-grid';
+import {OpenEOBackend, OpenEOJob} from "../lib/openeo/models";
+import {DataGrid, GridColDef, GridRenderCellParams, GridRowSelectionModel, GridToolbar} from '@mui/x-data-grid';
 import moment from "moment/moment";
+import {useOpenEOJobs} from "../hooks/useOpenEOJobs";
+import {Loading} from "@/components/Loading";
+import {useOpenEOStore} from "../store/openeo";
 
 interface JobTableProps {
-    jobs: OpenEOJob[];
-    setSelectedJobs: (jobs: OpenEOJob[]) => void;
+    backend: OpenEOBackend;
 }
 
-export const JobTable = ({jobs, setSelectedJobs}: JobTableProps) => {
+export const JobTable = ({backend}: JobTableProps) => {
+
+    const {data, error, loading} = useOpenEOJobs(backend);
+    const { setSelectedJobs } = useOpenEOStore();
 
     const getChipColor = (status?: string): string => {
         switch (status) {
@@ -34,7 +32,7 @@ export const JobTable = ({jobs, setSelectedJobs}: JobTableProps) => {
     }
 
     const handleSelectionChange = (model: GridRowSelectionModel) => {
-        setSelectedJobs(jobs.filter((j: OpenEOJob) => model.includes(j.id)))
+        setSelectedJobs(data.filter((j: OpenEOJob) => model.includes(j.id)))
     }
 
     const columns: GridColDef[] = [
@@ -52,11 +50,11 @@ export const JobTable = ({jobs, setSelectedJobs}: JobTableProps) => {
         {
             field: 'status', headerName: 'Status', width: 150,
             renderCell: (params: GridRenderCellParams<any, string>) => (
-                    <Chip
-                        color={getChipColor(params.value)}
-                        label={capitalize(params.value || 'Unknown')}
-                    >
-                    </Chip>
+                <Chip
+                    color={getChipColor(params.value)}
+                    label={capitalize(params.value || 'Unknown')}
+                >
+                </Chip>
             ),
         },
     ];
@@ -64,16 +62,21 @@ export const JobTable = ({jobs, setSelectedJobs}: JobTableProps) => {
     const paginationModel = {page: 0, pageSize: 20};
 
     return <div>
-        <DataGrid
-            rows={jobs}
-            columns={columns}
-            initialState={{pagination: {paginationModel}}}
-            pageSizeOptions={[5, 10, 20, 50, 100]}
-            slots={{toolbar: GridToolbar}}
-            sx={{border: 0}}
-            checkboxSelection
-            onRowSelectionModelChange={handleSelectionChange}
-        />
+        {
+            loading && <Loading></Loading>
+        }
+        {data.length > 0 &&
+            <DataGrid
+                rows={data}
+                columns={columns}
+                initialState={{pagination: {paginationModel}}}
+                pageSizeOptions={[5, 10, 20, 50, 100]}
+                slots={{toolbar: GridToolbar}}
+                sx={{border: 0}}
+                checkboxSelection
+                onRowSelectionModelChange={handleSelectionChange}
+            />
+        }
     </div>
 
 }

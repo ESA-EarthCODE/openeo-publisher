@@ -1,6 +1,7 @@
 import {OidcIssuerInfo, OpenEOBackend, OpenEOCredentialsProvider} from "./models";
 import {ResponseError} from "../utils/ResponseError";
 import {headers} from "next/headers";
+import {getOpenEOJobs} from "./jobs";
 
 export const getOpenEOBackends = async (): Promise<OpenEOBackend[]> => {
     const endpoints = (process.env.NEXT_PUBLIC_OPENEO_BACKENDS || '').split(',');
@@ -64,5 +65,14 @@ export const getCredentialProviders = async (url: string): Promise<OpenEOCredent
         )
     } else {
         throw new ResponseError(response.status, response.statusText, `Received error while retrieving Credential Providers from ${url}: ${await response.text()}`);
+    }
+}
+
+export const isAuthenticated= async (backend: OpenEOBackend): Promise<boolean> => {
+    try {
+       await getOpenEOJobs(backend);
+       return true;
+    } catch (e) {
+        return false;
     }
 }

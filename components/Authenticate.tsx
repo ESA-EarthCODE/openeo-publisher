@@ -10,6 +10,7 @@ export interface AuthenticateProps {
 
 }
 
+
 export const Authenticate = ({backend}: AuthenticateProps) => {
     const {data, loading, error} = useOpenEOCredentialsProvider(backend);
     const [selectedProvider, setSelectedProvider] = useState<OpenEOCredentialsProvider | null>(null);

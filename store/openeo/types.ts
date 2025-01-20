@@ -1,4 +1,4 @@
-import {OpenEOBackend, OpenEOCredentialsProvider} from "../../lib/openeo/models";
+import {OpenEOBackend, OpenEOCredentialsProvider, OpenEOJob} from "../../lib/openeo/models";
 
 export type OpenEOState = {
     backends: OpenEOBackend[],
@@ -7,4 +7,6 @@ export type OpenEOState = {
     setCredentialProviders: (backendId: string, credentialProviders: OpenEOCredentialsProvider[]) => void,
     selectedBackend: OpenEOBackend |  undefined;
     setSelectedBackend: (selectedBackend: OpenEOBackend | undefined) => void;
+    selectedJobs: OpenEOJob[];
+    setSelectedJobs: (selectedJobs: OpenEOJob[]) => void;
 };
