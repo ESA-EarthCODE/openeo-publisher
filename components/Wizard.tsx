@@ -8,9 +8,9 @@ import {isAuthenticated} from "../lib/openeo/backends";
 import {Authenticate} from "@/components/Authenticate";
 import {JobTable} from "@/components/JobTable";
 import {Publish} from "@/components/Publish";
-import {useInitOpenEOStore} from "../hooks/useInitOpenEOStore";
 import {QueryClient} from "@tanstack/query-core";
 import {QueryClientProvider} from "@tanstack/react-query";
+import {useWizardStore} from "../store/wizard";
 
 interface WizardStep {
     label: string;
@@ -22,11 +22,9 @@ interface WizardStep {
 
 export const Wizard = () => {
 
-    useInitOpenEOStore();
-
     const queryClient = new QueryClient();
-    const {selectedBackend, selectedJobs} = useOpenEOStore();
-    const [activeStep, setActiveStep] = useState<number>(0);
+    const {selectedBackend, setSelectedBackend, selectedJobs} = useOpenEOStore();
+    const { activeStep, setActiveStep } = useWizardStore();
     const [prevStepLoading, setPrevStepLoading] = useState<boolean>(false);
     const [nextStepLoading, setNextStepLoading] = useState<boolean>(false);
 
@@ -61,8 +59,17 @@ export const Wizard = () => {
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
+            // Retrieve the URL param from the window
             const urlParams = new URLSearchParams(window.location.search);
             setActiveStep(+(urlParams.get('step') || activeStep));
+
+            // Retrieve the selected backend from localStorage
+            const storedBackend = window.localStorage.getItem('openeo_backend');
+            if (storedBackend && storedBackend !== 'undefined') {
+                setSelectedBackend(JSON.parse(storedBackend));
+            } else {
+                setActiveStep(0);
+            }
         }
     }, []);
 
@@ -85,21 +92,16 @@ export const Wizard = () => {
     const handleNext = async () => {
         setNextStepLoading(true);
         const increment = await getStepIncrement(true);
-        handleStepChange(activeStep + increment);
+        setActiveStep(activeStep + increment);
         setNextStepLoading(false);
     };
 
     const handleBack = async () => {
         setPrevStepLoading(true);
         const increment = await getStepIncrement(false);
-        handleStepChange(activeStep - increment);
+        setActiveStep(activeStep - increment);
         setPrevStepLoading(false);
     };
-
-    const handleStepChange = (newStep: number) => {
-        setActiveStep(newStep);
-        window.history.replaceState(null, `Wizard - Step ${activeStep}`, `/?step=${newStep}`)
-    }
 
     const handleReset = () => {
         setActiveStep(0);
@@ -110,7 +112,7 @@ export const Wizard = () => {
             steps.map(({label}, idx) => {
                 return (
                     <Step key={label}>
-                        <StepButton color="inherit" onClick={() => handleStepChange(idx)} data-testid='stepper-step'>
+                        <StepButton color="inherit" onClick={() => setActiveStep(idx)} data-testid='stepper-step'>
                             {label}
                         </StepButton>
                     </Step>

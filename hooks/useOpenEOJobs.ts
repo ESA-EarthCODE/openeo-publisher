@@ -1,20 +1,19 @@
 'use client';
 
 
-import {useEffect, useState} from "react";
-import {OpenEOBackend, OpenEOJob} from "../lib/openeo/models";
+import {OpenEOBackend} from "../lib/openeo/models";
 import {getOpenEOJobs} from "../lib/openeo/jobs";
 import {useToastStore} from "../store/toasts";
 import {ResponseError} from "../lib/utils/ResponseError";
-import {useRouter} from "next/navigation";
 import {useOpenEOStore} from "store/openeo";
-import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {useQuery} from "@tanstack/react-query";
+import {useWizardStore} from "../store/wizard";
 
 export const useOpenEOJobs = (backend: OpenEOBackend | undefined) => {
 
-    const router = useRouter();
     const {addToast} = useToastStore();
     const {setSelectedBackend} = useOpenEOStore();
+    const {setActiveStep} = useWizardStore();
 
     const query = useQuery({
         queryKey: ['jobs', backend?.id],
@@ -32,7 +31,6 @@ export const useOpenEOJobs = (backend: OpenEOBackend | undefined) => {
                         severity: 'warning',
                     });
                     setSelectedBackend(undefined);
-                    router.push('/?step=0');
                 } else {
                     console.error('Could not retrieve openEO jobs', err);
                     addToast({
@@ -40,6 +38,7 @@ export const useOpenEOJobs = (backend: OpenEOBackend | undefined) => {
                         severity: 'error',
                     });
                 }
+                setActiveStep(0);
                 throw err;
             }
         },

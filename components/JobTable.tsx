@@ -5,7 +5,6 @@ import moment from "moment/moment";
 import {useOpenEOJobs} from "../hooks/useOpenEOJobs";
 import {Loading} from "@/components/Loading";
 import {useOpenEOStore} from "../store/openeo";
-import {useRouter} from "next/navigation";
 
 interface JobTableProps {
     backend: OpenEOBackend;
@@ -14,7 +13,7 @@ interface JobTableProps {
 export const JobTable = ({backend}: JobTableProps) => {
 
     const {data, error, loading} = useOpenEOJobs(backend);
-    const { setSelectedJobs } = useOpenEOStore();
+    const {setSelectedJobs} = useOpenEOStore();
 
     const getChipColor = (status?: string): string => {
         switch (status) {
@@ -79,7 +78,7 @@ export const JobTable = ({backend}: JobTableProps) => {
                 data-testid='job-table'
             />
         }
-        { !loading && data.length === 0 && <div data-testid='jobs-table-empty'>No jobs found</div>}
+        {!loading && data.length === 0 && <div data-testid='jobs-table-empty'>No jobs found</div>}
     </div>
 
 }
