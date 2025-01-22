@@ -7,24 +7,23 @@ import {useToastStore} from "../store/toasts";
 import {getCredentialProviders} from "../lib/openeo/backends";
 import {ResponseError} from "../lib/utils/ResponseError";
 import {useOpenEOStore} from "../store/openeo";
+import {useQuery} from "@tanstack/react-query";
 
 export const useOpenEOCredentialsProvider = (backend: OpenEOBackend | undefined) => {
-    const [data, setData] = useState<OpenEOCredentialsProvider[]>([]);
-    const [error, setError] = useState<ResponseError | null>(null);
-    const [loading, setLoading] = useState(true);
     const {addToast} = useToastStore();
     const {setCredentialProviders} = useOpenEOStore();
 
-    useEffect(() => {
-        async function fetchData() {
-            setLoading(true);
+
+    const query = useQuery({
+        queryKey: ['credential-providers', backend?.id],
+        queryFn: async () => {
             try {
                 if (backend) {
                     const result = await getCredentialProviders(backend.url);
                     setCredentialProviders(backend.id, result);
-                    setData(result);
+                    return result;
                 } else {
-                    setData([]);
+                    return [];
                 }
             } catch (err: any) {
                 console.error('Could not retrieve openEO credential providers', err);
@@ -32,14 +31,16 @@ export const useOpenEOCredentialsProvider = (backend: OpenEOBackend | undefined)
                     message: err.message,
                     severity: 'error',
                 });
-                setError(err);
-            } finally {
-                setLoading(false);
+                throw err;
             }
-        }
+        },
+        enabled: !!backend,
+        staleTime: 15 * 60 * 1000
+    });
 
-        fetchData();
-    }, [backend]);
-
-    return {data, error, loading};
+    return {
+        data: query.data || [],
+        error: query.error,
+        loading: query.isLoading,
+    };
 }

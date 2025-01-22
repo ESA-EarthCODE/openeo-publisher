@@ -79,6 +79,7 @@ export const JobTable = ({backend}: JobTableProps) => {
                 data-testid='job-table'
             />
         }
+        { !loading && data.length === 0 && <div data-testid='jobs-table-empty'>No jobs found</div>}
     </div>
 
 }

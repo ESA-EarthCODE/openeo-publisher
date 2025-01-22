@@ -1,6 +1,6 @@
 'use client';
 
-import {Button, CircularProgress, Step, StepButton, StepLabel, Stepper, Typography} from "@mui/material";
+import {Button, CircularProgress, Step, StepButton, Stepper, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {BackendSelector} from "@/components/BackendSelector";
 import {useOpenEOStore} from "../store/openeo";
@@ -9,6 +9,8 @@ import {Authenticate} from "@/components/Authenticate";
 import {JobTable} from "@/components/JobTable";
 import {Publish} from "@/components/Publish";
 import {useInitOpenEOStore} from "../hooks/useInitOpenEOStore";
+import {QueryClient} from "@tanstack/query-core";
+import {QueryClientProvider} from "@tanstack/react-query";
 
 interface WizardStep {
     label: string;
@@ -22,6 +24,7 @@ export const Wizard = () => {
 
     useInitOpenEOStore();
 
+    const queryClient = new QueryClient();
     const {selectedBackend, selectedJobs} = useOpenEOStore();
     const [activeStep, setActiveStep] = useState<number>(0);
     const [prevStepLoading, setPrevStepLoading] = useState<boolean>(false);
@@ -59,11 +62,7 @@ export const Wizard = () => {
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         setActiveStep(+(urlParams.get('step') || activeStep));
-    }, []);
-
-    useEffect(() => {
-        window.history.replaceState(null, `Wizard - Step ${activeStep}`, `/?step=${activeStep}`)
-    }, [activeStep]);
+    }, [window.location.search]);
 
     const skipStep = async (next: boolean): Promise<boolean> => {
         const step = activeStep + (next ? 1 : -1);
@@ -83,16 +82,21 @@ export const Wizard = () => {
     const handleNext = async () => {
         setNextStepLoading(true);
         const increment = await getStepIncrement(true);
-        setActiveStep((prevActiveStep) => prevActiveStep + increment);
+        handleStepChange(activeStep + increment);
         setNextStepLoading(false);
     };
 
     const handleBack = async () => {
         setPrevStepLoading(true);
         const increment = await getStepIncrement(false);
-        setActiveStep((prevActiveStep) => prevActiveStep - increment);
+        handleStepChange(activeStep - increment);
         setPrevStepLoading(false);
     };
+
+    const handleStepChange = (newStep: number) => {
+        setActiveStep(newStep);
+        window.history.replaceState(null, `Wizard - Step ${activeStep}`, `/?step=${newStep}`)
+    }
 
     const handleReset = () => {
         setActiveStep(0);
@@ -103,7 +107,7 @@ export const Wizard = () => {
             steps.map(({label}, idx) => {
                 return (
                     <Step key={label}>
-                        <StepButton color="inherit" onClick={() => setActiveStep(idx)} data-testid='stepper-step'>
+                        <StepButton color="inherit" onClick={() => handleStepChange(idx)} data-testid='stepper-step'>
                             {label}
                         </StepButton>
                     </Step>
@@ -156,8 +160,10 @@ export const Wizard = () => {
         </>
     )
 
-    return <div>
-        {generateStepper()}
-        {generateButtons()}
-    </div>
+    return <QueryClientProvider client={queryClient}>
+        <div>
+            {generateStepper()}
+            {generateButtons()}
+        </div>
+    </QueryClientProvider>
 }

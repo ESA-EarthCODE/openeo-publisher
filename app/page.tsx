@@ -1,5 +1,6 @@
 import {Metadata} from "next";
 import {Wizard} from "@/components/Wizard";
+import {useSearchParams} from "next/navigation";
 
 export const metadata: Metadata = {
     title: 'EarthCODE - openEO Job Publisher',

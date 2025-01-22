@@ -7,33 +7,32 @@ import {getOpenEOJobs} from "../lib/openeo/jobs";
 import {useToastStore} from "../store/toasts";
 import {ResponseError} from "../lib/utils/ResponseError";
 import {useRouter} from "next/navigation";
-import { useOpenEOStore } from "store/openeo";
+import {useOpenEOStore} from "store/openeo";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 
 export const useOpenEOJobs = (backend: OpenEOBackend | undefined) => {
 
     const router = useRouter();
-    const [data, setData] = useState<OpenEOJob[]>([]);
-    const [error, setError] = useState<ResponseError | null>(null);
-    const [loading, setLoading] = useState(true);
-    const { addToast } = useToastStore();
-    const { setSelectedBackend } = useOpenEOStore();
+    const {addToast} = useToastStore();
+    const {setSelectedBackend} = useOpenEOStore();
 
-    useEffect(() => {
-        async function fetchData() {
-            setLoading(true);
+    const query = useQuery({
+        queryKey: ['jobs', backend?.id],
+        queryFn: async () => {
             try {
                 if (backend) {
-                    const result = await getOpenEOJobs(backend);
-                    setData(result);
+                    return (await getOpenEOJobs(backend));
                 } else {
-                    setData([]);
+                    return [];
                 }
             } catch (err: any) {
-                if ((err as ResponseError).statusCode === 401) {
+                if ([401, 403].includes((err as ResponseError).statusCode)) {
                     addToast({
                         message: `You are not authenticated with ${backend?.title}. Please login first`,
                         severity: 'warning',
                     });
+                    setSelectedBackend(undefined);
+                    router.push('/?step=0');
                 } else {
                     console.error('Could not retrieve openEO jobs', err);
                     addToast({
@@ -41,16 +40,16 @@ export const useOpenEOJobs = (backend: OpenEOBackend | undefined) => {
                         severity: 'error',
                     });
                 }
-                setSelectedBackend(undefined);
-                router.push('/?step=0');
-                setError(err);
-            } finally {
-                setLoading(false);
+                throw err;
             }
-        }
+        },
+        enabled: !!backend,
+        staleTime: 10 * 1000, // Cache for 10 seconds
+    })
 
-        fetchData();
-    }, [backend]);
-
-    return {data, error, loading};
+    return {
+        data: query.data || [],
+        error: query.error,
+        loading: query.isLoading,
+    };
 }

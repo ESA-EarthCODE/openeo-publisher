@@ -6,7 +6,6 @@ import {NavBar} from "@/components/NavBar";
 import {Toasts} from "@/components/Toasts";
 
 import '@/styles/global.css';
-import {Metadata} from "next";
 
 const roboto = Roboto({
     weight: ['300', '400', '500', '700'],
@@ -23,14 +22,14 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className='p-0 m-0'>
-        <body className={`${roboto.className} p-0 m-0 bg-neutral-100` }>
+        <body className={`${roboto.className} p-0 m-0 bg-neutral-100`}>
         <AppRouterCacheProvider>
             <ThemeProvider theme={theme}>
                 <NavBar></NavBar>
                 <div className='p-10'>
                     {children}
                 </div>
-                <Toasts />
+                <Toasts/>
             </ThemeProvider>
         </AppRouterCacheProvider>
         </body>
