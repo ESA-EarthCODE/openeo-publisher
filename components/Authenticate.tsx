@@ -55,10 +55,6 @@ export const Authenticate = ({backend}: AuthenticateProps) => {
         return <Loading/>;
     } else if (data && data.length > 0) {
         return <div>
-            <Typography variant='h5'>Authenticate</Typography>
-            <div className='mt-2 mb-5 text-neutral-500'>Please select the authentication provider and login to the
-                openEO backend.
-            </div>
             <div className='flex flex-col gap-2 w-96'>
                 <FormControl variant="filled">
                     <InputLabel id="openeo-provider-label">Provider</InputLabel>
