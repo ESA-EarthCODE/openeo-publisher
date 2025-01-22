@@ -47,7 +47,6 @@ export const Authenticate = ({backend}: AuthenticateProps) => {
                 selectedProvider.default_clients[0].id
             )}&redirect_uri=${encodeURIComponent(redirectUrl)}&response_type=code&scope=${encodeURIComponent(selectedProvider.scopes.join(' '))}`;
 
-            console.log(redirectUrl);
             window.location.href = loginUrl;
         }
     }
