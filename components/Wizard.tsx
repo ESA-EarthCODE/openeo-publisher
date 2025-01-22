@@ -60,9 +60,12 @@ export const Wizard = () => {
     ]
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        setActiveStep(+(urlParams.get('step') || activeStep));
-    }, [window.location.search]);
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            setActiveStep(+(urlParams.get('step') || activeStep));
+        }
+    }, []);
+
 
     const skipStep = async (next: boolean): Promise<boolean> => {
         const step = activeStep + (next ? 1 : -1);

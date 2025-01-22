@@ -4,13 +4,10 @@ import vitoResponse from './fixture/responses/vito.json';
 import openEOJobs from './fixture/responses/jobs.json';
 import openEOJob from './fixture/responses/jobinfo.json';
 
-test.describe('Publishing Test', () => {
-
-    test.beforeEach(async ({page}) => {
-        await page.goto('/');
-    });
+test.describe('Publishing Wizard Tests', () => {
 
     test('Should publish openEO jobs', async ({page}) => {
+
 
         let createCount = 0;
         let prCount = 0;
@@ -22,6 +19,7 @@ test.describe('Publishing Test', () => {
         await page.route('https://openeofed.dataspace.copernicus.eu/openeo/jobs', async route => {
             await route.fulfill({json: openEOJobs});
         });
+
         await page.route('https://openeofed.dataspace.copernicus.eu/openeo/jobs/**', async route => {
             await route.fulfill({json: openEOJob});
         });
@@ -76,6 +74,7 @@ test.describe('Publishing Test', () => {
             }
         });
 
+        await page.goto('/');
 
         // STEP 1. Select backend
         await expect(page.getByTestId('backend-selector')).toBeVisible();
@@ -111,4 +110,20 @@ test.describe('Publishing Test', () => {
         expect(createCount).toBe(2);
         expect(prCount).toBe(1);
     });
+
+
+});
+
+test.describe('Wizard Navigation Tests', () => {
+
+    test('Should return to the first step whenever the user did not select a backend', async ({page}) => {
+
+        await page.addInitScript(params => {
+            window.localStorage.removeItem('openeo_backend');
+        });
+
+        await page.goto('?step=2');
+
+        expect(page.url()).toContain('?step=0');
+    })
 })

@@ -55,12 +55,14 @@ export const CallbackPage = () => {
 
                             // Store the access token in localStorage or cookies
                             localStorage.setItem(`access_token_${backend.id}`, `oidc/${provider.id}/${data.access_token}`);
+                            router.push('/?step=2');
                         } else {
                             console.error('Failed to fetch token:', await response.text());
                             addToast({
                                 message: `Failed to fetch token for ${backend.title}`,
                                 severity: 'error',
                             });
+                            router.push('/?step=0');
                         }
                     } catch (error) {
                         addToast({
@@ -68,9 +70,11 @@ export const CallbackPage = () => {
                             severity: 'error',
                         });
                         console.error('Error during token exchange:', error);
+                        router.push('/?step=0');
                     }
+                } else {
+                    router.push('/?step=0');
                 }
-                router.push('/');
             }
         };
 
