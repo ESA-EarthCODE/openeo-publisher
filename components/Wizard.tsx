@@ -76,8 +76,8 @@ export const Wizard = () => {
 
     const skipStep = async (next: boolean): Promise<boolean> => {
         const step = activeStep + (next ? 1 : -1);
-        if (!!steps[step].skipComponent) {
-            const skip = await steps[step].skipComponent();
+        if (steps[step].skipComponent) {
+            const skip = await steps[step].skipComponent?.();
             if (skip) {
                 return true;
             }
