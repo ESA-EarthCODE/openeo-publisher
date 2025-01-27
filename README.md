@@ -1,43 +1,43 @@
-# Next.js + Jest
+# EarthCODE - openEO Publisher
 
-This example shows how to configure Jest to work with Next.js.
+The **EarthCODE - openEO Publisher** is a Proof of Concept (PoC) developed under the EarthCODE project. Its primary goal
+is to provide an intuitive user interface for publishing results from an openEO-based platform into the EarthCODE
+catalogue.
 
-This includes Next.js' built-in support for Global CSS, CSS Modules and TypeScript. This example also shows how to use Jest with the App Router and React Server Components.
+This application is built using **React** and **Next.js**.
 
-> **Note:** Since tests can be co-located alongside other files inside the App Router, we have placed those tests in `app/` to demonstrate this behavior (which is different than `pages/`). You can still place all tests in `__tests__` if you prefer.
+## Getting Started
 
-## Deploy your own
+1. **Install Prerequisites**  
+   Run the following command to install the required dependencies:
+   ```bash
+   npm install
+   ```
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-jest&project-name=with-jest&repository-name=with-jest)
+2. **Start the Application**  
+   Launch the development server using:
+   ```bash
+   npm run dev
+   ```
 
-## How to Use
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+## Configure Your Environment
 
-```bash
-npx create-next-app --example with-jest with-jest-app
-```
+To ensure proper functionality, create a `.env` file in the root directory with the following keys and values:
 
-```bash
-yarn create next-app --example with-jest with-jest-app
-```
+| **Key**                       | **Value**                                                                                     |  
+|-------------------------------|-----------------------------------------------------------------------------------------------|  
+| `NEXT_PUBLIC_GITHUB_TOKEN`    | Your GitHub token for creating pull requests and publishing results to the GitHub repository. |  
+| `NEXT_PUBLIC_GITHUB_OWNER`    | The owner (organization or user) of the EarthCODE Catalogue GitHub repository.                |  
+| `NEXT_PUBLIC_GITHUB_REPO`     | The name of the EarthCODE Catalogue GitHub repository.                                        |  
+| `NEXT_PUBLIC_OPENEO_BACKENDS` | A comma-separated list of openEO backend endpoints to support.                                |  
 
-```bash
-pnpm create next-app --example with-jest with-jest-app
-```
+Example `.env` file:
 
-## Running Tests
+```env
+NEXT_PUBLIC_GITHUB_TOKEN=your_github_token_here  
+NEXT_PUBLIC_GITHUB_OWNER=earthcode_org  
+NEXT_PUBLIC_GITHUB_REPO=earthcode-catalogue  
+NEXT_PUBLIC_OPENEO_BACKENDS=https://backend1.openeo.org/openeo,https://backend2.openeo.org/openeo
+```  
 
-```bash
-npm test
-```
-
-```bash
-yarn test
-```
-
-```bash
-pnpm test
-```
-
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
