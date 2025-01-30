@@ -1,6 +1,6 @@
 'use client';
 
-import {OpenEOBackend, OpenEOJob, OpenEOJobDetails} from "../openeo/models";
+import {OpenEOBackend, OpenEOJob, OpenEOJobDetails} from "../openeo/jobs.models";
 import {GITHUB_OWNER, GITHUB_REPO, octokit} from "./index";
 
 

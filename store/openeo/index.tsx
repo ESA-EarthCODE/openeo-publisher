@@ -1,7 +1,7 @@
 'use client';
 
 import {create} from 'zustand';
-import {OpenEOBackend, OpenEOCredentialsProvider, OpenEOJob} from "../../lib/openeo/models";
+import {OpenEOBackend, OpenEOCredentialsProvider, OpenEOJob} from "../../lib/openeo/jobs.models";
 import {OpenEOState} from "./types";
 
 

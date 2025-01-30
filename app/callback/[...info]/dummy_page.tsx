@@ -1,6 +1,6 @@
 import {Loading} from "@/components/Loading";
 import {getCredentialProviders, getOpenEOBackends} from "../../../lib/openeo/backends";
-import {OpenEOBackend, OpenEOCredentialsProvider} from "../../../lib/openeo/models";
+import {OpenEOBackend, OpenEOCredentialsProvider} from "../../../lib/openeo/jobs.models";
 import {cookies, headers} from "next/headers";
 import {NextResponse} from "next/server";
 import {redirect} from "next/navigation";

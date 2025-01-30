@@ -2,7 +2,7 @@
 
 import {useEffect} from 'react';
 import {Loading} from "@/components/Loading";
-import {OpenEOBackend, OpenEOCredentialsProvider} from "../lib/openeo/models";
+import {OpenEOBackend, OpenEOCredentialsProvider} from "../lib/openeo/jobs.models";
 import {getCredentialProviders, getOpenEOBackends} from "../lib/openeo/backends";
 import {useRouter} from "next/navigation";
 import {useToastStore} from "../store/toasts";

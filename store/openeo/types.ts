@@ -1,4 +1,4 @@
-import {OpenEOBackend, OpenEOCredentialsProvider, OpenEOJob} from "../../lib/openeo/models";
+import {OpenEOBackend, OpenEOCredentialsProvider, OpenEOJob} from "../../lib/openeo/jobs.models";
 
 export type OpenEOState = {
     backends: OpenEOBackend[],

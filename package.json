@@ -36,6 +36,7 @@
     "dotenv": "^16.4.7",
     "jest": "29.7.0",
     "jest-environment-jsdom": "29.7.0",
+    "open-science-catalog-validation": "github:ESA-EarthCODE/open-science-catalog-validation",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "5.3.3"

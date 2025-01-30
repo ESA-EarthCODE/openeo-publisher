@@ -2,7 +2,7 @@ import {useOpenEOBackends} from "../hooks/useOpenEOBackends";
 import {useOpenEOStore} from "../store/openeo";
 import React, {useEffect} from "react";
 import {CircularProgress, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent} from "@mui/material";
-import {OpenEOBackend} from "../lib/openeo/models";
+import {OpenEOBackend} from "../lib/openeo/jobs.models";
 
 export const BackendSelector = () => {
 

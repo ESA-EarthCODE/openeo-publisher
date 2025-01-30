@@ -1,5 +1,5 @@
 import {capitalize, Chip} from "@mui/material";
-import {OpenEOBackend, OpenEOJob} from "../lib/openeo/models";
+import {OpenEOBackend, OpenEOJob} from "../lib/openeo/jobs.models";
 import {DataGrid, GridColDef, GridRenderCellParams, GridRowSelectionModel, GridToolbar} from '@mui/x-data-grid';
 import moment from "moment/moment";
 import {useOpenEOJobs} from "../hooks/useOpenEOJobs";

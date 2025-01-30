@@ -47,3 +47,5 @@ export interface OpenEOCredentialsProvider {
     default_clients: OpenEOCredentialsClient[];
     issuerInfo: OidcIssuerInfo;
 }
+
+

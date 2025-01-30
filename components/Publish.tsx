@@ -1,5 +1,5 @@
 import {Alert, Button, CircularProgress, LinearProgress} from "@mui/material";
-import {OpenEOBackend, OpenEOJob} from "../lib/openeo/models";
+import {OpenEOBackend, OpenEOJob} from "../lib/openeo/jobs.models";
 import React, {useState} from "react";
 import {createBranch} from "../lib/github/branches";
 import moment from "moment/moment";

@@ -1,7 +1,7 @@
 'use client';
 
 
-import {OpenEOBackend} from "../lib/openeo/models";
+import {OpenEOBackend} from "../lib/openeo/jobs.models";
 import {getOpenEOJobs} from "../lib/openeo/jobs";
 import {useToastStore} from "../store/toasts";
 import {ResponseError} from "../lib/utils/ResponseError";

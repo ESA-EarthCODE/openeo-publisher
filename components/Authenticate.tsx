@@ -1,4 +1,4 @@
-import {OpenEOBackend, OpenEOCredentialsProvider} from "../lib/openeo/models";
+import {OpenEOBackend, OpenEOCredentialsProvider} from "../lib/openeo/jobs.models";
 import {useOpenEOCredentialsProvider} from "../hooks/useOpenEOCredentialsProvider";
 import {Loading} from "@/components/Loading";
 import {Alert, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography} from "@mui/material";

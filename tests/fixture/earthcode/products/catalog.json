@@ -1,0 +1,27 @@
+{
+  "type": "Catalog",
+  "id": "products",
+  "stac_version": "1.0.0",
+  "description": "Geoscience products representing the measured or inferred values of one or more variables over a given time range and spatial area",
+  "links": [
+    {
+      "rel": "root",
+      "href": "../catalog.json",
+      "type": "application/json",
+      "title": "Open Science Catalog"
+    },
+    {
+      "rel": "child",
+      "href": "./test/collection.json",
+      "type": "application/json",
+      "title": "Test collection"
+    },
+    {
+      "rel": "self",
+      "href": "https://esa-earthcode.github.io/open-science-catalog-metadata/products/catalog.json",
+      "type": "application/json"
+    }
+  ],
+  "updated": "2024-09-12T20:32:22.975110Z",
+  "title": "Products"
+}

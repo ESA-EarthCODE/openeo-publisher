@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useOpenEOBackends} from "../hooks/useOpenEOBackends";
-import {OpenEOBackend} from "../lib/openeo/models";
+import {OpenEOBackend} from "../lib/openeo/jobs.models";
 import {useOpenEOStore} from "../store/openeo";
 import {BackendSelector} from "@/components/BackendSelector";
 

@@ -2,7 +2,7 @@
 
 
 import {useEffect, useState} from "react";
-import {OpenEOBackend, OpenEOCredentialsProvider} from "../lib/openeo/models";
+import {OpenEOBackend, OpenEOCredentialsProvider} from "../lib/openeo/jobs.models";
 import {useToastStore} from "../store/toasts";
 import {getCredentialProviders} from "../lib/openeo/backends";
 import {ResponseError} from "../lib/utils/ResponseError";
