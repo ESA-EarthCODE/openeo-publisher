@@ -1,12 +1,12 @@
 import {Link, OpenEOJobResults} from "../openeo/results.models";
 import {EarthCODEProduct} from "./product.models";
 
-export const createProductCollection = (project: string, job: OpenEOJobResults): EarthCODEProduct => {
+export const createProductCollection = (id: string, project: string, job: OpenEOJobResults): EarthCODEProduct => {
     return {
         assets: job.assets,
         description: job.description,
         extent: job.extent,
-        id: job.id,
+        id,
         license: job.license,
         links: [
             ...job.links.map((l: Link)=> (

@@ -1,137 +1,18 @@
 {
-  "assets": {
-    "result.json": {
-      "href": "https://openeo.dataspace.copernicus.eu/openeo/1.1/jobs/j-25020410530548a7aef81c62faebd127/results/assets/NjM5MTg1MWYtOTA0Mi00MTA4LThiMmEtM2RkMmU4YTlkZDBi/a22897461e625c0c5c49419bfd113dd6/result.json?expires=1739274740",
-      "roles": [
-        "data"
-      ],
-      "title": "result.json",
-      "type": "application/json"
-    },
-    "worldcereal-cropland-extent-postprocessed.tif": {
-      "href": "https://openeo.dataspace.copernicus.eu/openeo/1.1/jobs/j-25020410530548a7aef81c62faebd127/results/assets/NjM5MTg1MWYtOTA0Mi00MTA4LThiMmEtM2RkMmU4YTlkZDBi/94d1faa4ea6e53dae38129f85ea2e72a/worldcereal-cropland-extent-postprocessed.tif?expires=1739274740",
-      "proj:bbox": [
-        647210.0,
-        5676650.0,
-        661110.0,
-        5685720.0
-      ],
-      "proj:epsg": 32631,
-      "proj:shape": [
-        907,
-        1390
-      ],
-      "raster:bands": [
-        {
-          "name": "classification",
-          "statistics": {
-            "maximum": 1.0,
-            "mean": 0.20881235474685,
-            "minimum": 0.0,
-            "stddev": 0.40646002909502,
-            "valid_percent": 100.0
-          }
-        },
-        {
-          "name": "probability",
-          "statistics": {
-            "maximum": 100.0,
-            "mean": 87.618582091328,
-            "minimum": 51.0,
-            "stddev": 9.4378604749319,
-            "valid_percent": 100.0
-          }
-        },
-        {
-          "name": "probability_other",
-          "statistics": {
-            "maximum": 100.0,
-            "mean": 73.260664852903,
-            "minimum": 1.0,
-            "stddev": 32.092614946838,
-            "valid_percent": 100.0
-          }
-        },
-        {
-          "name": "probability_cropland",
-          "statistics": {
-            "maximum": 99.0,
-            "mean": 26.739335147097,
-            "minimum": 0.0,
-            "stddev": 32.092614946838,
-            "valid_percent": 100.0
-          }
-        }
-      ],
-      "roles": [
-        "data"
-      ],
-      "title": "worldcereal-cropland-extent-postprocessed.tif",
-      "type": "image/tiff; application=geotiff"
-    },
-    "worldcereal-cropland-extent.tif": {
-      "href": "https://openeo.dataspace.copernicus.eu/openeo/1.1/jobs/j-25020410530548a7aef81c62faebd127/results/assets/NjM5MTg1MWYtOTA0Mi00MTA4LThiMmEtM2RkMmU4YTlkZDBi/db10cabc11ea947c7b1d78dac38dae53/worldcereal-cropland-extent.tif?expires=1739274740",
-      "proj:bbox": [
-        647210.0,
-        5676650.0,
-        661110.0,
-        5685720.0
-      ],
-      "proj:epsg": 32631,
-      "proj:shape": [
-        907,
-        1390
-      ],
-      "raster:bands": [
-        {
-          "name": "classification",
-          "statistics": {
-            "maximum": 1.0,
-            "mean": 0.21644206134541,
-            "minimum": 0.0,
-            "stddev": 0.4118190080921,
-            "valid_percent": 100.0
-          }
-        },
-        {
-          "name": "probability",
-          "statistics": {
-            "maximum": 100.0,
-            "mean": 87.654939598486,
-            "minimum": 50.0,
-            "stddev": 12.373357966188,
-            "valid_percent": 100.0
-          }
-        },
-        {
-          "name": "probability_other",
-          "statistics": {
-            "maximum": 100.0,
-            "mean": 73.260664852904,
-            "minimum": 1.0,
-            "stddev": 32.092614946837,
-            "valid_percent": 100.0
-          }
-        },
-        {
-          "name": "probability_cropland",
-          "statistics": {
-            "maximum": 99.0,
-            "mean": 26.739335147098,
-            "minimum": 0.0,
-            "stddev": 32.092614946838,
-            "valid_percent": 100.0
-          }
-        }
-      ],
-      "roles": [
-        "data"
-      ],
-      "title": "worldcereal-cropland-extent.tif",
-      "type": "image/tiff; application=geotiff"
-    }
-  },
+  "type": "Collection",
+  "id": "worldcereal-maize-detection-belgium",
+  "stac_version": "1.0.0",
   "description": "Results for batch job cdse-j-25020410530548a7aef81c62faebd127",
+  "title": "WorldCereal Crop Extent - Belgium",
+  "license": "proprietary",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/osc/v1.0.0-rc.3/schema.json"
+  ],
+  "osc:type": "product",
+  "osc:status": "completed",
+  "osc:project": "worldcereal",
+  "osc:variables": [],
+  "osc:missions": [],
   "extent": {
     "spatial": {
       "bbox": [
@@ -152,8 +33,6 @@
       ]
     }
   },
-  "id": "cdse-j-25020410530548a7aef81c62faebd127",
-  "license": "proprietary",
   "links": [
     {
       "href": "openEO_2021-01-01Z.tif",
@@ -2749,7 +2628,7 @@
     },
     {
       "href": "https://openeo.dataspace.copernicus.eu/openeo/1.1/jobs/j-25020410530548a7aef81c62faebd127/results/NjM5MTg1MWYtOTA0Mi00MTA4LThiMmEtM2RkMmU4YTlkZDBi/e60aca71003c1f96928ebe596ad69534?expires=1739274740",
-      "rel": "canonical",
+      "rel": "via",
       "type": "application/json"
     },
     {
@@ -2781,17 +2660,150 @@
       "href": "https://openeofed.dataspace.copernicus.eu/openeo/1.2/jobs/cdse-j-25020410530548a7aef81c62faebd127/results/items/NjM5MTg1MWYtOTA0Mi00MTA4LThiMmEtM2RkMmU4YTlkZDBi/617625e3c9622cd6a48b4cbd9db81919/worldcereal-cropland-extent.tif?expires=1739274740",
       "rel": "item",
       "type": "application/geo+json"
+    },
+    {
+      "rel": "parent",
+      "href": "../catalog.json",
+      "type": "application/json",
+      "title": "Products"
+    },
+    {
+      "rel": "root",
+      "href": "../../catalog.json",
+      "type": "application/json",
+      "title": "Open Science Catalog"
     }
   ],
-  "openeo:status": "finished",
-  "stac_extensions": [
-    "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
-    "https://stac-extensions.github.io/file/v2.1.0/schema.json",
-    "https://stac-extensions.github.io/processing/v1.1.0/schema.json",
-    "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
-  ],
-  "stac_version": "1.0.0",
-  "summaries": {},
-  "title": "WorldCereal Crop Extent - Belgium",
-  "type": "Collection"
+  "assets": {
+    "result.json": {
+      "href": "https://openeo.dataspace.copernicus.eu/openeo/1.1/jobs/j-25020410530548a7aef81c62faebd127/results/assets/NjM5MTg1MWYtOTA0Mi00MTA4LThiMmEtM2RkMmU4YTlkZDBi/a22897461e625c0c5c49419bfd113dd6/result.json?expires=1739274740",
+      "roles": [
+        "data"
+      ],
+      "title": "result.json",
+      "type": "application/json"
+    },
+    "worldcereal-cropland-extent-postprocessed.tif": {
+      "href": "https://openeo.dataspace.copernicus.eu/openeo/1.1/jobs/j-25020410530548a7aef81c62faebd127/results/assets/NjM5MTg1MWYtOTA0Mi00MTA4LThiMmEtM2RkMmU4YTlkZDBi/94d1faa4ea6e53dae38129f85ea2e72a/worldcereal-cropland-extent-postprocessed.tif?expires=1739274740",
+      "proj:bbox": [
+        647210.0,
+        5676650.0,
+        661110.0,
+        5685720.0
+      ],
+      "proj:epsg": 32631,
+      "proj:shape": [
+        907,
+        1390
+      ],
+      "raster:bands": [
+        {
+          "name": "classification",
+          "statistics": {
+            "maximum": 1.0,
+            "mean": 0.20881235474685,
+            "minimum": 0.0,
+            "stddev": 0.40646002909502,
+            "valid_percent": 100.0
+          }
+        },
+        {
+          "name": "probability",
+          "statistics": {
+            "maximum": 100.0,
+            "mean": 87.618582091328,
+            "minimum": 51.0,
+            "stddev": 9.4378604749319,
+            "valid_percent": 100.0
+          }
+        },
+        {
+          "name": "probability_other",
+          "statistics": {
+            "maximum": 100.0,
+            "mean": 73.260664852903,
+            "minimum": 1.0,
+            "stddev": 32.092614946838,
+            "valid_percent": 100.0
+          }
+        },
+        {
+          "name": "probability_cropland",
+          "statistics": {
+            "maximum": 99.0,
+            "mean": 26.739335147097,
+            "minimum": 0.0,
+            "stddev": 32.092614946838,
+            "valid_percent": 100.0
+          }
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "worldcereal-cropland-extent-postprocessed.tif",
+      "type": "image/tiff; application=geotiff"
+    },
+    "worldcereal-cropland-extent.tif": {
+      "href": "https://openeo.dataspace.copernicus.eu/openeo/1.1/jobs/j-25020410530548a7aef81c62faebd127/results/assets/NjM5MTg1MWYtOTA0Mi00MTA4LThiMmEtM2RkMmU4YTlkZDBi/db10cabc11ea947c7b1d78dac38dae53/worldcereal-cropland-extent.tif?expires=1739274740",
+      "proj:bbox": [
+        647210.0,
+        5676650.0,
+        661110.0,
+        5685720.0
+      ],
+      "proj:epsg": 32631,
+      "proj:shape": [
+        907,
+        1390
+      ],
+      "raster:bands": [
+        {
+          "name": "classification",
+          "statistics": {
+            "maximum": 1.0,
+            "mean": 0.21644206134541,
+            "minimum": 0.0,
+            "stddev": 0.4118190080921,
+            "valid_percent": 100.0
+          }
+        },
+        {
+          "name": "probability",
+          "statistics": {
+            "maximum": 100.0,
+            "mean": 87.654939598486,
+            "minimum": 50.0,
+            "stddev": 12.373357966188,
+            "valid_percent": 100.0
+          }
+        },
+        {
+          "name": "probability_other",
+          "statistics": {
+            "maximum": 100.0,
+            "mean": 73.260664852904,
+            "minimum": 1.0,
+            "stddev": 32.092614946837,
+            "valid_percent": 100.0
+          }
+        },
+        {
+          "name": "probability_cropland",
+          "statistics": {
+            "maximum": 99.0,
+            "mean": 26.739335147098,
+            "minimum": 0.0,
+            "stddev": 32.092614946838,
+            "valid_percent": 100.0
+          }
+        }
+      ],
+      "roles": [
+        "data"
+      ],
+      "title": "worldcereal-cropland-extent.tif",
+      "type": "image/tiff; application=geotiff"
+    }
+  }
 }

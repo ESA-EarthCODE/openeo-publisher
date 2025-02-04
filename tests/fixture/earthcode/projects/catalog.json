@@ -1,8 +1,8 @@
 {
   "type": "Catalog",
-  "id": "products",
+  "id": "projects",
   "stac_version": "1.0.0",
-  "description": "Geoscience products representing the measured or inferred values of one or more variables over a given time range and spatial area",
+  "description": "Activities funded by ESA",
   "links": [
     {
       "rel": "root",
@@ -12,9 +12,9 @@
     },
     {
       "rel": "child",
-      "href": "./worldcereal-maize-detection-belgium/collection.json",
+      "href": "./worldcereal/collection.json",
       "type": "application/json",
-      "title": "WorldCereal Crop Extent - Belgium"
+      "title": "WorldCereal"
     },
     {
       "rel": "parent",
@@ -29,5 +29,5 @@
     }
   ],
   "updated": "2024-09-12T20:32:22.975110Z",
-  "title": "Products"
+  "title": "Projects"
 }
