@@ -15,7 +15,7 @@ export const JobTable = ({backend}: JobTableProps) => {
     const {data, error, loading} = useOpenEOJobs(backend);
     const {setSelectedJobs} = useOpenEOStore();
 
-    const getChipColor = (status?: string): string => {
+    const getChipColor = (status?: string): 'success' | 'primary' | 'warning' | 'error' | 'default' => {
         switch (status) {
             case 'finished':
                 return 'success';
