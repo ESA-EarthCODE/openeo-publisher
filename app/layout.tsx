@@ -6,6 +6,7 @@ import {NavBar} from "@/components/NavBar";
 import {Toasts} from "@/components/Toasts";
 
 import '@/styles/global.css';
+import {SessionProvider} from "next-auth/react";
 
 const roboto = Roboto({
     weight: ['300', '400', '500', '700'],
@@ -23,15 +24,17 @@ export default function RootLayout({
     return (
         <html lang="en" className='p-0 m-0'>
         <body className={`${roboto.className} p-0 m-0 bg-neutral-100`}>
-        <AppRouterCacheProvider>
-            <ThemeProvider theme={theme}>
-                <NavBar></NavBar>
-                <div className='p-10'>
-                    {children}
-                </div>
-                <Toasts/>
-            </ThemeProvider>
-        </AppRouterCacheProvider>
+        <SessionProvider>
+            <AppRouterCacheProvider>
+                <ThemeProvider theme={theme}>
+                    <NavBar></NavBar>
+                    <div className='p-10 flex justify-center items-center'>
+                        {children}
+                    </div>
+                    <Toasts/>
+                </ThemeProvider>
+            </AppRouterCacheProvider>
+        </SessionProvider>
         </body>
         </html>
     );

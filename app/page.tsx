@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-    return <div className='bg-white rounded-lg px-10 py-14 shadow-lg'>
+    return <div className='bg-white rounded-lg px-10 py-14 w-full shadow-lg'>
         <Wizard></Wizard>
     </div>
 }
