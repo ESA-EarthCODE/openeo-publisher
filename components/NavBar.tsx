@@ -1,26 +1,22 @@
 'use client';
 
-import {
-    AppBar,
-    CircularProgress,
-    FormControl,
-    IconButton,
-    InputLabel,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    Toolbar,
-    Typography
-} from "@mui/material";
-import React, {useEffect, useState} from "react";
-import {useOpenEOBackends} from "../hooks/useOpenEOBackends";
-import {OpenEOBackend} from "../lib/openeo/jobs.models";
-import {useOpenEOStore} from "../store/openeo";
-import {BackendSelector} from "@/components/BackendSelector";
+import {AppBar, IconButton, Toolbar, Typography, Avatar, Chip} from "@mui/material";
+import React from "react";
+import {useSession} from "next-auth/react";
 
 
 export const NavBar = () => {
+    const {data: session, status} = useSession()
 
+    console.log(session, status);
+
+    const getAvatar = (user) => {
+        if (!user) {
+            return <></>
+        } else {
+            return <Chip size="64" className='!bg-neutral-100' avatar={user.image ? <Avatar alt={user.name} src={user.image} /> : <Avatar>{user.name[0]}</Avatar> } label={user.name}/>
+        }
+    }
 
     return <AppBar position="static">
         <Toolbar>
@@ -35,6 +31,7 @@ export const NavBar = () => {
             <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                 EarthCODE - openEO Publisher
             </Typography>
+            { getAvatar(session?.user)}
         </Toolbar>
     </AppBar>
 }
