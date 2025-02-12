@@ -1,13 +1,13 @@
 'use client';
 
-import {GITHUB_OWNER, GITHUB_REPO, octokit} from "./index";
+import {getOctokit, GITHUB_OWNER, GITHUB_REPO} from "./index";
 
 
-export const createBranch = async (name: string) => {
+export const createBranch = async (token: string, name: string) => {
     if (GITHUB_OWNER && GITHUB_REPO) {
 
         // Get a reference to the main branch
-        const {data } = await octokit.rest.git.getRef({
+        const {data } = await getOctokit(token).rest.git.getRef({
             owner: GITHUB_OWNER,
             repo: GITHUB_REPO,
             ref: `heads/main`,
@@ -16,7 +16,7 @@ export const createBranch = async (name: string) => {
         const baseSha = data.object.sha;
 
         // Create a new branch
-        await octokit.rest.git.createRef({
+        await getOctokit(token).rest.git.createRef({
             owner: GITHUB_OWNER,
             repo: GITHUB_REPO,
             ref: `refs/heads/${name}`,

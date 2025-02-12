@@ -3,18 +3,17 @@
 import {AppBar, IconButton, Toolbar, Typography, Avatar, Chip} from "@mui/material";
 import React from "react";
 import {useSession} from "next-auth/react";
+import {signOutApp} from "../lib/auth";
 
 
 export const NavBar = () => {
-    const {data: session, status} = useSession()
-
-    console.log(session, status);
+    const {data: session} = useSession()
 
     const getAvatar = (user) => {
         if (!user) {
             return <></>
         } else {
-            return <Chip size="64" className='!bg-neutral-100' avatar={user.image ? <Avatar alt={user.name} src={user.image} /> : <Avatar>{user.name[0]}</Avatar> } label={user.name}/>
+            return <Chip onClick={async() => await signOutApp()} className='!bg-neutral-100' avatar={user.image ? <Avatar alt={user.name} src={user.image} /> : <Avatar>{user.name[0]}</Avatar> } label={user.name}/>
         }
     }
 
