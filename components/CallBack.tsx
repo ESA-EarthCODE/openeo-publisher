@@ -37,7 +37,7 @@ export const CallbackPage = () => {
                     const body = new URLSearchParams({
                         grant_type: 'authorization_code',
                         code: code || '',
-                        edirect_uri: redirectUrl,
+                        redirect_uri: redirectUrl,
                         client_id: provider.default_clients[0].id,
                     });
 
