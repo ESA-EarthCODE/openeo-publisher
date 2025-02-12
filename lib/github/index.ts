@@ -7,7 +7,7 @@ let octokit: Octokit;
 
 export const getOctokit = (token: string) => {
     if (!octokit) {
-        octokit = new Octokit();
+        octokit = new Octokit({ auth: token});
     }
     return octokit;
 }
