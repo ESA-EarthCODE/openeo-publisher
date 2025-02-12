@@ -2,6 +2,15 @@
 
 import {Octokit} from "@octokit/rest";
 
-export const octokit = new Octokit({ auth: process.env.NEXT_PUBLIC_GITHUB_TOKEN });
+
+let octokit: Octokit;
+
+export const getOctokit = (token: string) => {
+    if (!octokit) {
+        octokit = new Octokit({ auth: token});
+    }
+    return octokit;
+}
+
 export const GITHUB_OWNER = process.env.NEXT_PUBLIC_GITHUB_OWNER;
 export const GITHUB_REPO = process.env.NEXT_PUBLIC_GITHUB_REPO;

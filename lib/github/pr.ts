@@ -1,12 +1,12 @@
 'use client';
 
-import {OpenEOBackend, OpenEOJob, OpenEOJobDetails} from "../openeo/jobs.models";
-import {GITHUB_OWNER, GITHUB_REPO, octokit} from "./index";
+import {OpenEOBackend, OpenEOJob} from "../openeo/jobs.models";
+import {getOctokit, GITHUB_OWNER, GITHUB_REPO} from "./index";
 
 
-export const createPR = async (branch: string, backend: OpenEOBackend, jobs: OpenEOJob[]) => {
+export const createPR = async (token: string, branch: string, backend: OpenEOBackend, jobs: OpenEOJob[]) => {
     if (GITHUB_OWNER && GITHUB_REPO) {
-        await octokit.rest.pulls.create({
+        await getOctokit(token).rest.pulls.create({
             owner: GITHUB_OWNER,
             repo: GITHUB_REPO,
             title: `${backend.title} - Experiment Publishing` ,

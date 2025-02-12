@@ -8,6 +8,10 @@ import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import {getOpenEOJobDetails} from "../lib/openeo/jobs";
 import {createFile} from "../lib/github/files";
 import {createPR} from "../lib/github/pr";
+import {useSession} from "next-auth/react";
+import {useToastStore} from "../store/toasts";
+import {useRouter} from "next/navigation";
+import {createFork} from "../lib/github/fork";
 
 interface PublishProps {
     jobs: OpenEOJob[];
@@ -18,12 +22,13 @@ interface PublishProps {
 export const Publish = ({backend, jobs}: PublishProps) => {
 
     const [status, setStatus] = useState<string>();
-    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>();
     const [done, setDone] = useState<boolean>(false);
     const [progress, setProgress] = useState<number>(0);
     const [jobsProcessing, setJobsProcessing] = useState<OpenEOJob[]>([]);
     const [jobsDone, setJobsDone] = useState<OpenEOJob[]>([]);
+    const {data: session} = useSession();
+    const { addToast } = useToastStore();
 
     const steps = jobs.length + 2;
     let stepCount = 1;
@@ -40,41 +45,47 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     }
 
     const publishJobs = async () => {
-        try {
-            setError('');
-            setProgress(1)
-            setLoading(true);
-            setDone(false);
+        const token = session?.accessToken;
 
-            const branch = `openeo-publish-${moment().format('YYYY-MM-DD-HH-mm-ss-SSS')}`
+        if (token) {
+            try {
+                setError('');
+                setProgress(1)
+                setDone(false);
 
-            setStatus('Creating branch');
-            await createBranch(branch);
-            updateProgress();
+                const branch = `openeo-publish-${moment().format('YYYY-MM-DD-HH-mm-ss-SSS')}`
 
-            let jobIdx = 1;
-            for (const job of jobs) {
-                setStatus(`Fetching job information from ${job.title} (${jobIdx}/${jobs.length})`);
-                setJobProcessing(job);
-
-                const details = await getOpenEOJobDetails(backend, job.id);
-                await createFile(branch, `experiments/openeo/${job.id}.json`, details);
-
+                setStatus('Creating branch');
+                await createBranch(token, branch);
                 updateProgress();
-                setJobDone(job);
-                jobIdx++;
+
+                let jobIdx = 1;
+                for (const job of jobs) {
+                    setStatus(`Fetching job information from ${job.title} (${jobIdx}/${jobs.length})`);
+                    setJobProcessing(job);
+
+                    const details = await getOpenEOJobDetails(backend, job.id);
+                    await createFile(token, branch, `experiments/openeo/${job.id}.json`, details);
+
+                    updateProgress();
+                    setJobDone(job);
+                    jobIdx++;
+                }
+
+                setStatus('Creating PR')
+                await createPR(token, branch, backend, jobs);
+
+                setStatus('Publishing complete');
+                setProgress(100);
+                setDone(true);
+            } catch (e: any) {
+                setError(e.message);
             }
-
-            setStatus('Creating PR')
-            await createPR(branch, backend, jobs);
-
-            setStatus('Publishing complete');
-            setProgress(100);
-            setDone(true);
-            setLoading(false);
-        } catch (e: any) {
-            setError(e.message);
-            setLoading(false);
+        } else {
+           addToast({
+               message: 'You are not authenticated with GitHub. Please refresh the page.',
+               severity: 'error'
+           });
         }
     }
 
@@ -116,7 +127,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                     {error}
                 </Alert>
                 }
-                {status && <Alert
+                {status && !error && <Alert
                     severity={done ? 'success' : 'info'}
                     variant="standard"
                 >
