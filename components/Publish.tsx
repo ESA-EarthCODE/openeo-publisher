@@ -58,9 +58,6 @@ export const Publish = ({backend, jobs}: PublishProps) => {
 
                 const branch = `openeo-publish-${moment().format('YYYY-MM-DD-HH-mm-ss-SSS')}`
 
-                setStatus('Creating fork');
-                await createFork(token);
-
                 setStatus('Creating branch');
                 await createBranch(token, branch);
                 updateProgress();
