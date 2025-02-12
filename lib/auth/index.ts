@@ -1,11 +1,7 @@
 'use server'
 
-import {signIn, signOut} from "../../auth";
+import {signIn} from "../../auth";
 
 export async function signInGitHub() {
-    return await signIn('github', { redirectTo: '/'})
-}
-
-export async function signOutApp() {
-    return await signOut();
+    return await signIn('github', {redirectTo: '/'})
 }
