@@ -22,7 +22,6 @@ interface PublishProps {
 export const Publish = ({backend, jobs}: PublishProps) => {
 
     const [status, setStatus] = useState<string>();
-    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>();
     const [done, setDone] = useState<boolean>(false);
     const [progress, setProgress] = useState<number>(0);
@@ -30,7 +29,6 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     const [jobsDone, setJobsDone] = useState<OpenEOJob[]>([]);
     const {data: session} = useSession();
     const { addToast } = useToastStore();
-    const router = useRouter();
 
     const steps = jobs.length + 2;
     let stepCount = 1;
@@ -53,7 +51,6 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             try {
                 setError('');
                 setProgress(1)
-                setLoading(true);
                 setDone(false);
 
                 const branch = `openeo-publish-${moment().format('YYYY-MM-DD-HH-mm-ss-SSS')}`
@@ -81,10 +78,8 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                 setStatus('Publishing complete');
                 setProgress(100);
                 setDone(true);
-                setLoading(false);
             } catch (e: any) {
                 setError(e.message);
-                setLoading(false);
             }
         } else {
            addToast({
