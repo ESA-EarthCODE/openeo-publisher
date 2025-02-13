@@ -1,20 +1,12 @@
 import {Alert, Button, LinearProgress} from "@mui/material";
 import {OpenEOBackend, OpenEOJob} from "../../lib/openeo/jobs.models";
 import React, {useCallback, useState, useTransition} from "react";
-import {createBranch, deleteBranch} from "../../lib/github/branches";
 import moment from "moment";
-import {getOpenEOJobResults} from "../../lib/openeo/jobs";
-import {createFile} from "../../lib/github/files";
-import {createPR} from "../../lib/github/pr";
 import {useSession} from "next-auth/react";
 import {useToastStore} from "../../store/toasts";
 import {JobSchemaInfo, SchemaType} from "../../lib/earthcode/schema.model";
-import {EarthCODEProduct} from "../../lib/earthcode/product.models";
-import {createProductCollection} from "../../lib/earthcode/schema";
-import {OpenEOJobResults} from "../../lib/openeo/results.models";
 import {JobSummary} from "@/components/Publish/JobSummary";
 import {JobSchemaForm} from "@/components/Publish/JobSchemaForm";
-import {useOpenEOBackends} from "../../hooks/useOpenEOBackends";
 import {Loading} from "@/components/Loading";
 import {useGitHubProjects} from "../../hooks/useGitHubProjects";
 import {publishSchemas} from "../../lib/earthcode/publish";
@@ -30,23 +22,11 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     const [error, setError] = useState<string | null>(null);
     const [done, setDone] = useState<boolean>(false);
     const [progress, setProgress] = useState<number>(0);
-    const [jobSchemasProcessing, setJobSchemasProcessing] = useState<JobSchemaInfo[]>([]);
-    const [jobSchemasDone, setJobSchemasDone] = useState<JobSchemaInfo[]>([]);
     const [jobSchemas, setJobSchemas] = useState<JobSchemaInfo[]>([]);
     const {data: session} = useSession();
     const {data: projects, loading: projectsLoading} = useGitHubProjects(session?.accessToken);
-    const [isPending, startTransition] = useTransition();
+    const [_, startTransition] = useTransition();
     const {addToast} = useToastStore();
-
-    const setJobSchemaProcessing = (schema: JobSchemaInfo) => {
-        setJobSchemasProcessing((prev) => [...prev, schema]);
-        setJobSchemasDone((prev) => prev.filter((j) => j.id !== schema.id));
-    };
-
-    const setJobSchemaDone = (schema: JobSchemaInfo) => {
-        setJobSchemasDone((prev) => [...prev, schema]);
-        setJobSchemasProcessing((prev) => prev.filter((j) => j.id !== schema.id));
-    };
 
     const publishJobs = async () => {
         const token = session?.accessToken;
@@ -65,14 +45,14 @@ export const Publish = ({backend, jobs}: PublishProps) => {
 
         startTransition(async () => {
             const branch = `openeo-publish-${moment().format("YYYY-MM-DD-HH-mm-ss-SSS")}`;
-            for await (const { status, message, progress } of publishSchemas(token, branch, backend, jobSchemas)) {
+            for await (const {status, message, progress} of publishSchemas(token, branch, backend, jobSchemas)) {
                 setProgress(progress);
                 if (status === 'error') {
                     setError(message)
                 } else {
                     setStatus(message);
                 }
-                if(status === 'complete') {
+                if (status === 'complete') {
                     setDone(true);
                 }
             }
@@ -141,7 +121,8 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             >
                 Publish
             </Button>
-            <LinearProgress variant="determinate" color={error ? 'error' : 'primary'} value={progress} className="w-full min-h-2 my-2 rounded-full"/>
+            <LinearProgress variant="determinate" color={error ? 'error' : 'primary'} value={progress}
+                            className="w-full min-h-2 my-2 rounded-full"/>
             {error && <Alert severity="error">{error}</Alert>}
             {status && !error && <Alert severity={done ? "success" : "info"}>{status}</Alert>}
         </div>
