@@ -4,9 +4,7 @@ import {AppBar, Avatar, Chip, IconButton, ListItemIcon, Menu, MenuItem, Toolbar,
 import React from "react";
 import {signOut, useSession} from "next-auth/react";
 import {Logout} from "@mui/icons-material";
-import {signOutApp} from "../lib/auth";
-import { useRouter } from "next/navigation";
-
+import {User} from "next-auth";
 
 export const NavBar = () => {
     const {data: session, status} = useSession()
@@ -20,7 +18,7 @@ export const NavBar = () => {
         setAnchorEl(null);
     };
 
-    const getAvatar = (user) => {
+    const getAvatar = (user: User | undefined) => {
         if (!user) {
             return <></>
         } else {
@@ -30,8 +28,8 @@ export const NavBar = () => {
                          aria-expanded={open ? 'true' : undefined}
                          onClick={handleClick}
                          className='!bg-neutral-100'
-                         avatar={user.image ? <Avatar alt={user.name} src={user.image}/> :
-                             <Avatar>{user.name[0]}</Avatar>}
+                         avatar={user.image ? <Avatar alt={user.name || 'Unknown'} src={user.image}/> :
+                             <Avatar>{(user?.name || 'U')[0]}</Avatar>}
                          label={user.name}
             />
         }
