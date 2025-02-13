@@ -10,7 +10,7 @@ interface JobSummaryProps {
 
 export const JobSummary = ({ job, selectedSchemas, onSchemaChange }: JobSummaryProps) => {
     return (
-        <div className="flex items-center justify-between w-full bg-primary text-white rounded-lg shadow-lg px-4 py-4">
+        <div className="flex items-center justify-between w-full bg-primary text-white px-4 py-4">
             <span className='font-bold text-sm'>{job.title}</span>
             <FormControl>
                 <InputLabel id={`select-as-${job.id}-label`} sx={{ color: 'white', '&.Mui-focused': { color: 'white'}}}>Publish as</InputLabel>

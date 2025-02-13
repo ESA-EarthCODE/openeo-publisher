@@ -148,13 +148,13 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                 {jobs.map((job, idx) => (
                     <div
                         key={job.id}
-                        className="flex items-center flex-col gap-2 border-2 border-neutral-100 rounded-lg"
+                        className="flex items-center flex-col gap-2 border-2 border-primary shadow-lg rounded-lg"
                         data-testid="job-summary"
                     >
                         <JobSummary job={job} selectedSchemas={jobSchemas.filter(s => s.job === job).map(s => s.type)}
                                     onSchemaChange={handleJobSchemaChange}/>
                         {jobSchemas.some((s) => s.job.id === job.id) && (
-                            <div key={`schema_forms`} className="my-2 w-full px-5">
+                            <div key={`schema_forms`} className="my-2 mb-5 w-full px-5">
                                 {jobSchemas
                                     .filter((s) => s.job.id === job.id)
                                     .map((s) => (
