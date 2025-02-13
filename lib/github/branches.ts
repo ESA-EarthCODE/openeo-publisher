@@ -27,3 +27,16 @@ export const createBranch = async (token: string, name: string) => {
         throw Error('GitHub repository not configured!');
     }
 }
+export const deleteBranch = async (token: string, name: string) => {
+    if (GITHUB_OWNER && GITHUB_REPO) {
+        // Create a new branch
+        await getOctokit(token).rest.git.deleteRef({
+            owner: GITHUB_OWNER,
+            repo: GITHUB_REPO,
+            ref: `refs/heads/${name}`,
+        });
+
+    } else {
+        throw Error('GitHub repository not configured!');
+    }
+}

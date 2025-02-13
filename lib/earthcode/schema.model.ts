@@ -9,4 +9,5 @@ export interface JobSchemaInfo {
     project: string;
     type: SchemaType;
     job: OpenEOJob;
+    valid: boolean;
 }

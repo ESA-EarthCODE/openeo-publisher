@@ -96,7 +96,7 @@ test.describe('Publishing Wizard Tests', () => {
 
         await page.getByTestId('next-button').click();
 
-        // STEP 3. Publish jobs
+        // STEP 3. Index jobs
         await expect(page.getByTestId('publish-button')).toBeVisible();
         await expect(page.getByTestId('stepper-step').nth(3)).toHaveAttribute('aria-current', 'step');
         await expect(page.getByTestId('next-button')).not.toBeVisible();

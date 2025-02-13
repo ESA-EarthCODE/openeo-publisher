@@ -49,7 +49,7 @@ export const Wizard = () => {
             isValid: () => selectedJobs.length > 0,
         },
         {
-            label: 'Publish Jobs',
+            label: 'Index Jobs',
             description: 'Publishing your jobs to the EarthCODE Catalogue',
             component: selectedBackend ? <Publish jobs={selectedJobs} backend={selectedBackend}></Publish> : undefined,
             isValid: () => selectedJobs.length > 0,

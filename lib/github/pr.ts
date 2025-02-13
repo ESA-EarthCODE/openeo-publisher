@@ -9,7 +9,7 @@ export const createPR = async (token: string, branch: string, backend: OpenEOBac
         await getOctokit(token).rest.pulls.create({
             owner: GITHUB_OWNER,
             repo: GITHUB_REPO,
-            title: `${backend.title} - Experiment Publishing` ,
+            title: `${backend.title} - Publishing Results` ,
             head: branch,
             base: 'main',
             body: `Publishing of the following openEO experiments:\n\n${jobs.map((j: OpenEOJob) => `- ${j.title} (${j.id})`).join('\n')}`,

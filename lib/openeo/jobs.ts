@@ -2,6 +2,7 @@
 
 import {OpenEOBackend, OpenEOJob, OpenEOJobDetails} from "./jobs.models";
 import {ResponseError} from "../utils/ResponseError";
+import {OpenEOJobResults} from "./results.models";
 
 
 export const getOpenEOJobs = async (backend: OpenEOBackend): Promise<OpenEOJob[]> => {
@@ -30,14 +31,14 @@ export const getOpenEOJobDetails = async (backend: OpenEOBackend, jobId: string)
     }
 }
 
-export const getOpenEOJobResults = async (backend: OpenEOBackend, jobId: string): Promise<OpenEOJobDetails> => {
+export const getOpenEOJobResults = async (backend: OpenEOBackend, jobId: string): Promise<OpenEOJobResults> => {
     const response = await fetch(`${backend.url}/jobs/${jobId}/results`, {
         headers: {
             'Authorization': `Bearer ${localStorage.getItem(`access_token_${backend.id}`)}`
         }
     });
     if (response.ok) {
-        return (await response.json()) as OpenEOJobDetails
+        return (await response.json()) as OpenEOJobResults
     } else {
         throw new ResponseError(response.status, response.statusText, ` Could not retrieve job details from ${backend.title}: ${await response.text()}`);
     }
