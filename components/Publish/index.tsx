@@ -116,7 +116,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                 ...value.map((type) => ({
                     type,
                     job,
-                    id: `${job.id}_${type.toLowerCase()}`,
+                    id: job.title.toLowerCase().replaceAll(' ', '_'),
                     project: "",
                     valid: false
                 }))
@@ -167,7 +167,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                 data-testid="publish-button"
                 className="my-2"
             >
-                Index
+                Publish
             </Button>
             <LinearProgress variant="determinate" value={progress} className="w-full min-h-2 my-2 rounded-full"/>
             {error && <Alert severity="error">{error}</Alert>}
