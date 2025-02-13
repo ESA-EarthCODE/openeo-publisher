@@ -94,14 +94,23 @@ export const Publish = ({backend, jobs}: PublishProps) => {
 
                 setStatus("Creating PR");
                 await createPR(token, branch, backend, jobs);
+
+                setStatus("Publishing complete");
+                setProgress(100);
+                setDone(true);
+
             } catch (e) {
                 console.error(`Something went wrong while publishing, deleting branch ${branch}`);
                 await deleteBranch(token, branch);
+                setError('Could not publish to EarthCODE Open Science Catalog');
+                setJobSchemasDone([]);
+                setJobSchemasProcessing([]);
+                setProgress(0);
+                addToast({
+                    message: `Something went wrong while publishing to EarthCODE Open Science Catalog: ${e}`,
+                    severity: "error"
+                });
             }
-
-            setStatus("Publishing complete");
-            setProgress(100);
-            setDone(true);
         } catch (e: any) {
             setError(e.message);
         }
@@ -139,8 +148,6 @@ export const Publish = ({backend, jobs}: PublishProps) => {
         );
     }, []);
 
-    console.log(jobSchemas);
-
     return projectsLoading ? <Loading/> : (
         <div className="flex flex-col">
             <div className="font-bold">Summary</div>
@@ -177,7 +184,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             >
                 Publish
             </Button>
-            <LinearProgress variant="determinate" value={progress} className="w-full min-h-2 my-2 rounded-full"/>
+            <LinearProgress variant="determinate" color={error ? 'error' : 'primary'} value={progress} className="w-full min-h-2 my-2 rounded-full"/>
             {error && <Alert severity="error">{error}</Alert>}
             {status && !error && <Alert severity={done ? "success" : "info"}>{status}</Alert>}
         </div>

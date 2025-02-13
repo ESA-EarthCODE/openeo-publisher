@@ -33,7 +33,7 @@ export const deleteBranch = async (token: string, name: string) => {
         await getOctokit(token).rest.git.deleteRef({
             owner: GITHUB_OWNER,
             repo: GITHUB_REPO,
-            ref: `refs/heads/${name}`,
+            ref: `heads/${name}`,
         });
 
     } else {
