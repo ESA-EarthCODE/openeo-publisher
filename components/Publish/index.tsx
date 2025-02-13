@@ -14,6 +14,9 @@ import {createProductCollection} from "../../lib/earthcode/schema";
 import {OpenEOJobResults} from "../../lib/openeo/results.models";
 import {JobSummary} from "@/components/Publish/JobSummary";
 import {JobSchemaForm} from "@/components/Publish/JobSchemaForm";
+import {useOpenEOBackends} from "../../hooks/useOpenEOBackends";
+import {Loading} from "@/components/Loading";
+import {useGitHubProjects} from "../../hooks/useGitHubProjects";
 
 interface PublishProps {
     jobs: OpenEOJob[];
@@ -30,10 +33,12 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     const [jobSchemasDone, setJobSchemasDone] = useState<JobSchemaInfo[]>([]);
     const [jobSchemas, setJobSchemas] = useState<JobSchemaInfo[]>([]);
     const {data: session} = useSession();
+    const {data: projects, loading: projectsLoading} = useGitHubProjects((session as any)?.accessToken);
     const {addToast} = useToastStore();
 
     const steps = jobs.length + 2;
     let stepCount = 1;
+
 
     const updateProgress = () => setProgress(Math.round(((stepCount++) / steps) * 100));
 
@@ -134,7 +139,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
         );
     }, []);
 
-    return (
+    return projectsLoading ? <Loading/> : (
         <div className="flex flex-col">
             <div className="font-bold">Summary</div>
             <div className="flex flex-col gap-2 my-5">
@@ -152,6 +157,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                                     .filter((s) => s.job.id === job.id)
                                     .map((s) => (
                                         <JobSchemaForm schema={s} status={getSchemaStatus(s)}
+                                                       projects={projects}
                                                        onFormChange={handleFormChange}/>
                                     ))}
                             </div>

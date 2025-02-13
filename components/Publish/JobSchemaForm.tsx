@@ -1,4 +1,4 @@
-import {CircularProgress, FormControl, TextField} from "@mui/material";
+import {Autocomplete, CircularProgress, FormControl, TextField} from "@mui/material";
 import {JobSchemaInfo} from "../../lib/earthcode/schema.model";
 import {SchemaType} from "../../lib/earthcode/schema.model";
 import React from "react";
@@ -7,11 +7,12 @@ import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 
 interface JobSchemaFormProps {
     schema: JobSchemaInfo;
+    projects: string[];
     status: 'none' | 'processing' | 'done';
     onFormChange: (schema: JobSchemaInfo, key: "id" | "project", value: string) => void;
 }
 
-export const JobSchemaForm = ({schema, status, onFormChange}: JobSchemaFormProps) => {
+export const JobSchemaForm = ({schema, projects, status, onFormChange}: JobSchemaFormProps) => {
     const generateStatusIcon = () => {
         if (status === 'processing') return <CircularProgress size={21}/>;
         if (status === 'done') return <CheckCircleIcon color="success"/>;
@@ -37,11 +38,10 @@ export const JobSchemaForm = ({schema, status, onFormChange}: JobSchemaFormProps
                                 value={schema.id}
                                 onChange={(e) => onFormChange(schema, "id", e.target.value)}
                             />
-                            <TextField
-                                label="Project"
-                                variant="outlined"
+                            <Autocomplete
+                                options={projects}
                                 value={schema.project}
-                                onChange={(e) => onFormChange(schema, "project", e.target.value)}
+                                renderInput={(params) => <TextField {...params} variant="outlined" onChange={(e) => onFormChange(schema, "project", e.target.value)} label="Project"/>}
                             />
                         </FormControl>
                     </>
