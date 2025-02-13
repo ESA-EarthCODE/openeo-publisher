@@ -1,6 +1,6 @@
 import {Alert, Button, LinearProgress} from "@mui/material";
 import {OpenEOBackend, OpenEOJob} from "../../lib/openeo/jobs.models";
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useState, useTransition} from "react";
 import {createBranch, deleteBranch} from "../../lib/github/branches";
 import moment from "moment";
 import {getOpenEOJobResults} from "../../lib/openeo/jobs";
@@ -17,6 +17,7 @@ import {JobSchemaForm} from "@/components/Publish/JobSchemaForm";
 import {useOpenEOBackends} from "../../hooks/useOpenEOBackends";
 import {Loading} from "@/components/Loading";
 import {useGitHubProjects} from "../../hooks/useGitHubProjects";
+import {publishSchemas} from "../../lib/earthcode/publish";
 
 interface PublishProps {
     jobs: OpenEOJob[];
@@ -34,13 +35,8 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     const [jobSchemas, setJobSchemas] = useState<JobSchemaInfo[]>([]);
     const {data: session} = useSession();
     const {data: projects, loading: projectsLoading} = useGitHubProjects(session?.accessToken);
+    const [isPending, startTransition] = useTransition();
     const {addToast} = useToastStore();
-
-    const steps = jobs.length + 2;
-    let stepCount = 1;
-
-
-    const updateProgress = () => setProgress(Math.round(((stepCount++) / steps) * 100));
 
     const setJobSchemaProcessing = (schema: JobSchemaInfo) => {
         setJobSchemasProcessing((prev) => [...prev, schema]);
@@ -63,63 +59,24 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             return;
         }
 
-        try {
-            setError(null);
-            setProgress(1);
-            setDone(false);
+        setError(null);
+        setStatus(null);
+        setDone(false);
 
+        startTransition(async () => {
             const branch = `openeo-publish-${moment().format("YYYY-MM-DD-HH-mm-ss-SSS")}`;
-
-            setStatus("Creating branch");
-            await createBranch(token, branch);
-            updateProgress();
-
-            try {
-
-                let jobIdx = 1;
-                for (const schema of jobSchemas) {
-                    setStatus(`Fetching job information from ${schema.job.title} (${jobIdx}/${jobSchemas.length})`);
-                    setJobSchemaProcessing(schema);
-
-                    const details: OpenEOJobResults = await getOpenEOJobResults(backend, schema.job.id);
-                    if (schema.type === SchemaType.PRODUCT) {
-                        const product: EarthCODEProduct = createProductCollection(schema.id, schema.project, details);
-                        await createFile(token, branch, `products/${schema.id}/collection.json`, `Added product from openEO job ${schema.job.title} (${schema.job.id})`, product);
-                    }
-
-                    updateProgress();
-                    setJobSchemaDone(schema);
-                    jobIdx++;
+            for await (const { status, message, progress } of publishSchemas(token, branch, backend, jobSchemas)) {
+                setProgress(progress);
+                if (status === 'error') {
+                    setError(message)
+                } else {
+                    setStatus(message);
                 }
-
-                setStatus("Creating PR");
-                await createPR(token, branch, backend, jobs);
-
-                setStatus("Publishing complete");
-                setProgress(100);
-                setDone(true);
-
-            } catch (e) {
-                console.error(`Something went wrong while publishing, deleting branch ${branch}`);
-                await deleteBranch(token, branch);
-                setError('Could not publish to EarthCODE Open Science Catalog');
-                setJobSchemasDone([]);
-                setJobSchemasProcessing([]);
-                setProgress(0);
-                addToast({
-                    message: `Something went wrong while publishing to EarthCODE Open Science Catalog: ${e}`,
-                    severity: "error"
-                });
+                if(status === 'complete') {
+                    setDone(true);
+                }
             }
-        } catch (e: any) {
-            setError(e.message);
-        }
-    };
-
-    const getSchemaStatus = (schema: JobSchemaInfo): 'none' | 'processing' | 'done' => {
-        if (jobSchemasProcessing.includes(schema)) return 'processing';
-        if (jobSchemasDone.includes(schema)) return 'done';
-        return 'none';
+        });
     };
 
     const handleJobSchemaChange = useCallback((job: OpenEOJob, value: SchemaType[]) => {
@@ -165,7 +122,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                                 {jobSchemas
                                     .filter((s) => s.job.id === job.id)
                                     .map((s) => (
-                                        <JobSchemaForm schema={s} status={getSchemaStatus(s)}
+                                        <JobSchemaForm schema={s}
                                                        projects={projects}
                                                        onFormChange={handleFormChange}/>
                                     ))}

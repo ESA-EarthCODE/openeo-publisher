@@ -8,17 +8,10 @@ import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 interface JobSchemaFormProps {
     schema: JobSchemaInfo;
     projects: string[];
-    status: 'none' | 'processing' | 'done';
     onFormChange: (schema: JobSchemaInfo, key: "id" | "project", value: string) => void;
 }
 
-export const JobSchemaForm = ({schema, projects, status, onFormChange}: JobSchemaFormProps) => {
-    const generateStatusIcon = () => {
-        if (status === 'processing') return <CircularProgress size={21}/>;
-        if (status === 'done') return <CheckCircleIcon color="success"/>;
-        return <AccessTimeFilledIcon color="disabled"/>;
-    };
-
+export const JobSchemaForm = ({schema, projects, onFormChange}: JobSchemaFormProps) => {
     return (
         <div key={`job_form_${schema.job.id}_${schema.type}`}
              className='flex w-full flex-col gap-2'>
@@ -26,9 +19,6 @@ export const JobSchemaForm = ({schema, projects, status, onFormChange}: JobSchem
                 schema.type === SchemaType.PRODUCT && (
                     <>
                         <span className='font-bold mb-4 flex items-center'>
-                            <div className='mr-2'>
-                                {generateStatusIcon()}
-                            </div>
                             Product
                         </span>
                         <FormControl className='flex w-full flex-col gap-4'>
