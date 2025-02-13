@@ -23,3 +23,6 @@ export const getProjects = async (token: string) => {
     }
 }
 
+export const projectExists = async (token: string, project: string) => {
+    return !!(await getProjects(token)).find(p => p === project);
+}
