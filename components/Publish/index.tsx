@@ -133,11 +133,13 @@ export const Publish = ({backend, jobs}: PublishProps) => {
         setJobSchemas((prev) =>
             prev.map((s) =>
                 s.job.id === schema.job.id && s.type === schema.type
-                    ? {...s, [key]: value, valid: !!s.id && !!s.project}
+                    ? {...s, [key]: value}
                     : s
             )
         );
     }, []);
+
+    console.log(jobSchemas);
 
     return projectsLoading ? <Loading/> : (
         <div className="flex flex-col">
@@ -169,7 +171,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                 onClick={publishJobs}
                 color="primary"
                 variant="contained"
-                disabled={jobSchemas.length === 0 || jobSchemas.some((s) => !s.valid)}
+                disabled={jobSchemas.length === 0 || jobSchemas.some((s) => !s.id || !s.project)}
                 data-testid="publish-button"
                 className="my-2"
             >
