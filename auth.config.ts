@@ -10,7 +10,7 @@ export const authConfig = {
             return !!auth?.user;
         },
         async session({session, token}) {
-            (session as any).accessToken = token.accessToken as string;
+            session.accessToken = token.accessToken as string;
             return session;
         },
         async jwt({token, account}) {

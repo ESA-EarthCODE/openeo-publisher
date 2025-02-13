@@ -33,7 +33,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     const [jobSchemasDone, setJobSchemasDone] = useState<JobSchemaInfo[]>([]);
     const [jobSchemas, setJobSchemas] = useState<JobSchemaInfo[]>([]);
     const {data: session} = useSession();
-    const {data: projects, loading: projectsLoading} = useGitHubProjects((session as any)?.accessToken);
+    const {data: projects, loading: projectsLoading} = useGitHubProjects(session?.accessToken);
     const {addToast} = useToastStore();
 
     const steps = jobs.length + 2;
@@ -53,7 +53,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     };
 
     const publishJobs = async () => {
-        const token = (session as any)?.accessToken;
+        const token = session?.accessToken;
 
         if (!token) {
             addToast({
