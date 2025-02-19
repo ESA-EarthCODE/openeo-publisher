@@ -1,5 +1,6 @@
 import {Link, OpenEOJobResults} from "../openeo/results.models";
-import {EarthCODEProduct} from "./product.models";
+import {EarthCODEProduct, EarthCODEWorkflow} from "./product.models";
+import moment from "moment";
 
 export const createProductCollection = (id: string, project: string, job: OpenEOJobResults): EarthCODEProduct => {
     return {
@@ -9,7 +10,7 @@ export const createProductCollection = (id: string, project: string, job: OpenEO
         id,
         license: job.license,
         links: [
-            ...job.links.map((l: Link)=> (
+            ...job.links.map((l: Link) => (
                 {
                     ...l,
                     rel: l.rel === 'canonical' ? 'via' : l.rel,
@@ -39,5 +40,41 @@ export const createProductCollection = (id: string, project: string, job: OpenEO
         "osc:status": "completed",
         "osc:type": "product",
         "osc:variables": []
+    }
+}
+
+export const createWorkflowCollection = (id: string, title: string, description: string, project: string, job: OpenEOJobResults): EarthCODEWorkflow => {
+    return {
+        type: "Feature",
+        conformsTo: [
+            "http://www.opengis.net/spec/ogcapi-records-1/1.0/req/record-core"
+        ],
+        geometry: null,
+        id,
+        links: [
+            {
+                "rel": "root",
+                "href": "../../catalog.json",
+                "type": "application/json",
+                "title": "Open Science Catalog"
+            },
+            {
+                "rel": "parent",
+                "href": "../catalog.json",
+                "type": "application/json",
+                "title": "Projects"
+            }
+        ],
+        properties: {
+            title,
+            description,
+            "type": "workflow",
+            "osc:missions": [],
+            "osc:project": project,
+            "osc:status": "completed",
+            "osc:type": "workflow",
+            "osc:variables": [],
+            "osc:region": "",
+        }
     }
 }
