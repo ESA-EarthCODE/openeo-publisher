@@ -22,8 +22,8 @@ export const SignInForm = () => {
                 message: error instanceof Error ? error.message : 'Unknown error',
                 severity: 'error',
             });
+            setLoading(false);
         }
-        setLoading(false);
     };
 
 
