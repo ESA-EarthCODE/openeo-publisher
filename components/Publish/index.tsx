@@ -45,7 +45,6 @@ export const Publish = ({backend, jobs}: PublishProps) => {
 
         startTransition(async () => {
             const branch = `openeo-publish-${moment().format("YYYY-MM-DD-HH-mm-ss-SSS")}`;
-            console.log("JOBSCHEMAS", jobSchemas)
             for await (const {status, message, progress} of publishSchemas(token, branch, backend, jobSchemas)) {
                 setProgress(progress);
                 if (status === 'error') {
