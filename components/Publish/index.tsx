@@ -1,4 +1,4 @@
-import {Alert, Button, LinearProgress} from "@mui/material";
+import {Alert, Button, CircularProgress, LinearProgress} from "@mui/material";
 import {OpenEOBackend, OpenEOJob} from "../../lib/openeo/jobs.models";
 import React, {useCallback, useState, useTransition} from "react";
 import moment from "moment";
@@ -21,6 +21,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     const [status, setStatus] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [done, setDone] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [progress, setProgress] = useState<number>(0);
     const [jobSchemas, setJobSchemas] = useState<JobSchemaInfo[]>([]);
     const {data: session} = useSession();
@@ -42,18 +43,21 @@ export const Publish = ({backend, jobs}: PublishProps) => {
         setError(null);
         setStatus(null);
         setDone(false);
+        setLoading(true);
 
         startTransition(async () => {
             const branch = `openeo-publish-${moment().format("YYYY-MM-DD-HH-mm-ss-SSS")}`;
             for await (const {status, message, progress} of publishSchemas(token, branch, backend, jobSchemas)) {
                 setProgress(progress);
                 if (status === 'error') {
-                    setError(message)
+                    setError(message);
+                    setLoading(false);
                 } else {
                     setStatus(message);
                 }
                 if (status === 'complete') {
                     setDone(true);
+                    setLoading(false);
                 }
             }
         });
@@ -117,11 +121,11 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                 onClick={publishJobs}
                 color="primary"
                 variant="contained"
-                disabled={jobSchemas.length === 0 || jobSchemas.some((s) => !s.id || !s.project)}
+                disabled={loading || jobSchemas.length === 0 || jobSchemas.some((s) => !s.id || !s.project)}
                 data-testid="publish-button"
                 className="my-2"
             >
-                Publish
+                { loading ? <CircularProgress size='30px' color="inherit"/> : "Publish" }
             </Button>
             <LinearProgress variant="determinate" color={error ? 'error' : 'primary'} value={progress}
                             className="w-full min-h-2 my-2 rounded-full"/>
