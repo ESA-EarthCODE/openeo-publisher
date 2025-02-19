@@ -1,8 +1,11 @@
-import {expect, test} from '@playwright/test';
+import {expect} from '@playwright/test';
+import {test} from './setup';
 import openEOFedResponse from './fixture/responses/openeofed.json';
 import vitoResponse from './fixture/responses/vito.json';
 import openEOJobs from './fixture/responses/jobs.json';
 import openEOJob from './fixture/responses/jobinfo.json';
+import openEOJobResults from './fixture/responses/jobresults.json';
+import earthCODEProductCatalog from './fixture/earthcode/products/catalog.json';
 
 test.describe('Publishing Wizard Tests', () => {
 
@@ -24,9 +27,14 @@ test.describe('Publishing Wizard Tests', () => {
             await route.fulfill({json: openEOJob});
         });
 
+        await page.route('https://openeofed.dataspace.copernicus.eu/openeo/jobs/**/results', async route => {
+            await route.fulfill({json: openEOJobResults});
+        });
+
         await page.route('https://openeo.vito.be/openeo', async route => {
             await route.fulfill({json: vitoResponse});
         });
+
 
         await page.route('https://api.github.com/**/git/ref/heads%2Fmain', async route => {
             await route.fulfill({
@@ -52,12 +60,36 @@ test.describe('Publishing Wizard Tests', () => {
             }
         });
 
+        await page.route('https://api.github.com/**/git/refs/**', async route => {
+            if (route.request().method() === 'DELETE') {
+                await route.fulfill();
+            } else {
+                await route.continue();
+            }
+        });
+
         await page.route('https://api.github.com/**/contents/*', async route => {
             if (route.request().method() === 'PUT') {
                 createCount++;
                 await route.fulfill({
                     json: {}
                 });
+            } else if (route.request().method() === 'GET') {
+                if (route.request().url().endsWith('projects')) {
+                   await route.fulfill({
+                       json: []
+                   });
+                } else if (route.request().url().includes('catalog.json')) {
+                    await route.fulfill({
+                       json: {
+                           sha: '123',
+                           content: Buffer.from(JSON.stringify(earthCODEProductCatalog)).toString('base64')
+                       }
+                    });
+                } else {
+                    route.continue();
+                }
+
             } else {
                 await route.continue();
             }
@@ -73,8 +105,6 @@ test.describe('Publishing Wizard Tests', () => {
                 await route.continue();
             }
         });
-
-        await page.goto('/');
 
         // STEP 1. Select backend
         await expect(page.getByTestId('backend-selector')).toBeVisible();
@@ -103,11 +133,23 @@ test.describe('Publishing Wizard Tests', () => {
 
         await expect(page.getByTestId('job-summary')).toHaveCount(2);
 
+        await page.getByTestId('job-summary').nth(0).getByTestId('jobschema-selector').click();
+        await page.getByTestId('jobschema-selector-item').getByText('Product').click();
+        await page.getByTestId('job-summary').nth(0).getByTestId('schema-id').locator('input').fill("test-id-1");
+        await page.getByTestId('job-summary').nth(0).getByTestId('schema-project').locator('input').focus();
+        await page.getByTestId('job-summary').nth(0).getByTestId('schema-project').locator('input').fill("test-project-1");
+
+
+        await page.getByTestId('job-summary').nth(1).getByTestId('jobschema-selector').click();
+        await page.getByTestId('jobschema-selector-item').getByText('Product').click();
+        await page.getByTestId('job-summary').nth(1).getByTestId('schema-id').locator('input').fill("test-id-1");
+        await page.getByTestId('job-summary').nth(1).getByTestId('schema-project').locator('input').fill("test-project-1");
+
         await page.getByTestId('publish-button').click();
 
         await page.waitForResponse(resp => resp.url().includes('/pulls'));
 
-        expect(createCount).toBe(2);
+        expect(createCount).toBe(3); // 2 files and one parent catalogue
         expect(prCount).toBe(1);
     });
 

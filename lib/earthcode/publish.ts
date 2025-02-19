@@ -54,9 +54,12 @@ export const publishSchemas = async function*(token: string, branch: string, bac
             jobIdx++;
         }
 
+        console.log("REGISTRED SCHEMAS");
         if (products.length > 0) {
             yield { status: "progress", message: `Registering ${products.length} products in parent catalog`, progress: getProgress() };
             await registerParentCatalogue(token, 'products/catalog.json', branch, schemas.filter(s => s.type === SchemaType.PRODUCT));
+            console.log("REGISTERED PARENT CATALOGUE")
+
         } else {
             yield { status: "progress", message: `No products found to register in parent catalog`, progress: getProgress() };
         }
@@ -89,6 +92,8 @@ const registerParentCatalogue = async (token: string, path: string, branch: stri
             title: schema.job.title
         })
     }
+
+    console.log("GOTTEN FILE", content);
 
     await updateFile(token, path, branch, sha, 'Updated parent collection', content);
 }

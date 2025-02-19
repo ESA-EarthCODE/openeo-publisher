@@ -4,11 +4,11 @@ import {OpenEOJob} from "../../lib/openeo/jobs.models";
 
 interface JobSummaryProps {
     job: OpenEOJob;
-    selectedSchemas: SchemaType[];
-    onSchemaChange: (job: OpenEOJob, value: SchemaType[]) => void;
+    selectedSchema: SchemaType;
+    onSchemaChange: (job: OpenEOJob, value: SchemaType) => void;
 }
 
-export const JobSummary = ({ job, selectedSchemas, onSchemaChange }: JobSummaryProps) => {
+export const JobSummary = ({ job, selectedSchema, onSchemaChange }: JobSummaryProps) => {
     return (
         <div className="flex items-center justify-between w-full bg-primary text-white px-4 py-4">
             <span className='font-bold text-sm'>{job.title}</span>
@@ -17,9 +17,8 @@ export const JobSummary = ({ job, selectedSchemas, onSchemaChange }: JobSummaryP
                 <Select
                     labelId={`select-as-${job.id}-label`}
                     label="Index as"
-                    multiple
-                    value={selectedSchemas}
-                    onChange={(e) => onSchemaChange(job, e.target.value as SchemaType[])}
+                    value={selectedSchema || ""}
+                    onChange={(e) => onSchemaChange(job, e.target.value as SchemaType)}
                     className="min-w-64"
                     sx={{
                         color: 'white',
@@ -31,9 +30,12 @@ export const JobSummary = ({ job, selectedSchemas, onSchemaChange }: JobSummaryP
                         '.MuiSvgIcon-root': { color: 'white' }, // Ensures dropdown arrow is white
                     }}
                     size='small'
+                    data-testid='jobschema-selector'
                 >
                     {Object.values(SchemaType).map((type) => (
-                        <MenuItem key={type} value={type}>
+                        <MenuItem key={type} value={type}
+                                  data-testid='jobschema-selector-item'
+                        >
                             {type}
                         </MenuItem>
                     ))}

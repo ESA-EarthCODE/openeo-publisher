@@ -38,6 +38,7 @@ export const SignInForm = () => {
                     onClick={authenticateGitHub}
                     endIcon={!loading ? <GitHubIcon /> : <CircularProgress size={20} />}
                     disabled={loading} // Disable button when loading
+                    data-testid="login-button"
                 >
                     {loading ? "Signing in..." : "Log in"}
                 </Button>

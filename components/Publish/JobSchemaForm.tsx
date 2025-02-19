@@ -27,12 +27,13 @@ export const JobSchemaForm = ({schema, projects, onFormChange}: JobSchemaFormPro
                                 variant="outlined"
                                 value={schema.id}
                                 onChange={(e) => onFormChange(schema, "id", e.target.value)}
+                                data-testid="schema-id"
                             />
                             <Autocomplete
                                 options={projects}
                                 value={schema.project}
                                 onChange={(event, value) => onFormChange(schema, "project", value || '')}
-                                renderInput={(params) => <TextField {...params} onChange={(e) => onFormChange(schema, "project", e.target.value)} variant="outlined" label="Project"/>}
+                                renderInput={(params) => <TextField {...params} onChange={(e) => onFormChange(schema, "project", e.target.value) } data-testid="schema-project" variant="outlined" label="Project"/>}
                             />
                         </FormControl>
                     </>

@@ -45,6 +45,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
 
         startTransition(async () => {
             const branch = `openeo-publish-${moment().format("YYYY-MM-DD-HH-mm-ss-SSS")}`;
+            console.log("JOBSCHEMAS", jobSchemas)
             for await (const {status, message, progress} of publishSchemas(token, branch, backend, jobSchemas)) {
                 setProgress(progress);
                 if (status === 'error') {
@@ -59,18 +60,18 @@ export const Publish = ({backend, jobs}: PublishProps) => {
         });
     };
 
-    const handleJobSchemaChange = useCallback((job: OpenEOJob, value: SchemaType[]) => {
+    const handleJobSchemaChange = useCallback((job: OpenEOJob, type: SchemaType) => {
         setJobSchemas((prev) => {
             const newSchemas = prev.filter((s) => s.job.id !== job.id);
             return [
                 ...newSchemas,
-                ...value.map((type) => ({
+                {
                     type,
                     job,
                     id: job.title.toLowerCase().replaceAll(' ', '_'),
                     project: "",
                     valid: false
-                }))
+                }
             ];
         });
     }, []);
@@ -95,16 +96,18 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                         className="flex items-center flex-col gap-2 border-2 border-primary shadow-lg rounded-lg"
                         data-testid="job-summary"
                     >
-                        <JobSummary job={job} selectedSchemas={jobSchemas.filter(s => s.job === job).map(s => s.type)}
+                        <JobSummary job={job} selectedSchema={jobSchemas.filter(s => s.job === job).map(s => s.type)[0]}
                                     onSchemaChange={handleJobSchemaChange}/>
                         {jobSchemas.some((s) => s.job.id === job.id) && (
-                            <div key={`schema_forms`} className="my-2 mb-5 w-full px-5">
+                            <div className="my-2 mb-5 w-full px-5">
                                 {jobSchemas
                                     .filter((s) => s.job.id === job.id)
                                     .map((s) => (
                                         <JobSchemaForm schema={s}
                                                        projects={projects}
-                                                       onFormChange={handleFormChange}/>
+                                                       onFormChange={handleFormChange}
+                                                       key={`schema_form_${job.id}`}
+                                        />
                                     ))}
                             </div>
                         )}
