@@ -94,6 +94,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             title: `${job.title} - Experiment`,
             description: `Experiment of ${job.title}`,
             project: "",
+            license: "",
             product: initProductSchemaType(job),
             workflow: initWorkflowSchemaType(job),
         } as ExperimentInfo;

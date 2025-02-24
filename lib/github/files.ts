@@ -1,10 +1,10 @@
 'use client';
 
 import {getOctokit, GITHUB_OWNER, GITHUB_REPO} from "./index";
-import {EarthCODEProduct} from "../earthcode/concepts.models";
+import {EarthCODEProduct, EarthCODEWorkflow} from "../earthcode/concepts.models";
 
 
-export const createFile = async (token: string, branch: string, path: string, message: string, item: EarthCODEProduct) => {
+export const createFile = async (token: string, branch: string, path: string, message: string, item: EarthCODEProduct | EarthCODEWorkflow) => {
     if (GITHUB_OWNER && GITHUB_REPO) {
         const content = Buffer.from(JSON.stringify(item, null, 2)).toString('base64');
 

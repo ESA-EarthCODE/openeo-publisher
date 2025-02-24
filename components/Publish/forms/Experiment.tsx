@@ -7,7 +7,7 @@ import {WorkflowForm} from "@/components/Publish/forms/Workflow";
 interface ExperimentFormProps {
     schema: ExperimentInfo;
     projects: string[];
-    onFormChange: (schema: ExperimentInfo, key: "id" | "project" | "title" | "description" | "product" | "workflow", value: any) => void;
+    onFormChange: (schema: ExperimentInfo, key: "id" | "project" | "title" | "description" | "license" | "product" | "workflow", value: any) => void;
 }
 
 export const ExperimentForm = ({schema, projects, onFormChange}: ExperimentFormProps) => {
@@ -65,6 +65,13 @@ export const ExperimentForm = ({schema, projects, onFormChange}: ExperimentFormP
                         value={schema.description}
                         onChange={(e) => onFormChange(schema, "description", e.target.value)}
                         data-testid="schema-description"
+                    />
+                    <TextField
+                        label="License"
+                        variant="outlined"
+                        value={schema.license}
+                        onChange={(e) => onFormChange(schema, "license", e.target.value)}
+                        data-testid="schema-license"
                     />
                 </FormControl>
             </div>

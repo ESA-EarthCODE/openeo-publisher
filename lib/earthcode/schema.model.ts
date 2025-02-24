@@ -24,6 +24,7 @@ export interface WorkflowInfo extends JobSchemaInfo {
 }
 
 export interface ExperimentInfo extends JobSchemaInfo {
+    license: string;
     product: ProductInfo;
     workflow: WorkflowInfo;
 }

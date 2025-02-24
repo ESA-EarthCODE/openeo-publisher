@@ -2,10 +2,10 @@ import {Link, OpenEOJobResults} from "../openeo/results.models";
 import {EarthCODEExpiriment, EarthCODEProduct, EarthCODEWorkflow} from "./concepts.models";
 import moment from "moment";
 
-export const createProductCollection = (id: string, project: string, job: OpenEOJobResults): EarthCODEProduct => {
+export const createProductCollection = (id: string, title: string, description: string, project: string, job: OpenEOJobResults): EarthCODEProduct => {
     return {
         assets: job.assets,
-        description: job.description,
+        description: description,
         extent: job.extent,
         id,
         license: job.license,
@@ -33,7 +33,7 @@ export const createProductCollection = (id: string, project: string, job: OpenEO
             "https://stac-extensions.github.io/osc/v1.0.0-rc.3/schema.json",
         ],
         stac_version: job.stac_version,
-        title: job.title,
+        title: title,
         type: job.type,
         "osc:missions": [],
         "osc:project": project,

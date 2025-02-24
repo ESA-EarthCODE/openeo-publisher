@@ -39,7 +39,7 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     variant="outlined"
                     value={schema.url}
                     onChange={(e) => onFormChange(schema, "url", e.target.value)}
-                    data-testid="schema-id"
+                    data-testid="schema-url"
                 />
                 <TextField
                     label="Title"
