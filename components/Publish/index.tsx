@@ -4,7 +4,7 @@ import React, {useCallback, useState, useTransition} from "react";
 import moment from "moment";
 import {useSession} from "next-auth/react";
 import {useToastStore} from "../../store/toasts";
-import {JobSchemaInfo, SchemaType} from "../../lib/earthcode/schema.model";
+import {ExperimentInfo, JobSchemaInfo, ProductInfo, SchemaType, WorkflowInfo} from "../../lib/earthcode/schema.model";
 import {JobSummary} from "@/components/Publish/JobSummary";
 import {JobSchemaForm} from "@/components/Publish/JobSchemaForm";
 import {Loading} from "@/components/Loading";
@@ -63,23 +63,88 @@ export const Publish = ({backend, jobs}: PublishProps) => {
         });
     };
 
+    const initProductSchemaType = (job: OpenEOJob): ProductInfo => {
+        return {
+            type: SchemaType.PRODUCT,
+            job,
+            id: job.title.toLowerCase().replaceAll(' ', '_'),
+            title: `${job.title} - Product`,
+            description: `Product of ${job.title}`,
+            project: "",
+        } as ProductInfo;
+    }
+
+    const initWorkflowSchemaType = (job: OpenEOJob): WorkflowInfo => {
+        return {
+            type: SchemaType.WORKFLOW,
+            job,
+            id: job.title.toLowerCase().replaceAll(' ', '_'),
+            title: `${job.title} - Workflow`,
+            description: `Workflow of ${job.title}`,
+            project: "",
+            url: ""
+        } as WorkflowInfo;
+    }
+
+    const initExperimentSchemaType = (job: OpenEOJob): ExperimentInfo => {
+        return {
+            type: SchemaType.EXPERIMENT,
+            job,
+            id: job.title.toLowerCase().replaceAll(' ', '_'),
+            title: `${job.title} - Experiment`,
+            description: `Experiment of ${job.title}`,
+            project: "",
+            product: initProductSchemaType(job),
+            workflow: initWorkflowSchemaType(job),
+        } as ExperimentInfo;
+    }
+
+    const initSchemaType = (type: SchemaType, job: OpenEOJob): undefined | ProductInfo | ExperimentInfo => {
+        if (type === SchemaType.PRODUCT) {
+            return initProductSchemaType(job);
+        } else if (type === SchemaType.EXPERIMENT) {
+            return initExperimentSchemaType(job);
+        } else if (type === SchemaType.WORKFLOW) {
+            return initWorkflowSchemaType(job);
+        } else {
+            return undefined
+        }
+    }
+
+    const isProductSchemaValid = (schema: ProductInfo, isChild: boolean = true): boolean => {
+        return schema && !!schema.id && (isChild || !!schema.project) && !!schema.title && !!schema.description
+    }
+
+    const isWorkflowSchemaValid = (schema: WorkflowInfo, isChild: boolean = true): boolean => {
+        return schema && !!schema.id && (isChild || !!schema.project) && !!schema.title && !!schema.description && !!schema.url
+    }
+
+    const isExperimentSchemaValid = (schema: ExperimentInfo): boolean => {
+        return schema && !!schema.id && !!schema.project && !!schema.title && !!schema.description && isProductSchemaValid(schema.product) && isWorkflowSchemaValid(schema.workflow);
+
+    }
+
+    const isSchemaValid = (schema: ProductInfo | ExperimentInfo): boolean => {
+        if (schema.type === SchemaType.PRODUCT) {
+            return isProductSchemaValid(schema as ProductInfo);
+        } else if (schema.type === SchemaType.EXPERIMENT) {
+            return isExperimentSchemaValid(schema as ExperimentInfo);
+        } else {
+            return false;
+        }
+    }
+
     const handleJobSchemaChange = useCallback((job: OpenEOJob, type: SchemaType) => {
         setJobSchemas((prev) => {
             const newSchemas = prev.filter((s) => s.job.id !== job.id);
             return [
                 ...newSchemas,
-                {
-                    type,
-                    job,
-                    id: job.title.toLowerCase().replaceAll(' ', '_'),
-                    project: "",
-                    valid: false
-                }
+                initSchemaType(type, job)
             ];
         });
     }, []);
 
-    const handleFormChange = useCallback((schema: JobSchemaInfo, key: "id" | "project", value: string) => {
+    const handleFormChange = useCallback((schema: ProductInfo | ExperimentInfo, key: any, value: any) => {
         setJobSchemas((prev) =>
             prev.map((s) =>
                 s.job.id === schema.job.id && s.type === schema.type
@@ -121,11 +186,11 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                 onClick={publishJobs}
                 color="primary"
                 variant="contained"
-                disabled={loading || jobSchemas.length === 0 || jobSchemas.some((s) => !s.id || !s.project)}
+                disabled={loading || jobSchemas.length === 0 || jobSchemas.some((s) => !isSchemaValid(s))}
                 data-testid="publish-button"
                 className="my-2"
             >
-                { loading ? <CircularProgress size='30px' color="inherit"/> : "Publish" }
+                {loading ? <CircularProgress size='30px' color="inherit"/> : "Publish"}
             </Button>
             <LinearProgress variant="determinate" color={error ? 'error' : 'primary'} value={progress}
                             className="w-full min-h-2 my-2 rounded-full"/>

@@ -1,14 +1,12 @@
-import {Autocomplete, CircularProgress, FormControl, TextField} from "@mui/material";
-import {JobSchemaInfo} from "../../lib/earthcode/schema.model";
-import {SchemaType} from "../../lib/earthcode/schema.model";
+import {JobSchemaInfo, SchemaType} from "../../lib/earthcode/schema.model";
 import React from "react";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
+import {ProductForm} from "@/components/Publish/forms/Product";
+import {ExperimentForm} from "@/components/Publish/forms/Experiment";
 
 interface JobSchemaFormProps {
     schema: JobSchemaInfo;
     projects: string[];
-    onFormChange: (schema: JobSchemaInfo, key: "id" | "project", value: string) => void;
+    onFormChange: (schema: JobSchemaInfo, key: "id" | "project" | "title" | "description", value: string) => void;
 }
 
 export const JobSchemaForm = ({schema, projects, onFormChange}: JobSchemaFormProps) => {
@@ -17,27 +15,14 @@ export const JobSchemaForm = ({schema, projects, onFormChange}: JobSchemaFormPro
              className='flex w-full flex-col gap-2'>
             {
                 schema.type === SchemaType.PRODUCT && (
-                    <>
-                        <span className='font-bold mb-4 flex items-center'>
-                            Product
-                        </span>
-                        <FormControl className='flex w-full flex-col gap-4'>
-                            <TextField
-                                label="ID"
-                                variant="outlined"
-                                value={schema.id}
-                                onChange={(e) => onFormChange(schema, "id", e.target.value)}
-                                data-testid="schema-id"
-                            />
-                            <Autocomplete
-                                options={projects}
-                                value={schema.project}
-                                onChange={(event, value) => onFormChange(schema, "project", value || '')}
-                                renderInput={(params) => <TextField {...params} onChange={(e) => onFormChange(schema, "project", e.target.value) } data-testid="schema-project" variant="outlined" label="Project"/>}
-                            />
-                        </FormControl>
-                    </>
-                )}
+                    <ProductForm schema={schema} projects={projects} onFormChange={onFormChange}/>
+                )
+            }
+            {
+                schema.type === SchemaType.EXPERIMENT && (
+                    <ExperimentForm schema={schema} projects={projects} onFormChange={onFormChange}/>
+                )
+            }
         </div>
     );
 };
