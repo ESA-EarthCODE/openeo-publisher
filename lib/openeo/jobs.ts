@@ -12,7 +12,7 @@ export const getOpenEOJobs = async (backend: OpenEOBackend): Promise<OpenEOJob[]
         }
     });
     if (response.ok) {
-        return (await response.json()).jobs as OpenEOJob[];
+        return ((await response.json()).jobs as OpenEOJob[]).filter(j => j.status === 'finished');
     } else {
         throw new ResponseError(response.status, response.statusText, ` Could not retrieve jobs from ${backend.title}: ${await response.text()}`);
     }
