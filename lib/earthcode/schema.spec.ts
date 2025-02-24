@@ -16,7 +16,7 @@ describe("Test EarthCODE Schema Conversion", () => {
     });
 
     it("should create a workflow scheme", () => {
-        const experiment = createWorkflowCollection('worldcereal-maize-detection-workflow', 'ESA worldcereal global maize detector', 'A maize detection algorithm', 'worldcereal', 'https://raw.githubusercontent.com/WorldCereal/worldcereal-classification/refs/tags/worldcereal_crop_type_v1.0.0/src/worldcereal/udp/worldcereal_crop_type.json');
+        const experiment = createWorkflowCollection('worldcereal-maize-detection-workflow', 'ESA worldcereal global maize detector', 'A maize detection algorithm', 'worldcereal', 'https://raw.githubusercontent.com/WorldCereal/worldcereal-classification/refs/tags/worldcereal_crop_type_v1.0.0/src/worldcereal/udp/worldcereal_crop_type.json', ['foobar']);
         experiment.properties.created = '2025-02-19T23:00:00Z'
         experiment.properties.updated = '2025-02-19T23:00:00Z'
         expect(experiment).toEqual(workflowCollection)

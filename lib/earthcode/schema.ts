@@ -43,16 +43,7 @@ export const createProductCollection = (id: string, project: string, job: OpenEO
     }
 }
 
-export const createWorkflowCollection = (id: string, title: string, description: string, project: string, workflowUrl: string): EarthCODEWorkflow => {
-    //@TODO - Add reference to Experiment
-    /**
-     * {
-     *       "rel": "related",
-     *       "href": "../../experiments/e59e411c-20ed-4dc7-ba85-e2df001e9f0b/record.json",
-     *       "type": "application/json",
-     *       "title": "Experiment: POLARIS"
-     *     },
-     */
+export const createWorkflowCollection = (id: string, title: string, description: string, project: string, workflowUrl: string, experimentIds: string[]): EarthCODEWorkflow => {
     return {
         type: "Feature",
         conformsTo: [
@@ -85,6 +76,13 @@ export const createWorkflowCollection = (id: string, title: string, description:
                 "title": "openEO Workflow",
                 "href": workflowUrl,
             },
+            ...experimentIds.map((experiment) => ({
+                "rel": "related",
+                "href": `../../experiments/${experiment}/record.json`,
+                "type": "application/json",
+                "title": `Experiment: ${experiment}`
+
+            }))
         ],
         properties: {
             title,
@@ -118,7 +116,7 @@ export const createExperimentCollection = (id: string, title: string, descriptio
             description,
             license,
             "osc:workflow": workflowId,
-            "osc:product":  productId,
+            "osc:product": productId,
             version: "2"
         },
         links: [
