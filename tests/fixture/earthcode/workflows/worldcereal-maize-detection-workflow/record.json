@@ -6,6 +6,8 @@
   ],
   "geometry": null,
   "properties": {
+    "created": "2025-02-19T23:00:00Z",
+    "updated": "2025-02-19T23:00:00Z",
     "type": "workflow",
     "title": "ESA worldcereal global maize detector",
     "description": "A maize detection algorithm",
@@ -28,6 +30,18 @@
       "href": "../catalog.json",
       "type": "application/json",
       "title": "Projects"
+    },
+    {
+      "rel": "related",
+      "href": "../../projects/worldcereal/collection.json",
+      "type": "application/json",
+      "title": "Project: worldcereal"
+    },
+    {
+      "rel": "application",
+      "type": "application/json",
+      "title": "openEO Workflow",
+      "href": "https://raw.githubusercontent.com/WorldCereal/worldcereal-classification/refs/tags/worldcereal_crop_type_v1.0.0/src/worldcereal/udp/worldcereal_crop_type.json"
     }
   ]
 }

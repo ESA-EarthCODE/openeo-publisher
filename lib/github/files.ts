@@ -1,7 +1,7 @@
 'use client';
 
 import {getOctokit, GITHUB_OWNER, GITHUB_REPO} from "./index";
-import {EarthCODEProduct} from "../earthcode/product.models";
+import {EarthCODEProduct} from "../earthcode/concepts.models";
 
 
 export const createFile = async (token: string, branch: string, path: string, message: string, item: EarthCODEProduct) => {

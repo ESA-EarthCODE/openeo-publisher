@@ -1,5 +1,5 @@
 import {Link, OpenEOJobResults} from "../openeo/results.models";
-import {EarthCODEProduct, EarthCODEWorkflow} from "./product.models";
+import {EarthCODEExpiriment, EarthCODEProduct, EarthCODEWorkflow} from "./concepts.models";
 import moment from "moment";
 
 export const createProductCollection = (id: string, project: string, job: OpenEOJobResults): EarthCODEProduct => {
@@ -43,7 +43,16 @@ export const createProductCollection = (id: string, project: string, job: OpenEO
     }
 }
 
-export const createWorkflowCollection = (id: string, title: string, description: string, project: string, job: OpenEOJobResults): EarthCODEWorkflow => {
+export const createWorkflowCollection = (id: string, title: string, description: string, project: string, workflowUrl: string): EarthCODEWorkflow => {
+    //@TODO - Add reference to Experiment
+    /**
+     * {
+     *       "rel": "related",
+     *       "href": "../../experiments/e59e411c-20ed-4dc7-ba85-e2df001e9f0b/record.json",
+     *       "type": "application/json",
+     *       "title": "Experiment: POLARIS"
+     *     },
+     */
     return {
         type: "Feature",
         conformsTo: [
@@ -63,12 +72,26 @@ export const createWorkflowCollection = (id: string, title: string, description:
                 "href": "../catalog.json",
                 "type": "application/json",
                 "title": "Projects"
-            }
+            },
+            {
+                "rel": "related",
+                "href": `../../projects/${project}/collection.json`,
+                "type": "application/json",
+                "title": `Project: ${project}`
+            },
+            {
+                "rel": "application",
+                "type": "application/json",
+                "title": "openEO Workflow",
+                "href": workflowUrl,
+            },
         ],
         properties: {
             title,
             description,
-            "type": "workflow",
+            created: moment().toISOString(false),
+            updated: moment().toISOString(false),
+            type: "workflow",
             "osc:missions": [],
             "osc:project": project,
             "osc:status": "completed",
@@ -76,5 +99,53 @@ export const createWorkflowCollection = (id: string, title: string, description:
             "osc:variables": [],
             "osc:region": "",
         }
+    }
+}
+
+export const createExperimentCollection = (id: string, title: string, description: string, license: string, workflowId: string, productId: string): EarthCODEExpiriment => {
+    return {
+        id,
+        type: "Feature",
+        conformsTo: [
+            "http://www.opengis.net/spec/ogcapi-records-1/1.0/req/record-core"
+        ],
+        geometry: null,
+        properties: {
+            created: moment().toISOString(false),
+            updated: moment().toISOString(false),
+            type: "experiment",
+            title,
+            description,
+            license,
+            "osc:workflow": workflowId,
+            "osc:product":  productId,
+            version: "2"
+        },
+        links: [
+            {
+                rel: "root",
+                href: "../../catalog.json",
+                type: "application/json",
+                title: "Open Science Catalog"
+            },
+            {
+                rel: "parent",
+                href: "../catalog.json",
+                type: "application/json",
+                title: "Experiments"
+            },
+            {
+                rel: "related",
+                href: `../../workflows/${workflowId}/record.json`,
+                type: "application/json",
+                title: `Workflow: ${workflowId}`
+            },
+            {
+                rel: "related",
+                href: `../../products/${productId}/collection.json`,
+                type: "application/json",
+                title: `Product: ${productId}`
+            }
+        ]
     }
 }

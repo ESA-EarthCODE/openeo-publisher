@@ -1,0 +1,45 @@
+{
+  "id": "worldcereal-maize-detection-experiment",
+  "type": "Feature",
+  "conformsTo": [
+    "http://www.opengis.net/spec/ogcapi-records-1/1.0/req/record-core"
+  ],
+  "geometry": null,
+  "properties": {
+    "created": "2025-02-19T23:00:00Z",
+    "updated": "2025-02-19T23:00:00Z",
+    "type": "experiment",
+    "title": "ESA worldcereal global maize detector for Belgium",
+    "description": "A test experiment",
+    "license": "CC-BY-SA-4.0",
+    "osc:workflow": "worldcereal-maize-detection-workflow",
+    "osc:product": "worldcereal-maize-detection-product",
+    "version": "2"
+  },
+  "links": [
+    {
+      "rel": "root",
+      "href": "../../catalog.json",
+      "type": "application/json",
+      "title": "Open Science Catalog"
+    },
+    {
+      "rel": "parent",
+      "href": "../catalog.json",
+      "type": "application/json",
+      "title": "Experiments"
+    },
+    {
+      "rel": "related",
+      "href": "../../workflows/worldcereal-maize-detection-workflow/record.json",
+      "type": "application/json",
+      "title": "Workflow: worldcereal-maize-detection-workflow"
+    },
+    {
+      "rel": "related",
+      "href": "../../products/worldcereal-maize-detection-product/collection.json",
+      "type": "application/json",
+      "title": "Product: worldcereal-maize-detection-product"
+    }
+  ]
+}

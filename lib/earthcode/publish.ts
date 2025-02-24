@@ -56,7 +56,7 @@ export const publishSchemas = async function*(token: string, branch: string, bac
 
         if (products.length > 0) {
             yield { status: "progress", message: `Registering ${products.length} products in parent catalog`, progress: getProgress() };
-            await registerParentCatalogue(token, 'products/collection.json', branch, schemas.filter(s => s.type === SchemaType.PRODUCT));
+            await registerParentCatalogue(token, 'products/record.json', branch, schemas.filter(s => s.type === SchemaType.PRODUCT));
 
         } else {
             yield { status: "progress", message: `No products found to register in parent catalog`, progress: getProgress() };
