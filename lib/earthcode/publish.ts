@@ -107,7 +107,7 @@ export const publishSchemas = async function* (token: string, branch: string, ba
                 message: `Registering ${products.length} products in parent catalog`,
                 progress: getProgress()
             };
-            await registerParentCatalogue(token, 'products/catalog.json', branch, products);
+            await registerParentCatalogue(token, 'products/catalog.json', 'collection.json', branch, products);
 
         } else {
             yield {
@@ -123,7 +123,7 @@ export const publishSchemas = async function* (token: string, branch: string, ba
                 message: `Registering ${workflows.length} workflows in parent catalog`,
                 progress: getProgress()
             };
-            await registerParentCatalogue(token, 'workflows/catalog.json', branch, workflows);
+            await registerParentCatalogue(token, 'workflows/catalog.json', 'record.json', branch, workflows);
 
         } else {
             yield {
@@ -139,7 +139,7 @@ export const publishSchemas = async function* (token: string, branch: string, ba
                 message: `Registering ${experiments.length} experiments in parent catalog`,
                 progress: getProgress()
             };
-            await registerParentCatalogue(token, 'experiments/catalog.json', branch, workflows);
+            await registerParentCatalogue(token, 'experiments/catalog.json', 'record.json', branch, workflows);
 
         } else {
             yield {
@@ -165,14 +165,14 @@ export const publishSchemas = async function* (token: string, branch: string, ba
     }
 }
 
-const registerParentCatalogue = async (token: string, path: string, branch: string, schemas: JobSchemaInfo[]) => {
+const registerParentCatalogue = async (token: string, path: string, filename: string, branch: string, schemas: JobSchemaInfo[]) => {
 
     const {sha, content} = await getFile(token, path, branch);
 
     for (const schema of schemas) {
         content.links.push({
             rel: "child",
-            href: `./${schema.id}/collection.json`,
+            href: `./${schema.id}/${filename}`,
             type: "application/json",
             title: schema.job.title
         })
