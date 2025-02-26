@@ -22,6 +22,8 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                         value={schema.project}
                         onChange={(event, value) => onFormChange(schema, "project", value || '')}
                         renderInput={(params) => <TextField {...params}
+                                                            required
+                                                            error={!schema.project}
                                                             onChange={(e) => onFormChange(schema, "project", e.target.value)}
                                                             data-testid="schema-project" variant="outlined"
                                                             label="Project"/>}
@@ -33,6 +35,8 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     value={schema.id}
                     onChange={(e) => onFormChange(schema, "id", e.target.value)}
                     data-testid="schema-id"
+                    required
+                    error={!schema.id}
                 />
                 <TextField
                     label="URL"
@@ -40,6 +44,8 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     value={schema.url}
                     onChange={(e) => onFormChange(schema, "url", e.target.value)}
                     data-testid="schema-url"
+                    required
+                    error={!schema.url}
                 />
                 <TextField
                     label="Title"
@@ -47,6 +53,8 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     value={schema.title}
                     onChange={(e) => onFormChange(schema, "title", e.target.value)}
                     data-testid="schema-title"
+                    required
+                    error={!schema.title}
                 />
                 <TextField
                     label="Description"
@@ -56,6 +64,8 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     value={schema.description}
                     onChange={(e) => onFormChange(schema, "description", e.target.value)}
                     data-testid="schema-description"
+                    required
+                    error={!schema.description}
                 />
             </FormControl>
         </div>
