@@ -1,4 +1,4 @@
-import {expect} from '@playwright/test';
+import {expect, Page} from '@playwright/test';
 import {test} from './setup';
 import openEOFedResponse from './fixture/responses/openeofed.json';
 import vitoResponse from './fixture/responses/vito.json';
@@ -9,11 +9,10 @@ import earthCODEProductCatalog from './fixture/earthcode/products/catalog.json';
 
 test.describe('Publishing Wizard Tests', () => {
 
-    test('Should publish openEO jobs', async ({page}) => {
-
-
-        let createCount = 0;
-        let prCount = 0;
+    const setupRoutes = async (
+        page: Page,
+        callBackCreateFile: () => void,
+        callbackCreatePR: () => void) => {
 
         await page.route('https://openeofed.dataspace.copernicus.eu/openeo/', async route => {
             await route.fulfill({json: openEOFedResponse});
@@ -36,7 +35,7 @@ test.describe('Publishing Wizard Tests', () => {
         });
 
 
-        await page.route('https://api.github.com/**/git/ref/heads%2Fmain', async route => {
+        await page.route('https://api.github.com/**/git/ref/**', async route => {
             await route.fulfill({
                 json: {
                     object: {
@@ -70,21 +69,33 @@ test.describe('Publishing Wizard Tests', () => {
 
         await page.route('https://api.github.com/**/contents/*', async route => {
             if (route.request().method() === 'PUT') {
-                createCount++;
+                callBackCreateFile();
                 await route.fulfill({
                     json: {}
                 });
             } else if (route.request().method() === 'GET') {
                 if (route.request().url().endsWith('projects')) {
-                   await route.fulfill({
-                       json: []
-                   });
+                    await route.fulfill({
+                        json: [
+                            {
+                                name: "test-project-1",
+                                type: "dir"
+                            }
+                        ]
+                    });
                 } else if (route.request().url().includes('catalog.json')) {
                     await route.fulfill({
-                       json: {
-                           sha: '123',
-                           content: Buffer.from(JSON.stringify(earthCODEProductCatalog)).toString('base64')
-                       }
+                        json: {
+                            sha: '123',
+                            content: Buffer.from(JSON.stringify(earthCODEProductCatalog)).toString('base64')
+                        }
+                    });
+                } else if (route.request().url().includes('collection.json')) {
+                    await route.fulfill({
+                        json: {
+                            sha: '123',
+                            content: Buffer.from(JSON.stringify({links: []})).toString('base64')
+                        }
                     });
                 } else {
                     route.continue();
@@ -97,7 +108,7 @@ test.describe('Publishing Wizard Tests', () => {
 
         await page.route('https://api.github.com/**/pulls', async route => {
             if (route.request().method() === 'POST') {
-                prCount++;
+                callbackCreatePR();
                 await route.fulfill({
                     json: {}
                 });
@@ -105,13 +116,16 @@ test.describe('Publishing Wizard Tests', () => {
                 await route.continue();
             }
         });
+    }
+
+    const selectJobs = async (page: Page, backend: string, jobs: number[]) => {
 
         // STEP 1. Select backend
         await expect(page.getByTestId('backend-selector')).toBeVisible();
         await expect(page.getByTestId('stepper-step').nth(0)).toHaveAttribute('aria-current', 'step');
 
         await page.getByTestId('backend-selector').click();
-        await page.getByTestId('backend-selector-item').getByText('Copernicus Data Space Ecosystem openEO Aggregator').click();
+        await page.getByTestId('backend-selector-item').getByText(backend).click();
 
         await page.getByTestId('next-button').click();
 
@@ -120,40 +134,119 @@ test.describe('Publishing Wizard Tests', () => {
         await expect(page.getByTestId('stepper-step').nth(2)).toHaveAttribute('aria-current', 'step');
         await expect(page.getByTestId('next-button')).toBeDisabled();
 
-        await expect(page.getByTestId('job-table').getByRole('rowgroup').getByRole('row')).toHaveCount(17);
-        await page.getByTestId('job-table').getByRole('rowgroup').getByRole('checkbox').nth(0).check();
-        await page.getByTestId('job-table').getByRole('rowgroup').getByRole('checkbox').nth(5).check();
+        await expect(page.getByTestId('job-table').getByRole('rowgroup').getByRole('row')).toHaveCount(13);
+        for (const index of jobs) {
+            await page.getByTestId('job-table').getByRole('rowgroup').getByRole('checkbox').nth(index).check();
+        }
 
         await page.getByTestId('next-button').click();
 
-        // STEP 3. Index jobs
+        // STEP 3. Publish
         await expect(page.getByTestId('publish-button')).toBeVisible();
         await expect(page.getByTestId('stepper-step').nth(3)).toHaveAttribute('aria-current', 'step');
         await expect(page.getByTestId('next-button')).not.toBeVisible();
 
-        await expect(page.getByTestId('job-summary')).toHaveCount(2);
+        await expect(page.getByTestId('job-summary')).toHaveCount(jobs.length);
+
+
+    }
+
+    test('Should publish openEO jobs as an EarthCODE product', async ({page}) => {
+
+        let createCount = 0;
+        let prCount = 0;
+
+        await setupRoutes(page, () => createCount++, () => prCount++);
+        await selectJobs(page, 'Copernicus Data Space Ecosystem openEO Aggregator', [0, 5])
+
 
         await page.getByTestId('job-summary').nth(0).getByTestId('jobschema-selector').click();
         await page.getByTestId('jobschema-selector-item').getByText('Product').click();
-        await page.getByTestId('job-summary').nth(0).getByTestId('schema-id').locator('input').fill("test-id-1");
-        await page.getByTestId('job-summary').nth(0).getByTestId('schema-project').locator('input').focus();
-        await page.getByTestId('job-summary').nth(0).getByTestId('schema-project').locator('input').fill("test-project-1");
+        await page.getByTestId('job-summary').nth(0).getByTestId('product-schema-id').locator('input').fill("test-product-id-1");
+        await page.getByTestId('job-summary').nth(0).getByTestId('product-schema-project').locator('input').focus();
+        await page.getByTestId('job-summary').nth(0).getByTestId('product-schema-project').locator('input').fill("test-project-1");
 
 
         await page.getByTestId('job-summary').nth(1).getByTestId('jobschema-selector').click();
         await page.getByTestId('jobschema-selector-item').getByText('Product').click();
-        await page.getByTestId('job-summary').nth(1).getByTestId('schema-id').locator('input').fill("test-id-1");
-        await page.getByTestId('job-summary').nth(1).getByTestId('schema-project').locator('input').fill("test-project-1");
+        await page.getByTestId('job-summary').nth(1).getByTestId('product-schema-id').locator('input').fill("test-product-id-2");
+        await page.getByTestId('job-summary').nth(1).getByTestId('product-schema-project').locator('input').fill("test-project-1");
 
         await page.getByTestId('publish-button').click();
 
         await page.waitForResponse(resp => resp.url().includes('/pulls'));
 
-        expect(createCount).toBe(3); // 2 files and one parent catalogue
+        expect(createCount).toBe(4); // 2 product + 1 parent catalogue + 1 project
         expect(prCount).toBe(1);
     });
 
+    test('Should publish openEO jobs as an EarthCODE workflow', async ({page}) => {
 
+        let createCount = 0;
+        let prCount = 0;
+
+        await setupRoutes(page, () => createCount++, () => prCount++);
+        await selectJobs(page, 'Copernicus Data Space Ecosystem openEO Aggregator', [0, 5])
+
+
+        // STEP 3. Publish workflows
+        await page.getByTestId('job-summary').nth(0).getByTestId('jobschema-selector').click();
+        await page.getByTestId('jobschema-selector-item').getByText('Workflow').click();
+        await page.getByTestId('job-summary').nth(0).getByTestId('workflow-schema-project').locator('input').fill("test-project-1");
+        await page.getByTestId('job-summary').nth(0).getByTestId('workflow-schema-id').locator('input').fill("test-workflow-id-1");
+        await page.getByTestId('job-summary').nth(0).getByTestId('workflow-schema-url').locator('input').fill("https://workflow-url-1.test");
+
+
+
+        await page.getByTestId('job-summary').nth(1).getByTestId('jobschema-selector').click();
+        await page.getByTestId('jobschema-selector-item').getByText('Workflow').click();
+        await page.getByTestId('job-summary').nth(1).getByTestId('workflow-schema-project').locator('input').fill("test-project-1");
+        await page.getByTestId('job-summary').nth(1).getByTestId('workflow-schema-id').locator('input').fill("test-workflow-id-2");
+        await page.getByTestId('job-summary').nth(1).getByTestId('workflow-schema-url').locator('input').fill("https://workflow-url-2.test");
+
+        await page.getByTestId('publish-button').click();
+
+        await page.waitForResponse(resp => resp.url().includes('/pulls'));
+
+        expect(createCount).toBe(4); // 2 workflows + 1 parent + 1 project
+        expect(prCount).toBe(1);
+    });
+
+    test('Should publish openEO jobs as an EarthCODE experiment', async ({page}) => {
+
+        let createCount = 0;
+        let prCount = 0;
+
+        await setupRoutes(page, () => createCount++, () => prCount++);
+        await selectJobs(page, 'Copernicus Data Space Ecosystem openEO Aggregator', [0, 5])
+
+
+        // STEP 3. Publish workflows
+        await page.getByTestId('job-summary').nth(0).getByTestId('jobschema-selector').click();
+        await page.getByTestId('jobschema-selector-item').getByText('Experiment').click();
+        await page.getByTestId('job-summary').nth(0).getByTestId('experiment-schema-id').locator('input').fill("test-experiment-id-1");
+        await page.getByTestId('job-summary').nth(0).getByTestId('experiment-schema-project').locator('input').fill("test-project-1");
+        await page.getByTestId('job-summary').nth(0).getByTestId('product-schema-id').locator('input').fill("test-product-id-1");
+        await page.getByTestId('job-summary').nth(0).getByTestId('workflow-schema-id').locator('input').fill("test-workflow-id-1");
+        await page.getByTestId('job-summary').nth(0).getByTestId('workflow-schema-url').locator('input').fill("https://workflow-url-1.test");
+
+
+
+        await page.getByTestId('job-summary').nth(1).getByTestId('jobschema-selector').click();
+        await page.getByTestId('jobschema-selector-item').getByText('Experiment').click();
+        await page.getByTestId('job-summary').nth(1).getByTestId('experiment-schema-id').locator('input').fill("test-experiment-id-2");
+        await page.getByTestId('job-summary').nth(1).getByTestId('experiment-schema-project').locator('input').fill("test-project-1");
+        await page.getByTestId('job-summary').nth(1).getByTestId('product-schema-id').locator('input').fill("test-product-id-2");
+        await page.getByTestId('job-summary').nth(1).getByTestId('workflow-schema-id').locator('input').fill("test-workflow-id-2");
+        await page.getByTestId('job-summary').nth(1).getByTestId('workflow-schema-url').locator('input').fill("https://workflow-url-2.test");
+
+        await page.getByTestId('publish-button').click();
+
+        await page.waitForResponse(resp => resp.url().includes('/pulls'));
+
+        expect(createCount).toBe(10); // 2 * 3 (product, workflow experiment) + 3 parents + 1 project
+        expect(prCount).toBe(1);
+    });
 });
 
 test.describe('Wizard Navigation Tests', () => {

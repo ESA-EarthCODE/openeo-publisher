@@ -128,6 +128,8 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     const isSchemaValid = (schema: ProductInfo | ExperimentInfo): boolean => {
         if (schema.type === SchemaType.PRODUCT) {
             return isProductSchemaValid(schema as ProductInfo);
+        } else if (schema.type === SchemaType.WORKFLOW) {
+            return isWorkflowSchemaValid(schema as WorkflowInfo);
         } else if (schema.type === SchemaType.EXPERIMENT) {
             return isExperimentSchemaValid(schema as ExperimentInfo);
         } else {

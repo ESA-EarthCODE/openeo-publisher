@@ -1,12 +1,13 @@
-import {JobSchemaInfo, SchemaType} from "../../lib/earthcode/schema.model";
+import {ExperimentInfo, JobSchemaInfo, ProductInfo, SchemaType, WorkflowInfo} from "../../lib/earthcode/schema.model";
 import React from "react";
 import {ProductForm} from "@/components/Publish/forms/Product";
 import {ExperimentForm} from "@/components/Publish/forms/Experiment";
+import {WorkflowForm} from "@/components/Publish/forms/Workflow";
 
 interface JobSchemaFormProps {
     schema: JobSchemaInfo;
     projects: string[];
-    onFormChange: (schema: JobSchemaInfo, key: "id" | "project" | "title" | "description", value: string) => void;
+    onFormChange: (schema: JobSchemaInfo, key: any, value: string) => void;
 }
 
 export const JobSchemaForm = ({schema, projects, onFormChange}: JobSchemaFormProps) => {
@@ -15,12 +16,17 @@ export const JobSchemaForm = ({schema, projects, onFormChange}: JobSchemaFormPro
              className='flex w-full flex-col gap-2'>
             {
                 schema.type === SchemaType.PRODUCT && (
-                    <ProductForm schema={schema} projects={projects} onFormChange={onFormChange}/>
+                    <ProductForm schema={schema as ProductInfo} projects={projects} onFormChange={onFormChange}/>
+                )
+            }
+            {
+                schema.type === SchemaType.WORKFLOW && (
+                    <WorkflowForm schema={schema as WorkflowInfo} projects={projects} onFormChange={onFormChange}/>
                 )
             }
             {
                 schema.type === SchemaType.EXPERIMENT && (
-                    <ExperimentForm schema={schema} projects={projects} onFormChange={onFormChange}/>
+                    <ExperimentForm schema={schema as ExperimentInfo} projects={projects} onFormChange={onFormChange}/>
                 )
             }
         </div>

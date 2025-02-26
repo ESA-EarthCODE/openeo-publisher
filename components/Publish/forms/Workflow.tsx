@@ -25,7 +25,7 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                                                             required
                                                             error={!schema.project}
                                                             onChange={(e) => onFormChange(schema, "project", e.target.value)}
-                                                            data-testid="schema-project" variant="outlined"
+                                                            data-testid="workflow-schema-project" variant="outlined"
                                                             label="Project"/>}
                     />
                 }
@@ -34,7 +34,7 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     variant="outlined"
                     value={schema.id}
                     onChange={(e) => onFormChange(schema, "id", e.target.value)}
-                    data-testid="schema-id"
+                    data-testid="workflow-schema-id"
                     required
                     error={!schema.id}
                 />
@@ -43,7 +43,7 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     variant="outlined"
                     value={schema.url}
                     onChange={(e) => onFormChange(schema, "url", e.target.value)}
-                    data-testid="schema-url"
+                    data-testid="workflow-schema-url"
                     required
                     error={!schema.url}
                 />
@@ -52,7 +52,7 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     variant="outlined"
                     value={schema.title}
                     onChange={(e) => onFormChange(schema, "title", e.target.value)}
-                    data-testid="schema-title"
+                    data-testid="workflow-schema-title"
                     required
                     error={!schema.title}
                 />
@@ -63,7 +63,7 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     rows={5}
                     value={schema.description}
                     onChange={(e) => onFormChange(schema, "description", e.target.value)}
-                    data-testid="schema-description"
+                    data-testid="workflow-schema-description"
                     required
                     error={!schema.description}
                 />

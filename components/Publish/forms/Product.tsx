@@ -25,7 +25,7 @@ export const ProductForm = ({schema, projects, onFormChange, showProjects = true
                                                             required
                                                             error={!schema.project}
                                                             onChange={(e) => onFormChange(schema, "project", e.target.value)}
-                                                            data-testid="schema-project" variant="outlined"
+                                                            data-testid="product-schema-project" variant="outlined"
                                                             label="Project"/>}
                     />
                 }
@@ -34,7 +34,7 @@ export const ProductForm = ({schema, projects, onFormChange, showProjects = true
                     variant="outlined"
                     value={schema.id}
                     onChange={(e) => onFormChange(schema, "id", e.target.value)}
-                    data-testid="schema-id"
+                    data-testid="product-schema-id"
                     required
                     error={!schema.id}
                 />
@@ -43,7 +43,7 @@ export const ProductForm = ({schema, projects, onFormChange, showProjects = true
                     variant="outlined"
                     value={schema.title}
                     onChange={(e) => onFormChange(schema, "title", e.target.value)}
-                    data-testid="schema-title"
+                    data-testid="product-schema-title"
                     required
                     error={!schema.title}
                 />
@@ -54,7 +54,7 @@ export const ProductForm = ({schema, projects, onFormChange, showProjects = true
                     rows={5}
                     value={schema.description}
                     onChange={(e) => onFormChange(schema, "description", e.target.value)}
-                    data-testid="schema-description"
+                    data-testid="product-schema-description"
                     required
                     error={!schema.description}
                 />
