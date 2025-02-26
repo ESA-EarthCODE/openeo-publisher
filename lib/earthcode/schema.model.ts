@@ -14,6 +14,7 @@ export interface JobSchemaInfo {
     description: string;
     project: string;
     job: OpenEOJob;
+    href?: string;
 }
 
 export interface ProductInfo extends JobSchemaInfo {
