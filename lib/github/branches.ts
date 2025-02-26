@@ -1,6 +1,6 @@
 'use client';
 
-import {getOctokit, GITHUB_OWNER, GITHUB_REPO} from "./index";
+import {getOctokit, GITHUB_OWNER, GITHUB_REF_BRANCH, GITHUB_REPO} from "./index";
 
 
 export const createBranch = async (token: string, name: string) => {
@@ -10,7 +10,7 @@ export const createBranch = async (token: string, name: string) => {
         const {data } = await getOctokit(token).rest.git.getRef({
             owner: GITHUB_OWNER,
             repo: GITHUB_REPO,
-            ref: `heads/main`,
+            ref: `heads/${GITHUB_REF_BRANCH}`
         });
 
         const baseSha = data.object.sha;

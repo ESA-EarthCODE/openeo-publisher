@@ -14,3 +14,4 @@ export const getOctokit = (token: string) => {
 
 export const GITHUB_OWNER = process.env.NEXT_PUBLIC_GITHUB_OWNER;
 export const GITHUB_REPO = process.env.NEXT_PUBLIC_GITHUB_REPO;
+export const GITHUB_REF_BRANCH = process.env.NEXT_PUBLIC_GITHUB_REF_BRANCH || 'main';
