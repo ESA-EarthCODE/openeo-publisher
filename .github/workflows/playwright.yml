@@ -7,8 +7,6 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    environment:
-      AUTH_SECRET: 'foobar'
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -20,6 +18,8 @@ jobs:
       run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npx playwright test
+      env:
+        AUTH_SECRET: 'foobar'
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
