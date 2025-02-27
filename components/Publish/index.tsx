@@ -138,13 +138,16 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     }
 
     const handleJobSchemaChange = useCallback((job: OpenEOJob, type: SchemaType) => {
-        setJobSchemas((prev) => {
-            const newSchemas = prev.filter((s) => s.job.id !== job.id);
-            return [
-                ...newSchemas,
-                initSchemaType(type, job)
-            ];
-        });
+        const schema = initSchemaType(type, job);
+        if (schema) {
+            setJobSchemas((prev) => {
+                const existingSchemas = prev.filter((s) => s.job.id !== job.id);
+                return [
+                    ...existingSchemas,
+                    schema
+                ]
+            });
+        }
     }, []);
 
     const handleFormChange = useCallback((schema: ProductInfo | ExperimentInfo, key: any, value: any) => {
