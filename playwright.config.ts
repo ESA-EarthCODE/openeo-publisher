@@ -18,7 +18,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL: 'http://localhost:3000',
-    trace: 'retain-on-failure,
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
 
