@@ -47,6 +47,7 @@ export const publishSchemas = async function* (
     await createBranch(token, branch);
 
     try {
+        // @ts-ignore
         for (const [index, schema] of schemas.entries()) {
             yield {
                 status: "processing",
@@ -118,7 +119,6 @@ const registerSchemas = async (
     category: string,
     filename: string,
     schemas: JobSchemaInfo[],
-    getProgress: () => number,
 )=>  {
     if (!schemas.length) {
         return;

@@ -32,8 +32,8 @@ export const getFile = async (token: string, path: string, branch: string) => {
         });
 
         return {
-            sha: fileData.sha,
-            content: JSON.parse(Buffer.from(fileData.content, "base64").toString('utf-8')),
+            sha: (fileData as any).sha,
+            content: JSON.parse(Buffer.from((fileData as any).content, "base64").toString('utf-8')),
         };
 
     } else {

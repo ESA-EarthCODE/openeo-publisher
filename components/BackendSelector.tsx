@@ -9,11 +9,6 @@ export const BackendSelector = () => {
     const {data, error, loading} = useOpenEOBackends();
     const { selectedBackend, setSelectedBackend } = useOpenEOStore();
 
-    useEffect(() => {
-        if (!selectedBackend && data.length > 0) {
-            setSelectedBackend(data[0]); // Set the first backend as default
-        }
-    }, [data, selectedBackend, setSelectedBackend]);
 
     const handleChange = (event: SelectChangeEvent<string>) => {
         const backend = data.find((b: OpenEOBackend) => b.id === event.target.value);
@@ -36,7 +31,7 @@ export const BackendSelector = () => {
         {
             !loading && data.length > 0 &&
             <div className='bg-white rounded-md my-2'>
-                <FormControl variant="filled">
+                <FormControl variant="filled" className='!min-w-64'>
                     <InputLabel id="openeo-backend-label">Backend</InputLabel>
                     <Select
                         labelId="openeo-backend-label"
