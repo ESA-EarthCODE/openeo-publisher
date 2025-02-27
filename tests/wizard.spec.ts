@@ -14,7 +14,7 @@ test.describe('Publishing Wizard Tests', () => {
         callBackCreateFile: () => void,
         callbackCreatePR: () => void) => {
 
-        await page.route('https://openeofed.dataspace.copernicus.eu/openeo/', async route => {
+        await page.route('https://openeofed.dataspace.copernicus.eu/openeo', async route => {
             await route.fulfill({json: openEOFedResponse});
         });
 
@@ -251,13 +251,42 @@ test.describe('Publishing Wizard Tests', () => {
 
 test.describe('Wizard Navigation Tests', () => {
 
+    const setupRoutes = async (
+        page: Page
+    ) => {
+
+        await page.route('https://openeofed.dataspace.copernicus.eu/openeo', async route => {
+            await route.fulfill({json: openEOFedResponse});
+        });
+
+        await page.route('https://openeofed.dataspace.copernicus.eu/openeo/jobs', async route => {
+            await route.fulfill({json: openEOJobs});
+        });
+
+        await page.route('https://openeofed.dataspace.copernicus.eu/openeo/jobs/**', async route => {
+            await route.fulfill({json: openEOJob});
+        });
+
+        await page.route('https://openeofed.dataspace.copernicus.eu/openeo/jobs/**/results', async route => {
+            await route.fulfill({json: openEOJobResults});
+        });
+
+        await page.route('https://openeo.vito.be/openeo', async route => {
+            await route.fulfill({json: vitoResponse});
+        });
+    }
+
+
     test('Should return to the first step whenever the user did not select a backend', async ({page}) => {
 
-        await page.addInitScript(params => {
+        await setupRoutes(page);
+
+        await page.evaluate(() => {
             window.localStorage.removeItem('openeo_backend');
         });
 
         await page.goto('?step=2');
+        await page.waitForTimeout(1000);
 
         expect(page.url()).toContain('?step=0');
         await expect(page.getByTestId('backend-selector')).toBeVisible();
@@ -266,14 +295,8 @@ test.describe('Wizard Navigation Tests', () => {
 
     test('Should return to the first step whenever the user is not logged in anymore', async ({page}) => {
 
-        await page.addInitScript(params => {
-            window.localStorage.setItem('openeo_backend', JSON.stringify({
-                id: 'openeofed',
-                title: 'Copernicus Data Space Ecosystem openEO Aggregator',
-                url: 'https://openeofed.dataspace.copernicus.eu/openeo/'
-            }));
-        });
 
+        await setupRoutes(page);
         await page.route('https://openeofed.dataspace.copernicus.eu/openeo/jobs', async route => {
             await route.fulfill({
                 status: 401
@@ -281,7 +304,19 @@ test.describe('Wizard Navigation Tests', () => {
         });
 
 
+        await page.evaluate(() => {
+            window.localStorage.setItem('openeo_backend', JSON.stringify({
+                id: 'openeofed',
+                title: 'Copernicus Data Space Ecosystem openEO Aggregator',
+                url: 'https://openeofed.dataspace.copernicus.eu/openeo'
+            }));
+        });
+
+
+
         await page.goto('?step=2');
+        await page.waitForTimeout(1000);
+
         await expect(page.getByTestId('toast')).toContainText('You are not authenticated with');
 
         expect(page.url()).toContain('?step=0');

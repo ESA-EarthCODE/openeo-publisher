@@ -6,7 +6,8 @@
     "start": "next start",
     "test": "jest --watch",
     "test:ci": "jest --ci",
-    "test:playwright": "npx playwright test --ui"
+    "test:playwright": "npx playwright test",
+    "test:playwright:ui": "npx playwright test --ui"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
