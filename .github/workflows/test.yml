@@ -6,6 +6,13 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+      AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID }}
+      AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
+      NEXT_PUBLIC_GITHUB_OWNER: ESA-EarthCODE
+      NEXT_PUBLIC_GITHUB_REPO: open-science-catalog-metadata-testing
+      NEXT_PUBLIC_OPENEO_BACKENDS: https://openeofed.dataspace.copernicus.eu/openeo,https://openeo.vito.be/openeo
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node
@@ -19,13 +26,6 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run Playwright tests
         run: npx playwright test
-        env:
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID }}
-          AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
-          NEXT_PUBLIC_GITHUB_OWNER: ESA-EarthCODE
-          NEXT_PUBLIC_GITHUB_REPO: open-science-catalog-metadata-testing
-          NEXT_PUBLIC_OPENEO_BACKENDS: https://openeofed.dataspace.copernicus.eu/openeo,https://openeo.vito.be/openeo
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
