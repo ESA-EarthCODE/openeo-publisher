@@ -12,3 +12,4 @@ jobs:
   test-pr:
     needs: build-pr
     uses: ./.github/workflows/test.yml
+    secrets: inherit
