@@ -1,9 +1,7 @@
-name: Deploy Website to Pages
-
+name: Build and test
 on:
   push:
     branches: ["main"]
-
   workflow_dispatch:
 
 permissions:
@@ -12,8 +10,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: "build-and-test"
+  cancel-in-progress: true
 
 jobs:
   # Build job
@@ -22,68 +20,124 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Detect package manager
-        id: detect-package-manager
-        run: |
-          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
-            exit 0
-          elif [ -f "${{ github.workspace }}/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Unable to determine package manager"
-            exit 1
-          fi
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install
+      - name: Cache Next.js build
+        uses: actions/cache@v3
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+      - name: Build with Next.js
+        run: npx next build
+
+  test:
+    requires: build
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          # Automatically inject basePath in your Next.js configuration file and disable
-          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-          #
-          # You may remove this line if you want to manage the configuration yourself.
-          static_site_generator: next
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            .next/cache
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
+          cache: 'npm'
       - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Build with Next.js
-        run: ${{ steps.detect-package-manager.outputs.runner }} next build
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: npx playwright test
+        env:
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          AUTH_GITHUB_ID: ${{ secrets.AUTH_GITHUB_ID }}
+          AUTH_GITHUB_SECRET: ${{ secrets.AUTH_GITHUB_SECRET }}
+          NEXT_PUBLIC_GITHUB_OWNER: ESA-EarthCODE
+          NEXT_PUBLIC_GITHUB_REPO: open-science-catalog-metadata-testing
+          NEXT_PUBLIC_OPENEO_BACKENDS: https://openeofed.dataspace.copernicus.eu/openeo,https://openeo.vito.be/openeo
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
-          path: ./out
-      - name: semantic-release
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install
+      - name: Create release
         run: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get release version
+        id: version
+        run: |
+          version=$(npm pkg get version | tr -d '"')
+          echo "docker_version=${version}" >> $GITHUB_OUTPUT
+      - name: Debug version
+        run: echo "Version is ${{ steps.version.outputs.docker_version }}"
+    outputs:
+      docker_version: ${{ steps.version.outputs.docker_version }}
 
-
-  # Deployment job
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    needs: release
     runs-on: ubuntu-latest
-    needs: build
+    env:
+      DOCKER_IMAGE_NAME: earthcode-openeo-publisher
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - name: Update package.json
+        id: version
+        run: |
+          sed -i "s/0.0.0-semver/${{needs.release.outputs.docker_version}}/g" package.json
+      - name: Create .env file
+        run: | 
+          echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env
+          echo "AUTH_GITHUB_ID=${{ secrets.AUTH_GITHUB_ID }}" >> .env
+          echo "AUTH_GITHUB_SECRET=${{ secrets.AUTH_GITHUB_SECRET }}" >> .env
+          echo "AUTH_TRUST_HOST=true" >> .env
+          echo "NEXT_PUBLIC_GITHUB_OWNER=ESA-EarthCODE" >> .env
+          echo "NEXT_PUBLIC_GITHUB_REPO=open-science-catalog-metadata-testing" >> .env
+          echo "NEXT_PUBLIC_OPENEO_BACKENDS=https://openeofed.dataspace.copernicus.eu/openeo" >> .env
+      - run: npm install
+      - name: Login to Docker repository
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.DOCKER_ARTIFACTORY }}
+          username: ${{ secrets.ARTIFACTORY_USERNAME }}
+          password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      - name: Build image
+        run: |
+          docker build \
+           --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} \
+           -t $DOCKER_IMAGE_NAME .
+      - name: Tag image
+        run: |
+          docker tag $DOCKER_IMAGE_NAME ${{ secrets.DOCKER_ARTIFACTORY }}/$DOCKER_IMAGE_NAME:${{needs.release.outputs.docker_version}} 
+          docker tag $DOCKER_IMAGE_NAME  ${{ secrets.DOCKER_ARTIFACTORY }}/$DOCKER_IMAGE_NAME:latest
+      - name: Push image
+        run: |
+          docker push ${{ secrets.DOCKER_ARTIFACTORY }}/$DOCKER_IMAGE_NAME:${{needs.release.outputs.docker_version}} 
+          docker push ${{ secrets.DOCKER_ARTIFACTORY }}/$DOCKER_IMAGE_NAME:latest
