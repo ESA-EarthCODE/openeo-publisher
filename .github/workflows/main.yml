@@ -42,9 +42,9 @@ jobs:
         id: version
         run: |
           version=$(npm pkg get version | tr -d '"')
-          echo "docker_version=${version}" >> $GITHUB_OUTPUT
+          echo "version=${version}" >> $GITHUB_OUTPUT
       - name: Debug version
-        run: echo "Version is ${{ steps.version.outputs.docker_version }}"
+        run: echo "Version is ${{ steps.version.outputs.version}}"
   deploy:
     needs: release
     runs-on: ubuntu-latest
