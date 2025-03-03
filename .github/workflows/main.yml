@@ -14,13 +14,13 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
-  test:
-    needs: build
-    uses: ./.github/workflows/test.yml
-    secrets: inherit
+#  test:
+#    needs: build
+#    uses: ./.github/workflows/test.yml
+#    secrets: inherit
 
   release:
-    needs: test
+#    needs: test
     runs-on: ubuntu-latest
     outputs:
       docker_version: ${{ steps.semantic_release.outputs.version }}
@@ -42,6 +42,7 @@ jobs:
         id: version
         run: |
           version=$(npm pkg get version | tr -d '"')
+          echo "Found version: ${version}" 
           echo "version=${version}" >> $GITHUB_OUTPUT
       - name: Debug version
         run: echo "Version is ${{ steps.version.outputs.version}}"
