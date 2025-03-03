@@ -7,7 +7,7 @@ on:
 permissions: write-all
 
 concurrency:
-  group: "build-and-test"
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
