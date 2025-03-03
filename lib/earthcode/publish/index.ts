@@ -35,7 +35,8 @@ export const publishSchemas = async function* (
         return list;
     }, []);
 
-    const totalSteps = (schemas.length * 2) + groupedProjects.length + 3;
+    // totalSteps = number of schemas + 3 parent catalogues + each project + create pr
+    const totalSteps = schemas.length + 3 + groupedProjects.length + 1;
     const getProgress = () => Math.round(((stepCount++) / totalSteps) * 100);
 
     if (!token || !branch || !backend || !schemas) {
@@ -49,11 +50,6 @@ export const publishSchemas = async function* (
     try {
         // @ts-ignore
         for (const [index, schema] of schemas.entries()) {
-            yield {
-                status: "processing",
-                message: `Fetching job info for ${schema.job.title} (${index + 1}/${schemas.length})`,
-                progress: getProgress(),
-            };
 
             switch (schema.type) {
                 case SchemaType.PRODUCT:
