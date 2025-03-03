@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Create release
-        run: npm run release || { echo "No release created. Exiting."; exit 0; }
+        run: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get release version
@@ -49,6 +49,7 @@ jobs:
   deploy:
     needs: release
     runs-on: ubuntu-latest
+    if: needs.release.outputs.docker_version != ''
     env:
       DOCKER_IMAGE_NAME: earthcode-openeo-publisher
     steps:
