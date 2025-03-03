@@ -46,6 +46,7 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     data-testid="workflow-schema-url"
                     required
                     error={!schema.url}
+                    type='url'
                 />
                 <TextField
                     label="Title"
