@@ -22,6 +22,8 @@ jobs:
   release:
     needs: test
     runs-on: ubuntu-latest
+    outputs:
+      docker_version: ${{ steps.semantic_release.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,19 +35,12 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Create release
-        run: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Get release version
-        id: version
         run: |
-          version=$(npm pkg get version | tr -d '"')
-          echo "docker_version=${version}" >> $GITHUB_OUTPUT
-      - name: Debug version
-        run: echo "Version is ${{ steps.version.outputs.docker_version }}"
-    outputs:
-      docker_version: ${{ steps.version.outputs.docker_version }}
-
+          VERSION=$(npx semantic-release)
+          echo "version=$VERSION" >> "$GITHUB_ENV"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
   deploy:
     needs: release
     runs-on: ubuntu-latest
@@ -59,10 +54,9 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
-      - name: Update package.json
-        id: version
-        run: |
-          sed -i "s/0.0.0-semver/${{needs.release.outputs.docker_version}}/g" package.json
+      - name: Get package version
+        id: package_version
+        run: echo $(node -p "require('./package.json').version")")
       - name: Create .env file
         run: | 
           echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env
@@ -87,7 +81,7 @@ jobs:
            -t $DOCKER_IMAGE_NAME .
       - name: Tag image
         run: |
-          docker tag $DOCKER_IMAGE_NAME ${{ secrets.DOCKER_ARTIFACTORY }}/$DOCKER_IMAGE_NAME:${{needs.release.outputs.docker_version}} 
+          docker tag $DOCKER_IMAGE_NAME ${{ secrets.DOCKER_ARTIFACTORY }}/$DOCKER_IMAGE_NAME:${{ needs.release.outputs.docker_version }} 
           docker tag $DOCKER_IMAGE_NAME  ${{ secrets.DOCKER_ARTIFACTORY }}/$DOCKER_IMAGE_NAME:latest
       - name: Push image
         run: |

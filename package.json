@@ -1,6 +1,7 @@
 {
+  "name": "earthcode_openeo_publisher",
   "version": "0.0.0-semver",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
