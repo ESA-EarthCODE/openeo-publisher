@@ -6,7 +6,7 @@ export const authConfig = {
         signIn: '/signin'
     },
     callbacks: {
-        authorized({ auth, request: { nextUrl } }) {
+        authorized({ auth }) {
             if (process.env.NODE_ENV === "test") {
                 return true;
             } else {
