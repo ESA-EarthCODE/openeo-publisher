@@ -35,12 +35,16 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Create release
+        run: npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get release version
+        id: version
         run: |
-          VERSION=$(npx semantic-release)
-          echo "version=$VERSION" >> "$GITHUB_ENV"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          version=$(npm pkg get version | tr -d '"')
+          echo "docker_version=${version}" >> $GITHUB_OUTPUT
+      - name: Debug version
+        run: echo "Version is ${{ steps.version.outputs.docker_version }}"
   deploy:
     needs: release
     runs-on: ubuntu-latest
