@@ -20,7 +20,7 @@ jobs:
 #    secrets: inherit
 
   release:
-#    needs: test
+    needs: build
     runs-on: ubuntu-latest
     outputs:
       docker_version: ${{ steps.semantic_release.outputs.version }}
