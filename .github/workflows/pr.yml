@@ -5,6 +5,10 @@ on:
     types: [ opened, synchronize ]
   workflow_dispatch:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-pr:
     uses: ./.github/workflows/build.yml
