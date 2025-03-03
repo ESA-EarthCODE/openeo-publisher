@@ -14,16 +14,16 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
-#  test:
-#    needs: build
-#    uses: ./.github/workflows/test.yml
-#    secrets: inherit
+  test:
+    needs: build
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
 
   release:
-    needs: build
+    needs: test
     runs-on: ubuntu-latest
     outputs:
-      docker_version: ${{ steps.semantic_release.outputs.version }}
+      docker_version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,14 +42,13 @@ jobs:
         id: version
         run: |
           version=$(npm pkg get version | tr -d '"')
-          echo "Found version: ${version}" 
           echo "version=${version}" >> $GITHUB_OUTPUT
       - name: Debug version
         run: echo "Version is ${{ steps.version.outputs.version}}"
   deploy:
     needs: release
     runs-on: ubuntu-latest
-    if: needs.release.outputs.docker_version != ''
+    if: needs.release.outputs.docker_version != '0.0.0-semver'
     env:
       DOCKER_IMAGE_NAME: earthcode-openeo-publisher
     steps:
