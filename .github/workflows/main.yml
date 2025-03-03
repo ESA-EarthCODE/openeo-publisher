@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Create release
-        run: npm run release
+        run: npm run release || { echo "No release created. Exiting."; exit 0; }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get release version
@@ -58,9 +58,6 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
-      - name: Get package version
-        id: package_version
-        run: echo $(node -p "require('./package.json').version")")
       - name: Create .env file
         run: | 
           echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env
