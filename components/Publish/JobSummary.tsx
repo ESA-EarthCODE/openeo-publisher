@@ -16,7 +16,7 @@ export const JobSummary = ({ job, selectedSchema, onSchemaChange }: JobSummaryPr
                 <InputLabel id={`select-as-${job.id}-label`} sx={{ color: 'white', '&.Mui-focused': { color: 'white'}}}>Publish as</InputLabel>
                 <Select
                     labelId={`select-as-${job.id}-label`}
-                    label="Index as"
+                    label="Publish as"
                     value={selectedSchema || ""}
                     onChange={(e) => onSchemaChange(job, e.target.value as SchemaType)}
                     className="min-w-64"
@@ -32,6 +32,9 @@ export const JobSummary = ({ job, selectedSchema, onSchemaChange }: JobSummaryPr
                     size='small'
                     data-testid='jobschema-selector'
                 >
+                    <MenuItem value="">
+                        <em>None</em>
+                    </MenuItem>
                     {Object.values(SchemaType).map((type) => (
                         <MenuItem key={type} value={type}
                                   data-testid='jobschema-selector-item'

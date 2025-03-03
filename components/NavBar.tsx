@@ -48,12 +48,15 @@ export const NavBar = () => {
                 edge="start"
                 color="inherit"
                 aria-label="menu"
-                sx={{mr: 2}}
+                sx={{mr: 2, mt: 10, mb: 4}}
             >
             </IconButton>
-            <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
-                EarthCODE - openEO Publisher
-            </Typography>
+            <div className='flex-1 flex flex-col'>
+                <Typography variant="h4" component="div" sx={{flexGrow: 1, fontWeight: 'bold'}}>
+                    EarthCODE - openEO Publisher
+                </Typography>
+                <span>Publish your openEO jobs to the EarthCODE Open Science Catalog</span>
+            </div>
             {getAvatar(session?.user)}
             <Menu
                 anchorEl={anchorEl}

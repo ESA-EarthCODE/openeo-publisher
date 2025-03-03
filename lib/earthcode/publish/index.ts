@@ -35,8 +35,8 @@ export const publishSchemas = async function* (
         return list;
     }, []);
 
-    // totalSteps = number of schemas + 3 parent catalogues + each project + create pr
-    const totalSteps = schemas.length + 3 + groupedProjects.length + 1;
+    // totalSteps = number of schemas + 3 parent catalogues + each project + create pr + offset
+    const totalSteps = schemas.length + 3 + groupedProjects.length + 1 + 1;
     const getProgress = () => Math.round(((stepCount++) / totalSteps) * 100);
 
     if (!token || !branch || !backend || !schemas) {

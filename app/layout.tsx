@@ -1,19 +1,11 @@
 import {AppRouterCacheProvider} from "@mui/material-nextjs/v13-appRouter";
-import {Roboto} from 'next/font/google';
-import theme from "./theme";
 import {ThemeProvider} from "@mui/material/styles";
 import {NavBar} from "@/components/NavBar";
 import {Toasts} from "@/components/Toasts";
 
 import '@/styles/global.css';
 import {SessionProvider} from "next-auth/react";
-
-const roboto = Roboto({
-    weight: ['300', '400', '500', '700'],
-    subsets: ['latin'],
-    display: 'swap',
-    variable: '--font-roboto',
-});
+import theme from "@/styles/theme";
 
 
 export default function RootLayout({
@@ -23,12 +15,12 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className='p-0 m-0'>
-        <body className={`${roboto.className} p-0 m-0 bg-neutral-100`}>
+        <body className='p-0 m-0 bg-white'>
         <SessionProvider>
             <AppRouterCacheProvider>
                 <ThemeProvider theme={theme}>
                     <NavBar></NavBar>
-                    <div className='p-10 flex justify-center items-center'>
+                    <div className='p-20 flex justify-center items-center'>
                         {children}
                     </div>
                     <Toasts/>

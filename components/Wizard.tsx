@@ -112,7 +112,7 @@ export const Wizard = () => {
             steps.map(({label}, idx) => {
                 return (
                     <Step key={label}>
-                        <StepButton color="inherit" onClick={() => setActiveStep(idx)} data-testid='stepper-step'>
+                        <StepButton onClick={() => setActiveStep(idx)} data-testid='stepper-step'>
                             {label}
                         </StepButton>
                     </Step>
@@ -136,7 +136,7 @@ export const Wizard = () => {
         <>
             <div className='py-10'>
                 <div className='mb-5'>
-                    <Typography variant='h6'>{steps[activeStep].label}</Typography>
+                    <Typography variant='h6' sx={{fontWeight: 'bold'}}>{steps[activeStep].label}</Typography>
                     <span className='text-sm'>{steps[activeStep].description || ''}</span>
                 </div>
                 <div>
