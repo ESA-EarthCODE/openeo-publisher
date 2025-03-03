@@ -5,6 +5,7 @@ import React from "react";
 import {signOut, useSession} from "next-auth/react";
 import {Logout} from "@mui/icons-material";
 import {User} from "next-auth";
+import { version } from '../package.json';
 
 export const NavBar = () => {
     const {data: session, status} = useSession()
@@ -96,6 +97,9 @@ export const NavBar = () => {
                         <Logout fontSize="small"/>
                     </ListItemIcon>
                     Logout
+                </MenuItem>
+                <MenuItem disabled>
+                    <span className='text-xs italic text-center w-full mt-2'>{version}</span>
                 </MenuItem>
             </Menu>
         </Toolbar>
