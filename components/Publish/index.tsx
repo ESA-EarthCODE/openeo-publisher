@@ -119,16 +119,16 @@ export const Publish = ({backend, jobs}: PublishProps) => {
         }
     }
 
-    const isProductSchemaValid = (schema: ProductInfo, isChild: boolean = true): boolean => {
+    const isProductSchemaValid = (schema: ProductInfo, isChild: boolean = false): boolean => {
         return schema && !!schema.id && (isChild || !!schema.project) && !!schema.title && !!schema.description && (isChild || schema.themes.length > 0);
     }
 
-    const isWorkflowSchemaValid = (schema: WorkflowInfo, isChild: boolean = true): boolean => {
+    const isWorkflowSchemaValid = (schema: WorkflowInfo, isChild: boolean = false): boolean => {
         return schema && !!schema.id && (isChild || !!schema.project) && !!schema.title && !!schema.description && !!schema.url && (isChild || schema.themes.length > 0);
     }
 
     const isExperimentSchemaValid = (schema: ExperimentInfo): boolean => {
-        return schema && !!schema.id && !!schema.project && !!schema.title && !!schema.description && schema.themes.length > 0 && isProductSchemaValid(schema.product) && isWorkflowSchemaValid(schema.workflow);
+        return schema && !!schema.id && !!schema.project && !!schema.title && !!schema.description && schema.themes.length > 0 && isProductSchemaValid(schema.product, true) && isWorkflowSchemaValid(schema.workflow, true);
 
     }
 
