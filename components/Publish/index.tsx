@@ -10,6 +10,7 @@ import {JobSchemaForm} from "@/components/Publish/JobSchemaForm";
 import {Loading} from "@/components/Loading";
 import {useGitHubProjects} from "../../hooks/useGitHubProjects";
 import {publishSchemas} from "../../lib/earthcode/publish";
+import {useWizardStore} from "../../store/wizard";
 
 interface PublishProps {
     jobs: OpenEOJob[];
@@ -28,6 +29,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     const {data: projects, loading: projectsLoading} = useGitHubProjects(session?.accessToken);
     const [_, startTransition] = useTransition();
     const {addToast} = useToastStore();
+    const { setActiveStep } = useWizardStore();
 
     const publishJobs = async () => {
         const token = session?.accessToken;
@@ -50,8 +52,11 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             for await (const {status, message, progress} of publishSchemas(token, branch, backend, jobSchemas)) {
                 setProgress(progress);
                 if (status === 'error') {
-                    setError(message);
+                    setError(() => message);
                     setLoading(false);
+                    if (message.includes('403')) {
+                        setActiveStep(0);
+                    }
                 } else {
                     setStatus(message);
                 }
