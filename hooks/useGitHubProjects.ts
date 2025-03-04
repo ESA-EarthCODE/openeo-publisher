@@ -3,7 +3,7 @@
 
 import {useToastStore} from "../store/toasts";
 import {useQuery} from "@tanstack/react-query";
-import {getProjects} from "../lib/github/projects";
+import {getProjects} from "../lib/earthcode/projects";
 
 export const useGitHubProjects = (token?: string) => {
     const {addToast} = useToastStore();

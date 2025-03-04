@@ -1,11 +1,12 @@
 import {Autocomplete, FormControl, TextField} from "@mui/material";
 import React from "react";
 import {JobSchemaInfo, ProductInfo, WorkflowInfo} from "../../../lib/earthcode/schema.model";
+import {EarthCODEProjectInfo} from "../../../lib/earthcode/concepts.models";
 
 interface WorkflowFormProps {
     schema: WorkflowInfo;
-    projects: string[];
-    onFormChange: (schema: WorkflowInfo, key: "id" | "project" | "title" | "description" | "url", value: string) => void;
+    projects: EarthCODEProjectInfo[];
+    onFormChange: (schema: WorkflowInfo, key: "id" | "project" | "title" | "description" | "url", value: any) => void;
     showProjects?: boolean;
 }
 
@@ -20,12 +21,13 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     <Autocomplete
                         options={projects}
                         value={schema.project}
-                        onChange={(event, value) => onFormChange(schema, "project", value || '')}
+                        onChange={(event, value) => onFormChange(schema, "project", value)}
+                        getOptionLabel={(option) => option.title}
                         renderInput={(params) => <TextField {...params}
                                                             required
                                                             error={!schema.project}
                                                             onChange={(e) => onFormChange(schema, "project", e.target.value)}
-                                                            data-testid="workflow-schema-project" variant="outlined"
+                                                            data-testid="product-schema-project" variant="outlined"
                                                             label="Project"/>}
                     />
                 }

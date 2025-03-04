@@ -70,7 +70,6 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             id: job.title.toLowerCase().replaceAll(' ', '_'),
             title: `${job.title} - Product`,
             description: `Product of ${job.title}`,
-            project: "",
         } as ProductInfo;
     }
 
@@ -81,7 +80,6 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             id: job.title.toLowerCase().replaceAll(' ', '_'),
             title: `${job.title} - Workflow`,
             description: `Workflow of ${job.title}`,
-            project: "",
             url: ""
         } as WorkflowInfo;
     }
@@ -93,7 +91,6 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             id: job.title.toLowerCase().replaceAll(' ', '_'),
             title: `${job.title} - Experiment`,
             description: `Experiment of ${job.title}`,
-            project: "",
             license: "",
             product: initProductSchemaType(job),
             workflow: initWorkflowSchemaType(job),

@@ -3,11 +3,12 @@ import React from "react";
 import {ProductForm} from "@/components/Publish/forms/Product";
 import {ExperimentForm} from "@/components/Publish/forms/Experiment";
 import {WorkflowForm} from "@/components/Publish/forms/Workflow";
+import {EarthCODEProjectInfo} from "../../lib/earthcode/concepts.models";
 
 interface JobSchemaFormProps {
     schema: JobSchemaInfo;
-    projects: string[];
-    onFormChange: (schema: JobSchemaInfo, key: any, value: string) => void;
+    projects: EarthCODEProjectInfo[];
+    onFormChange: (schema: JobSchemaInfo, key: any, value: any) => void;
 }
 
 export const JobSchemaForm = ({schema, projects, onFormChange}: JobSchemaFormProps) => {

@@ -6,7 +6,8 @@ import {publishWorkflow} from "./workflow";
 import {publishExperiment} from "./experiment";
 import {createPR} from "lib/github/pr";
 import {getFile, updateFile} from "lib/github/files";
-import {projectExists} from "lib/github/projects";
+import {projectExists} from "../projects";
+import {EarthCODEProjectInfo} from "../concepts.models";
 
 
 export const publishSchemas = async function* (
@@ -26,14 +27,17 @@ export const publishSchemas = async function* (
     const workflows: WorkflowInfo[] = [];
     const experiments: ExperimentInfo[] = [];
 
-    const groupedProjects = schemas.reduce<{ project: string, schemas: JobSchemaInfo[] }[]>((list, schema) => {
-        const existingProject = list.find(i => i.project === schema.project);
-        existingProject ? existingProject.schemas.push(schema) : list.push({
-            project: schema.project,
-            schemas: [schema]
-        });
-        return list;
-    }, []);
+    const groupedProjects = schemas
+        .reduce<{ project?: EarthCODEProjectInfo, schemas: JobSchemaInfo[] }[]>((list, schema) => {
+            const existingProject = list
+                .filter(i => i.project)
+                .find(i => i.project?.id === schema.project?.id);
+            existingProject ? existingProject.schemas.push(schema) : list.push({
+                project: schema.project,
+                schemas: [schema]
+            });
+            return list;
+        }, []);
 
     // totalSteps = number of schemas + 3 parent catalogues + each project + create pr + offset
     const totalSteps = schemas.length + 3 + groupedProjects.length + 1 + 1;
@@ -44,7 +48,7 @@ export const publishSchemas = async function* (
         return;
     }
 
-    yield { status: "processing", message: "Creating branch", progress: getProgress() };
+    yield {status: "processing", message: "Creating branch", progress: getProgress()};
     await createBranch(token, branch);
 
     try {
@@ -53,29 +57,35 @@ export const publishSchemas = async function* (
 
             switch (schema.type) {
                 case SchemaType.PRODUCT:
-                    yield { status: "progress", message: `Processing product ${schema.id}`, progress: getProgress() };
+                    yield {status: "progress", message: `Processing product ${schema.id}`, progress: getProgress()};
                     await publishProduct(schema as ProductInfo, backend, token, branch);
                     products.push(schema as ProductInfo);
                     break;
 
                 case SchemaType.WORKFLOW:
-                    yield { status: "progress", message: `Processing workflow ${schema.id}`, progress: getProgress() };
+                    yield {status: "progress", message: `Processing workflow ${schema.id}`, progress: getProgress()};
                     await publishWorkflow(schema as WorkflowInfo, [], token, branch);
                     workflows.push(schema as WorkflowInfo);
                     break;
 
                 case SchemaType.EXPERIMENT:
-                    yield { status: "progress", message: `Processing experiment ${schema.id}`, progress: getProgress() };
+                    yield {status: "progress", message: `Processing experiment ${schema.id}`, progress: getProgress()};
 
                     const experimentSchema = schema as ExperimentInfo;
 
-                    await publishProduct(experimentSchema.product, backend, token, branch);
+                    const product = await publishProduct({
+                        ...experimentSchema.product,
+                        project: experimentSchema.project
+                    }, backend, token, branch);
                     products.push(experimentSchema.product);
 
-                    await publishWorkflow(experimentSchema.workflow, [schema.id], token, branch);
+                    const workflow = await publishWorkflow({
+                        ...experimentSchema.workflow,
+                        project: experimentSchema.project
+                    }, [schema.id], token, branch);
                     workflows.push(experimentSchema.workflow);
 
-                    await publishExperiment(experimentSchema, token, branch);
+                    await publishExperiment(experimentSchema, workflow, product, token, branch);
                     experiments.push(experimentSchema);
                     break;
 
@@ -84,17 +94,31 @@ export const publishSchemas = async function* (
             }
         }
 
-        yield { status: "progress", message: `Registering ${schemas.length} products in parent catalog`, progress: getProgress() };
-        await registerSchemas(token, branch, "products", "collection.json", products);
-        yield { status: "progress", message: `Registering ${schemas.length} workflows in parent catalog`, progress: getProgress() };
-        await registerSchemas(token, branch, "workflows", "record.json", workflows);
-        yield { status: "progress", message: `Registering ${schemas.length} experiments in parent catalog`, progress: getProgress() };
-        await registerSchemas(token, branch, "experiments", "record.json", experiments,);
+        yield {
+            status: "progress",
+            message: `Registering ${schemas.length} products in parent catalog`,
+            progress: getProgress()
+        };
+        await registerSchemas(token, branch, "products", "collection.json", products, 'child');
+        yield {
+            status: "progress",
+            message: `Registering ${schemas.length} workflows in parent catalog`,
+            progress: getProgress()
+        };
+        await registerSchemas(token, branch, "workflows", "record.json", workflows, 'item');
+        yield {
+            status: "progress",
+            message: `Registering ${schemas.length} experiments in parent catalog`,
+            progress: getProgress()
+        };
+        await registerSchemas(token, branch, "experiments", "record.json", experiments, 'item');
 
 
         for (const project of groupedProjects) {
             yield {status: "progress", message: `Registering project ${project.project}`, progress: getProgress()};
-            await registerProject(token, branch, project.project, project.schemas);
+            if (project.project) {
+                await registerProject(token, branch, project.project, project.schemas);
+            }
         }
 
         yield {status: "progress", message: "Creating PR...", progress: getProgress()};
@@ -115,23 +139,24 @@ const registerSchemas = async (
     category: string,
     filename: string,
     schemas: JobSchemaInfo[],
-)=>  {
+    rel: string,
+) => {
     if (!schemas.length) {
         return;
     }
-    await registerParentCatalogue(token,  `${category}/catalog.json`, filename, branch, schemas);
+    await registerParentCatalogue(token, `${category}/catalog.json`, filename, branch, schemas, rel);
 };
 
-const registerParentCatalogue = async (token: string, path: string, filename: string, branch: string, schemas: JobSchemaInfo[]) => {
+const registerParentCatalogue = async (token: string, path: string, filename: string, branch: string, schemas: JobSchemaInfo[], rel: string) => {
 
     const {sha, content} = await getFile(token, path, branch);
 
     for (const schema of schemas) {
         content.links.push({
-            rel: "child",
+            rel,
             href: schema.href || `./${schema.id}/${filename}`,
             type: "application/json",
-            title: schema.job.title
+            title: schema.title
         })
     }
 
@@ -139,13 +164,15 @@ const registerParentCatalogue = async (token: string, path: string, filename: st
     await updateFile(token, path, branch, sha, 'Updated parent collection', content);
 }
 
-const registerProject = async (token: string, branch: string, project: string, schemas: JobSchemaInfo[]) => {
-    if (!await projectExists(token, project)) {
-        console.warn(`Trying to register non existing project ${project}`);
+const registerProject = async (token: string, branch: string, project: EarthCODEProjectInfo, schemas: JobSchemaInfo[]) => {
+    if (!await projectExists(token, project.id)) {
+        console.warn(`Trying to register non existing project ${project.id}`);
     } else {
-        await registerParentCatalogue(token, `projects/${project}/collection.json`, '', branch, schemas.map(s => ({
-            ...s,
-            href: `../../${s.type.toLowerCase()}/${s.id}/${s.type === SchemaType.PRODUCT ? 'collection.json' : 'record.json'}`
-        })))
+        await registerParentCatalogue(token, `projects/${project.id}/collection.json`, '', branch, schemas
+            .filter(s => s.type === SchemaType.PRODUCT)
+            .map(s => ({
+                ...s,
+                href: `../../${s.type.toLowerCase()}/${s.id}/${s.type === SchemaType.PRODUCT ? 'collection.json' : 'record.json'}`
+            })), 'child')
     }
 }

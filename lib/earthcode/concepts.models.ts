@@ -43,12 +43,18 @@ export interface EarthCODEProduct extends OSCProps {
     extent: Extent
     links: Link[]
     assets: Assets
+    themes: any[];
 }
 
 export interface EarthCODEWorkflow extends RecordHeaders {
     properties: RecordProperties & OSCProps;
 
 }
-export interface EarthCODEExpiriment extends RecordHeaders{
+export interface EarthCODEExperiment extends RecordHeaders{
     properties: RecordProperties & OSCExperimentProps;
+}
+
+export interface EarthCODEProjectInfo {
+    id: string;
+    title: string;
 }

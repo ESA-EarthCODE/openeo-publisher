@@ -1,8 +1,18 @@
 import {Link, OpenEOJobResults} from "../openeo/results.models";
-import {EarthCODEExpiriment, EarthCODEProduct, EarthCODEWorkflow} from "./concepts.models";
+import {EarthCODEExperiment, EarthCODEProduct, EarthCODEProjectInfo, EarthCODEWorkflow} from "./concepts.models";
 import moment from "moment";
 
-export const createProductCollection = (id: string, title: string, description: string, project: string, job: OpenEOJobResults): EarthCODEProduct => {
+const getRel = (link: Link) => {
+    if(link.rel === 'canonical') {
+        return 'via';
+    } else if (link.rel === 'self') {
+        return 'item';
+    } else {
+        return link.rel
+    }
+}
+
+export const createProductCollection = (id: string, title: string, description: string, project: EarthCODEProjectInfo, job: OpenEOJobResults): EarthCODEProduct => {
     return {
         assets: job.assets,
         description: description,
@@ -13,9 +23,15 @@ export const createProductCollection = (id: string, title: string, description: 
             ...job.links.map((l: Link) => (
                 {
                     ...l,
-                    rel: l.rel === 'canonical' ? 'via' : l.rel,
+                    rel: getRel(l)
                 }
             )),
+            {
+                "rel": "related",
+                "href": `../../projects/${project.id}/collection.json`,
+                "type": "application/json",
+                "title": `Project: ${project.title}`
+            },
             {
                 "rel": "parent",
                 "href": "../catalog.json",
@@ -31,19 +47,21 @@ export const createProductCollection = (id: string, title: string, description: 
         ],
         stac_extensions: [
             "https://stac-extensions.github.io/osc/v1.0.0-rc.3/schema.json",
+            "https://stac-extensions.github.io/themes/v1.0.0/schema.json",
         ],
         stac_version: job.stac_version,
         title: title,
         type: job.type,
         "osc:missions": [],
-        "osc:project": project,
+        "osc:project": project.id,
         "osc:status": "completed",
         "osc:type": "product",
-        "osc:variables": []
+        "osc:variables": [],
+        themes: []
     }
 }
 
-export const createWorkflowCollection = (id: string, title: string, description: string, project: string, workflowUrl: string, experimentIds: string[]): EarthCODEWorkflow => {
+export const createWorkflowCollection = (id: string, title: string, description: string, project: EarthCODEProjectInfo, workflowUrl: string, experimentIds: string[]): EarthCODEWorkflow => {
     return {
         type: "Feature",
         conformsTo: [
@@ -62,13 +80,13 @@ export const createWorkflowCollection = (id: string, title: string, description:
                 "rel": "parent",
                 "href": "../catalog.json",
                 "type": "application/json",
-                "title": "Projects"
+                "title": "Workflows"
             },
             {
                 "rel": "related",
-                "href": `../../projects/${project}/collection.json`,
+                "href": `../../projects/${project.id}/collection.json`,
                 "type": "application/json",
-                "title": `Project: ${project}`
+                "title": `Project: ${project.title}`
             },
             {
                 "rel": "application",
@@ -91,7 +109,7 @@ export const createWorkflowCollection = (id: string, title: string, description:
             updated: moment().toISOString(false),
             type: "workflow",
             "osc:missions": [],
-            "osc:project": project,
+            "osc:project": project.id,
             "osc:status": "completed",
             "osc:type": "workflow",
             "osc:variables": [],
@@ -100,7 +118,7 @@ export const createWorkflowCollection = (id: string, title: string, description:
     }
 }
 
-export const createExperimentCollection = (id: string, title: string, description: string, license: string, workflowId: string, productId: string): EarthCODEExpiriment => {
+export const createExperimentCollection = (id: string, title: string, description: string, license: string, project: EarthCODEProjectInfo, workflow: EarthCODEWorkflow, product: EarthCODEProduct): EarthCODEExperiment => {
     return {
         id,
         type: "Feature",
@@ -115,8 +133,9 @@ export const createExperimentCollection = (id: string, title: string, descriptio
             title,
             description,
             license,
-            "osc:workflow": workflowId,
-            "osc:product": productId,
+            "osc:project": project.id,
+            "osc:workflow": workflow.id,
+            "osc:product": product.id,
             version: "2"
         },
         links: [
@@ -134,16 +153,22 @@ export const createExperimentCollection = (id: string, title: string, descriptio
             },
             {
                 rel: "related",
-                href: `../../workflows/${workflowId}/record.json`,
+                href: `../../workflows/${workflow.id}/record.json`,
                 type: "application/json",
-                title: `Workflow: ${workflowId}`
+                title: `Workflow: ${workflow.properties.title}`
             },
             {
                 rel: "related",
-                href: `../../products/${productId}/collection.json`,
+                href: `../../products/${product.id}/collection.json`,
                 type: "application/json",
-                title: `Product: ${productId}`
-            }
+                title: `Product: ${product.title}`
+            },
+            {
+                "rel": "related",
+                "href": `../../projects/${project.id}/collection.json`,
+                "type": "application/json",
+                "title": `Project: ${project.title}`
+            },
         ]
     }
 }

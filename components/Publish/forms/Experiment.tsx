@@ -3,10 +3,11 @@ import React, {useCallback} from "react";
 import {ExperimentInfo, ProductInfo, WorkflowInfo} from "../../../lib/earthcode/schema.model";
 import {ProductForm} from "@/components/Publish/forms/Product";
 import {WorkflowForm} from "@/components/Publish/forms/Workflow";
+import {EarthCODEProjectInfo} from "../../../lib/earthcode/concepts.models";
 
 interface ExperimentFormProps {
     schema: ExperimentInfo;
-    projects: string[];
+    projects: EarthCODEProjectInfo[];
     onFormChange: (schema: ExperimentInfo, key: "id" | "project" | "title" | "description" | "license" | "product" | "workflow", value: any) => void;
 }
 
@@ -37,7 +38,8 @@ export const ExperimentForm = ({schema, projects, onFormChange}: ExperimentFormP
                     <Autocomplete
                         options={projects}
                         value={schema.project}
-                        onChange={(event, value) => onFormChange(schema, "project", value || '')}
+                        onChange={(event, value) => onFormChange(schema, "project", value)}
+                        getOptionLabel={(option) => option.title}
                         renderInput={(params) => <TextField {...params}
                                                             required
                                                             error={!schema.project}

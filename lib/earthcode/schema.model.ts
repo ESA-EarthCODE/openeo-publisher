@@ -1,4 +1,5 @@
 import {OpenEOJob} from "../openeo/jobs.models";
+import {EarthCODEProjectInfo} from "./concepts.models";
 
 export enum SchemaType {
     PRODUCT = 'Product',
@@ -12,7 +13,7 @@ export interface JobSchemaInfo {
     id: string;
     title: string;
     description: string;
-    project: string;
+    project?: EarthCODEProjectInfo;
     job: OpenEOJob;
     href?: string;
 }

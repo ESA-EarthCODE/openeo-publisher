@@ -14,6 +14,7 @@
     "license": "CC-BY-SA-4.0",
     "osc:workflow": "worldcereal-maize-detection-workflow",
     "osc:product": "worldcereal-maize-detection-product",
+    "osc:project": "worldcereal",
     "version": "2"
   },
   "links": [
@@ -33,13 +34,19 @@
       "rel": "related",
       "href": "../../workflows/worldcereal-maize-detection-workflow/record.json",
       "type": "application/json",
-      "title": "Workflow: worldcereal-maize-detection-workflow"
+      "title": "Workflow: ESA worldcereal global maize detector"
     },
     {
       "rel": "related",
       "href": "../../products/worldcereal-maize-detection-product/collection.json",
       "type": "application/json",
-      "title": "Product: worldcereal-maize-detection-product"
+      "title": "Product: WorldCereal Crop Extent - Belgium"
+    },
+    {
+      "href": "../../projects/worldcereal/collection.json",
+      "rel": "related",
+      "title": "Project: ESA WorldCereal",
+      "type": "application/json"
     }
   ]
 }

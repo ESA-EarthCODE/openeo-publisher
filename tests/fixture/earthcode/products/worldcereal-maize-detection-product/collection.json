@@ -2,11 +2,13 @@
   "type": "Collection",
   "id": "worldcereal-maize-detection-product",
   "stac_version": "1.0.0",
+  "themes": [],
   "description": "Results for batch job cdse-j-25020410530548a7aef81c62faebd127",
   "title": "WorldCereal Crop Extent - Belgium",
   "license": "proprietary",
   "stac_extensions": [
-    "https://stac-extensions.github.io/osc/v1.0.0-rc.3/schema.json"
+    "https://stac-extensions.github.io/osc/v1.0.0-rc.3/schema.json",
+    "https://stac-extensions.github.io/themes/v1.0.0/schema.json"
   ],
   "osc:type": "product",
   "osc:status": "completed",
@@ -2648,7 +2650,7 @@
     },
     {
       "href": "https://openeofed.dataspace.copernicus.eu/openeo/1.2/jobs/cdse-j-25020410530548a7aef81c62faebd127/results",
-      "rel": "self",
+      "rel": "item",
       "type": "application/json"
     },
     {
@@ -2660,6 +2662,12 @@
       "href": "https://openeofed.dataspace.copernicus.eu/openeo/1.2/jobs/cdse-j-25020410530548a7aef81c62faebd127/results/items/NjM5MTg1MWYtOTA0Mi00MTA4LThiMmEtM2RkMmU4YTlkZDBi/617625e3c9622cd6a48b4cbd9db81919/worldcereal-cropland-extent.tif?expires=1739274740",
       "rel": "item",
       "type": "application/geo+json"
+    },
+    {
+      "href": "../../projects/worldcereal/collection.json",
+      "rel": "related",
+      "title": "Project: ESA WorldCereal",
+      "type": "application/json"
     },
     {
       "rel": "parent",

@@ -1,11 +1,12 @@
 import {Autocomplete, FormControl, TextField} from "@mui/material";
 import React from "react";
 import {ProductInfo} from "../../../lib/earthcode/schema.model";
+import {EarthCODEProjectInfo} from "../../../lib/earthcode/concepts.models";
 
 interface ProductFormProps {
     schema: ProductInfo;
-    projects: string[];
-    onFormChange: (schema: ProductInfo, key: "id" | "project" | "title" | "description", value: string) => void;
+    projects: EarthCODEProjectInfo[];
+    onFormChange: (schema: ProductInfo, key: "id" | "project" | "title" | "description", value: any) => void;
     showProjects?: boolean;
 }
 
@@ -20,7 +21,8 @@ export const ProductForm = ({schema, projects, onFormChange, showProjects = true
                     <Autocomplete
                         options={projects}
                         value={schema.project}
-                        onChange={(event, value) => onFormChange(schema, "project", value || '')}
+                        onChange={(event, value) => onFormChange(schema, "project", value)}
+                        getOptionLabel={(option) => option.title}
                         renderInput={(params) => <TextField {...params}
                                                             required
                                                             error={!schema.project}
