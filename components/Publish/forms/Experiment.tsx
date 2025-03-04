@@ -96,7 +96,7 @@ export const ExperimentForm = ({schema, projects, themes, onFormChange}: Experim
                         renderInput={(params) => <TextField {...params}
                                                             required
                                                             error={schema.themes.length === 0}
-                                                            data-testid="expriment-schema-theme" variant="outlined"
+                                                            data-testid="experiment-schema-theme" variant="outlined"
                                                             label="Themes"/>}
                     />
                 </FormControl>

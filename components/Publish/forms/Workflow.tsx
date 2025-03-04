@@ -29,7 +29,7 @@ export const WorkflowForm = ({schema, projects, themes, onFormChange, isChild = 
                                                             required
                                                             error={!schema.project}
                                                             onChange={(e) => onFormChange(schema, "project", e.target.value)}
-                                                            data-testid="product-schema-project" variant="outlined"
+                                                            data-testid="workflow-schema-project" variant="outlined"
                                                             label="Project"/>}
                     />
                 }
