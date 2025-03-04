@@ -4,12 +4,13 @@
 import {useToastStore} from "../store/toasts";
 import {useQuery} from "@tanstack/react-query";
 import {getProjects} from "../lib/earthcode/projects";
+import {getThemes} from "../lib/earthcode/themes";
 
-export const useGitHubProjects = (token?: string) => {
+export const useEarthCODEThemes = (token?: string) => {
     const {addToast} = useToastStore();
 
     if (!token) {
-        console.warn('No token configured when fetching GitHub Projects');
+        console.warn('No token configured when fetching EarthCODE Themes');
         return {
             data: [],
             loading: false,
@@ -17,14 +18,14 @@ export const useGitHubProjects = (token?: string) => {
     } else {
 
         const query = useQuery({
-            queryKey: ['github-projects'],
+            queryKey: ['earthcode-themes'],
             queryFn: async () => {
                 try {
-                    return await getProjects(token);
+                    return await getThemes(token);
                 } catch (err: any) {
-                    console.error('Could not retrieve GitHub projects', err);
+                    console.error('Could not retrieve EarthCODE Themes', err);
                     addToast({
-                        message: 'Could not retrieve GitHub Projects',
+                        message: 'Could not retrieve EarthCODE Themes',
                         severity: 'warning',
                     });
                     return [];

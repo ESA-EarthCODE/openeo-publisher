@@ -11,7 +11,7 @@ export const publishExperiment = async (
     branch: string
 ): Promise<EarthCODEExperiment> => {
     const experiment = createExperimentCollection(
-        schema.id, schema.title, schema.description, schema.license, schema.project || {id: '', title: ''}, workflow, product
+        schema.id, schema.title, schema.description, schema.license, schema.project || {id: '', title: ''}, schema.themes, workflow, product
     );
 
     await createFile(

@@ -22,6 +22,7 @@ export  interface RecordProperties {
     updated: string;
     license?: string;
     version?: string;
+    themes: any[];
 }
 
 export interface RecordHeaders {
@@ -55,6 +56,11 @@ export interface EarthCODEExperiment extends RecordHeaders{
 }
 
 export interface EarthCODEProjectInfo {
+    id: string;
+    title: string;
+}
+
+export interface EarthCODEThemeInfo{
     id: string;
     title: string;
 }

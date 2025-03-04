@@ -8,9 +8,10 @@ import {ExperimentInfo, JobSchemaInfo, ProductInfo, SchemaType, WorkflowInfo} fr
 import {JobSummary} from "@/components/Publish/JobSummary";
 import {JobSchemaForm} from "@/components/Publish/JobSchemaForm";
 import {Loading} from "@/components/Loading";
-import {useGitHubProjects} from "../../hooks/useGitHubProjects";
+import {useEarthCODEProjects} from "../../hooks/useEarthCODEProjects";
 import {publishSchemas} from "../../lib/earthcode/publish";
 import {useWizardStore} from "../../store/wizard";
+import {useEarthCODEThemes} from "../../hooks/useEarthCODEThemes";
 
 interface PublishProps {
     jobs: OpenEOJob[];
@@ -26,7 +27,8 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     const [progress, setProgress] = useState<number>(0);
     const [jobSchemas, setJobSchemas] = useState<JobSchemaInfo[]>([]);
     const {data: session} = useSession();
-    const {data: projects, loading: projectsLoading} = useGitHubProjects(session?.accessToken);
+    const {data: projects, loading: projectsLoading} = useEarthCODEProjects(session?.accessToken);
+    const {data: themes, loading: themesLoading} = useEarthCODEThemes(session?.accessToken);
     const [_, startTransition] = useTransition();
     const {addToast} = useToastStore();
     const { setActiveStep } = useWizardStore();
@@ -75,6 +77,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             id: job.title.toLowerCase().replaceAll(' ', '_'),
             title: `${job.title} - Product`,
             description: `Product of ${job.title}`,
+            themes: [],
         } as ProductInfo;
     }
 
@@ -85,7 +88,8 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             id: job.title.toLowerCase().replaceAll(' ', '_'),
             title: `${job.title} - Workflow`,
             description: `Workflow of ${job.title}`,
-            url: ""
+            url: "",
+            themes: []
         } as WorkflowInfo;
     }
 
@@ -99,6 +103,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             license: "",
             product: initProductSchemaType(job),
             workflow: initWorkflowSchemaType(job),
+            themes: []
         } as ExperimentInfo;
     }
 
@@ -115,15 +120,15 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     }
 
     const isProductSchemaValid = (schema: ProductInfo, isChild: boolean = true): boolean => {
-        return schema && !!schema.id && (isChild || !!schema.project) && !!schema.title && !!schema.description
+        return schema && !!schema.id && (isChild || !!schema.project) && !!schema.title && !!schema.description && (isChild || schema.themes.length > 0);
     }
 
     const isWorkflowSchemaValid = (schema: WorkflowInfo, isChild: boolean = true): boolean => {
-        return schema && !!schema.id && (isChild || !!schema.project) && !!schema.title && !!schema.description && !!schema.url
+        return schema && !!schema.id && (isChild || !!schema.project) && !!schema.title && !!schema.description && !!schema.url && (isChild || schema.themes.length > 0);
     }
 
     const isExperimentSchemaValid = (schema: ExperimentInfo): boolean => {
-        return schema && !!schema.id && !!schema.project && !!schema.title && !!schema.description && isProductSchemaValid(schema.product) && isWorkflowSchemaValid(schema.workflow);
+        return schema && !!schema.id && !!schema.project && !!schema.title && !!schema.description && schema.themes.length > 0 && isProductSchemaValid(schema.product) && isWorkflowSchemaValid(schema.workflow);
 
     }
 
@@ -162,7 +167,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
         );
     }, []);
 
-    return projectsLoading ? <Loading/> : (
+    return (projectsLoading || themesLoading) ? <Loading/> : (
         <div className="flex flex-col">
             <div className="font-bold">Summary</div>
             <div className="flex flex-col gap-2 my-5">
@@ -181,6 +186,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                                     .map((s) => (
                                         <JobSchemaForm schema={s}
                                                        projects={projects}
+                                                       themes={themes}
                                                        onFormChange={handleFormChange}
                                                        key={`schema_form_${job.id}`}
                                         />

@@ -3,15 +3,16 @@ import React, {useCallback} from "react";
 import {ExperimentInfo, ProductInfo, WorkflowInfo} from "../../../lib/earthcode/schema.model";
 import {ProductForm} from "@/components/Publish/forms/Product";
 import {WorkflowForm} from "@/components/Publish/forms/Workflow";
-import {EarthCODEProjectInfo} from "../../../lib/earthcode/concepts.models";
+import {EarthCODEProjectInfo, EarthCODEThemeInfo} from "../../../lib/earthcode/concepts.models";
 
 interface ExperimentFormProps {
     schema: ExperimentInfo;
     projects: EarthCODEProjectInfo[];
-    onFormChange: (schema: ExperimentInfo, key: "id" | "project" | "title" | "description" | "license" | "product" | "workflow", value: any) => void;
+    themes: EarthCODEThemeInfo[];
+    onFormChange: (schema: ExperimentInfo, key: string, value: any) => void;
 }
 
-export const ExperimentForm = ({schema, projects, onFormChange}: ExperimentFormProps) => {
+export const ExperimentForm = ({schema, projects, themes, onFormChange}: ExperimentFormProps) => {
 
     const handleProductChange = useCallback((product: ProductInfo, key: any, value: string) => {
         onFormChange(schema, "product", {
@@ -40,6 +41,7 @@ export const ExperimentForm = ({schema, projects, onFormChange}: ExperimentFormP
                         value={schema.project}
                         onChange={(event, value) => onFormChange(schema, "project", value)}
                         getOptionLabel={(option) => option.title}
+                        getOptionKey={(option) => option.id}
                         renderInput={(params) => <TextField {...params}
                                                             required
                                                             error={!schema.project}
@@ -83,17 +85,31 @@ export const ExperimentForm = ({schema, projects, onFormChange}: ExperimentFormP
                         onChange={(e) => onFormChange(schema, "license", e.target.value)}
                         data-testid="experiment-schema-license"
                     />
+                    <Autocomplete
+                        options={themes}
+                        value={schema.themes || []}
+                        onChange={(event, value) => onFormChange(schema, "themes", value)}
+                        getOptionLabel={(option) => option.title}
+                        getOptionKey={(option) => option.id}
+                        isOptionEqualToValue={(option, value) => option.id === value.id}
+                        multiple
+                        renderInput={(params) => <TextField {...params}
+                                                            required
+                                                            error={schema.themes.length === 0}
+                                                            data-testid="expriment-schema-theme" variant="outlined"
+                                                            label="Themes"/>}
+                    />
                 </FormControl>
             </div>
             <hr/>
             <div>
-                <WorkflowForm schema={schema.workflow} projects={[]} onFormChange={handleWorkflowChange}
-                              showProjects={false}/>
+                <WorkflowForm schema={schema.workflow} themes={themes} projects={[]} onFormChange={handleWorkflowChange}
+                              isChild={true}/>
             </div>
             <hr/>
             <div>
-                <ProductForm schema={schema.product} projects={[]} onFormChange={handleProductChange}
-                             showProjects={false}/>
+                <ProductForm schema={schema.product} themes={themes} projects={[]} onFormChange={handleProductChange}
+                             isChild={true}/>
             </div>
         </div>
     );

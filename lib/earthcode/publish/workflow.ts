@@ -10,7 +10,7 @@ export const publishWorkflow = async (
     branch: string
 ): Promise<EarthCODEWorkflow> => {
     const workflow = createWorkflowCollection(
-        schema.id, schema.title, schema.description, schema.project || {id: '', title: ''}, schema.url, experiments
+        schema.id, schema.title, schema.description, schema.project || {id: '', title: ''}, schema.themes, schema.url, experiments
     );
 
     await createFile(

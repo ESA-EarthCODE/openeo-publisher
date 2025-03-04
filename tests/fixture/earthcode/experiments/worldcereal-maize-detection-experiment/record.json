@@ -15,7 +15,17 @@
     "osc:workflow": "worldcereal-maize-detection-workflow",
     "osc:product": "worldcereal-maize-detection-product",
     "osc:project": "worldcereal",
-    "version": "2"
+    "version": "2",
+    "themes": [
+      {
+        "concepts": [
+          {
+            "id": "test"
+          }
+        ],
+        "scheme": "https://github.com/stac-extensions/osc#theme"
+      }
+    ]
   },
   "links": [
     {
@@ -47,6 +57,12 @@
       "rel": "related",
       "title": "Project: ESA WorldCereal",
       "type": "application/json"
+    },
+    {
+      "rel": "related",
+      "href": "../../themes/test/catalog.json",
+      "type": "application/json",
+      "title": "Theme: TEST"
     }
   ]
 }

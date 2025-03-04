@@ -16,7 +16,17 @@
     "osc:type": "workflow",
     "osc:region": "",
     "osc:missions": [],
-    "osc:variables": []
+    "osc:variables": [],
+    "themes": [
+      {
+        "concepts": [
+          {
+            "id": "test"
+          }
+        ],
+        "scheme": "https://github.com/stac-extensions/osc#theme"
+      }
+    ]
   },
   "links": [
     {
@@ -36,6 +46,12 @@
       "href": "../../projects/worldcereal/collection.json",
       "type": "application/json",
       "title": "Project: ESA WorldCereal"
+    },
+    {
+      "rel": "related",
+      "href": "../../themes/test/catalog.json",
+      "type": "application/json",
+      "title": "Theme: TEST"
     },
     {
       "rel": "application",

@@ -1,28 +1,30 @@
 import {Autocomplete, FormControl, TextField} from "@mui/material";
 import React from "react";
 import {ProductInfo} from "../../../lib/earthcode/schema.model";
-import {EarthCODEProjectInfo} from "../../../lib/earthcode/concepts.models";
+import {EarthCODEProjectInfo, EarthCODEThemeInfo} from "../../../lib/earthcode/concepts.models";
 
 interface ProductFormProps {
     schema: ProductInfo;
     projects: EarthCODEProjectInfo[];
-    onFormChange: (schema: ProductInfo, key: "id" | "project" | "title" | "description", value: any) => void;
-    showProjects?: boolean;
+    themes: EarthCODEThemeInfo[];
+    onFormChange: (schema: ProductInfo, key: string, value: any) => void;
+    isChild?: boolean;
 }
 
-export const ProductForm = ({schema, projects, onFormChange, showProjects = true}: ProductFormProps) => {
+export const ProductForm = ({schema, projects, themes, onFormChange, isChild = false}: ProductFormProps) => {
     return (
         <div>
         <span className='font-bold mb-4 flex items-center'>
                             Product
                         </span>
             <FormControl className='flex w-full flex-col gap-4'>
-                {showProjects &&
+                {!isChild &&
                     <Autocomplete
                         options={projects}
                         value={schema.project}
                         onChange={(event, value) => onFormChange(schema, "project", value)}
                         getOptionLabel={(option) => option.title}
+                        getOptionKey={(option) => option.id}
                         renderInput={(params) => <TextField {...params}
                                                             required
                                                             error={!schema.project}
@@ -60,6 +62,22 @@ export const ProductForm = ({schema, projects, onFormChange, showProjects = true
                     required
                     error={!schema.description}
                 />
+                {!isChild &&
+                    <Autocomplete
+                        options={themes}
+                        value={schema.themes || []}
+                        onChange={(event, value) => onFormChange(schema, "themes", value)}
+                        getOptionLabel={(option) => option.title}
+                        getOptionKey={(option) => option.id}
+                        isOptionEqualToValue={(option, value) => option.id === value.id}
+                        multiple
+                        renderInput={(params) => <TextField {...params}
+                                                            required
+                                                            error={schema.themes.length === 0}
+                                                            data-testid="product-schema-theme" variant="outlined"
+                                                            label="Themes"/>}
+                    />
+                }
             </FormControl>
         </div>
     );

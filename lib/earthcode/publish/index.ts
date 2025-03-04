@@ -7,7 +7,8 @@ import {publishExperiment} from "./experiment";
 import {createPR} from "lib/github/pr";
 import {getFile, updateFile} from "lib/github/files";
 import {projectExists} from "../projects";
-import {EarthCODEProjectInfo} from "../concepts.models";
+import {EarthCODEProjectInfo, EarthCODEThemeInfo} from "../concepts.models";
+import {themeExists} from "../themes";
 
 
 export const publishSchemas = async function* (
@@ -34,13 +35,27 @@ export const publishSchemas = async function* (
                 .find(i => i.project?.id === schema.project?.id);
             existingProject ? existingProject.schemas.push(schema) : list.push({
                 project: schema.project,
-                schemas: [schema]
+                schemas: schema.type === SchemaType.EXPERIMENT ? [schema, (schema as ExperimentInfo).product, (schema as ExperimentInfo).workflow] : [schema]
             });
             return list;
         }, []);
 
-    // totalSteps = number of schemas + 3 parent catalogues + each project + create pr + offset
-    const totalSteps = schemas.length + 3 + groupedProjects.length + 1 + 1;
+    const groupedThemes = schemas
+        .reduce<{ theme: EarthCODEThemeInfo, schemas: JobSchemaInfo[] }[]>((list, schema) => {
+            for (const theme of schema.themes) {
+                const existingTheme = list
+                    .find(i => i.theme.id === theme.id);
+                existingTheme ? existingTheme.schemas.push(schema) : list.push({
+                    theme,
+                    schemas: schema.type === SchemaType.EXPERIMENT ? [schema, (schema as ExperimentInfo).product, (schema as ExperimentInfo).workflow] : [schema]
+                });
+            }
+            return list;
+        }, []);
+
+
+    // totalSteps = number of schemas + 3 parent catalogues + each project + each theme + create pr + offset
+    const totalSteps = schemas.length + 3 + groupedProjects.length + groupedThemes.length + 1 + 1;
     const getProgress = () => Math.round(((stepCount++) / totalSteps) * 100);
 
     if (!token || !branch || !backend || !schemas) {
@@ -75,13 +90,15 @@ export const publishSchemas = async function* (
 
                     const product = await publishProduct({
                         ...experimentSchema.product,
-                        project: experimentSchema.project
+                        project: experimentSchema.project,
+                        themes: experimentSchema.themes
                     }, backend, token, branch);
                     products.push(experimentSchema.product);
 
                     const workflow = await publishWorkflow({
                         ...experimentSchema.workflow,
-                        project: experimentSchema.project
+                        project: experimentSchema.project,
+                        themes: experimentSchema.themes
                     }, [schema.id], token, branch);
                     workflows.push(experimentSchema.workflow);
 
@@ -119,6 +136,11 @@ export const publishSchemas = async function* (
             if (project.project) {
                 await registerProject(token, branch, project.project, project.schemas);
             }
+        }
+
+        for (const theme of groupedThemes) {
+            yield {status: "progress", message: `Registering theme ${theme.theme.id}`, progress: getProgress()};
+            await registerTheme(token, branch, theme.theme, theme.schemas);
         }
 
         yield {status: "progress", message: "Creating PR...", progress: getProgress()};
@@ -164,6 +186,8 @@ const registerParentCatalogue = async (token: string, path: string, filename: st
     await updateFile(token, path, branch, sha, 'Updated parent collection', content);
 }
 
+const getSelfRefLink = (schema: JobSchemaInfo) =>  `../../${schema.type.toLowerCase()}s/${schema.id}/${schema.type === SchemaType.PRODUCT ? 'collection.json' : 'record.json'}`
+
 const registerProject = async (token: string, branch: string, project: EarthCODEProjectInfo, schemas: JobSchemaInfo[]) => {
     if (!await projectExists(token, project.id)) {
         console.warn(`Trying to register non existing project ${project.id}`);
@@ -172,7 +196,20 @@ const registerProject = async (token: string, branch: string, project: EarthCODE
             .filter(s => s.type === SchemaType.PRODUCT)
             .map(s => ({
                 ...s,
-                href: `../../${s.type.toLowerCase()}/${s.id}/${s.type === SchemaType.PRODUCT ? 'collection.json' : 'record.json'}`
+                href: getSelfRefLink(s)
+            })), 'child')
+    }
+}
+
+const registerTheme = async (token: string, branch: string, theme: EarthCODEThemeInfo, schemas: JobSchemaInfo[]) => {
+    if (!await themeExists(token, theme.id)) {
+        console.warn(`Trying to register non existing theme ${theme.id}`);
+    } else {
+        await registerParentCatalogue(token, `themes/${theme.id}/catalog.json`, '', branch, schemas
+            .filter(s => s.type === SchemaType.PRODUCT)
+            .map(s => ({
+                ...s,
+                href: getSelfRefLink(s)
             })), 'child')
     }
 }

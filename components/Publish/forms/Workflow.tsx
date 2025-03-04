@@ -1,28 +1,30 @@
 import {Autocomplete, FormControl, TextField} from "@mui/material";
 import React from "react";
 import {JobSchemaInfo, ProductInfo, WorkflowInfo} from "../../../lib/earthcode/schema.model";
-import {EarthCODEProjectInfo} from "../../../lib/earthcode/concepts.models";
+import {EarthCODEProjectInfo, EarthCODEThemeInfo} from "../../../lib/earthcode/concepts.models";
 
 interface WorkflowFormProps {
     schema: WorkflowInfo;
     projects: EarthCODEProjectInfo[];
-    onFormChange: (schema: WorkflowInfo, key: "id" | "project" | "title" | "description" | "url", value: any) => void;
-    showProjects?: boolean;
+    themes: EarthCODEThemeInfo[];
+    onFormChange: (schema: WorkflowInfo, key: string, value: any) => void;
+    isChild?: boolean;
 }
 
-export const WorkflowForm = ({schema, projects, onFormChange, showProjects = true}: WorkflowFormProps) => {
+export const WorkflowForm = ({schema, projects, themes, onFormChange, isChild = false}: WorkflowFormProps) => {
     return (
         <div>
         <span className='font-bold mb-4 flex items-center'>
                             Workflow
                         </span>
             <FormControl className='flex w-full flex-col gap-4'>
-                {showProjects &&
+                {!isChild &&
                     <Autocomplete
                         options={projects}
                         value={schema.project}
                         onChange={(event, value) => onFormChange(schema, "project", value)}
                         getOptionLabel={(option) => option.title}
+                        getOptionKey={(option) => option.id}
                         renderInput={(params) => <TextField {...params}
                                                             required
                                                             error={!schema.project}
@@ -70,6 +72,22 @@ export const WorkflowForm = ({schema, projects, onFormChange, showProjects = tru
                     required
                     error={!schema.description}
                 />
+                {!isChild &&
+                    <Autocomplete
+                        options={themes}
+                        value={schema.themes || []}
+                        onChange={(event, value) => onFormChange(schema, "themes", value)}
+                        getOptionLabel={(option) => option.title}
+                        getOptionKey={(option) => option.id}
+                        isOptionEqualToValue={(option, value) => option.id === value.id}
+                        multiple
+                        renderInput={(params) => <TextField {...params}
+                                                            required
+                                                            error={schema.themes.length === 0}
+                                                            data-testid="workflow-schema-theme" variant="outlined"
+                                                            label="Themes"/>}
+                    />
+                }
             </FormControl>
         </div>
     );

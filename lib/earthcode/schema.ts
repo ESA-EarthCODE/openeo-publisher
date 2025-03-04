@@ -1,5 +1,11 @@
 import {Link, OpenEOJobResults} from "../openeo/results.models";
-import {EarthCODEExperiment, EarthCODEProduct, EarthCODEProjectInfo, EarthCODEWorkflow} from "./concepts.models";
+import {
+    EarthCODEExperiment,
+    EarthCODEProduct,
+    EarthCODEProjectInfo,
+    EarthCODEThemeInfo,
+    EarthCODEWorkflow
+} from "./concepts.models";
 import moment from "moment";
 
 const getRel = (link: Link) => {
@@ -12,7 +18,14 @@ const getRel = (link: Link) => {
     }
 }
 
-export const createProductCollection = (id: string, title: string, description: string, project: EarthCODEProjectInfo, job: OpenEOJobResults): EarthCODEProduct => {
+const createThemes = (themes: EarthCODEThemeInfo[]) => ([{
+    scheme: "https://github.com/stac-extensions/osc#theme",
+    concepts: themes.map(t => ({
+        id: t.id
+    }))
+}])
+
+export const createProductCollection = (id: string, title: string, description: string, project: EarthCODEProjectInfo, themes: EarthCODEThemeInfo[], job: OpenEOJobResults): EarthCODEProduct => {
     return {
         assets: job.assets,
         description: description,
@@ -26,6 +39,12 @@ export const createProductCollection = (id: string, title: string, description: 
                     rel: getRel(l)
                 }
             )),
+            ...themes.map((t: EarthCODEThemeInfo) => ({
+                "rel": "related",
+                "href": `../../themes/${t.id}/catalog.json`,
+                "type": "application/json",
+                "title": `Theme: ${t.title}`
+            })),
             {
                 "rel": "related",
                 "href": `../../projects/${project.id}/collection.json`,
@@ -46,7 +65,7 @@ export const createProductCollection = (id: string, title: string, description: 
             }
         ],
         stac_extensions: [
-            "https://stac-extensions.github.io/osc/v1.0.0-rc.3/schema.json",
+            "https://stac-extensions.github.io/osc/v1.0.0/schema.json",
             "https://stac-extensions.github.io/themes/v1.0.0/schema.json",
         ],
         stac_version: job.stac_version,
@@ -57,11 +76,11 @@ export const createProductCollection = (id: string, title: string, description: 
         "osc:status": "completed",
         "osc:type": "product",
         "osc:variables": [],
-        themes: []
+        themes: createThemes(themes)
     }
 }
 
-export const createWorkflowCollection = (id: string, title: string, description: string, project: EarthCODEProjectInfo, workflowUrl: string, experimentIds: string[]): EarthCODEWorkflow => {
+export const createWorkflowCollection = (id: string, title: string, description: string, project: EarthCODEProjectInfo, themes: EarthCODEThemeInfo[], workflowUrl: string, experimentIds: string[]): EarthCODEWorkflow => {
     return {
         type: "Feature",
         conformsTo: [
@@ -88,6 +107,12 @@ export const createWorkflowCollection = (id: string, title: string, description:
                 "type": "application/json",
                 "title": `Project: ${project.title}`
             },
+            ...themes.map((t: EarthCODEThemeInfo) => ({
+                "rel": "related",
+                "href": `../../themes/${t.id}/catalog.json`,
+                "type": "application/json",
+                "title": `Theme: ${t.title}`
+            })),
             {
                 "rel": "application",
                 "type": "application/json",
@@ -114,11 +139,12 @@ export const createWorkflowCollection = (id: string, title: string, description:
             "osc:type": "workflow",
             "osc:variables": [],
             "osc:region": "",
+            themes: createThemes(themes)
         }
     }
 }
 
-export const createExperimentCollection = (id: string, title: string, description: string, license: string, project: EarthCODEProjectInfo, workflow: EarthCODEWorkflow, product: EarthCODEProduct): EarthCODEExperiment => {
+export const createExperimentCollection = (id: string, title: string, description: string, license: string, project: EarthCODEProjectInfo, themes: EarthCODEThemeInfo[], workflow: EarthCODEWorkflow, product: EarthCODEProduct): EarthCODEExperiment => {
     return {
         id,
         type: "Feature",
@@ -136,7 +162,8 @@ export const createExperimentCollection = (id: string, title: string, descriptio
             "osc:project": project.id,
             "osc:workflow": workflow.id,
             "osc:product": product.id,
-            version: "2"
+            version: "2",
+            themes: createThemes(themes)
         },
         links: [
             {
@@ -169,6 +196,12 @@ export const createExperimentCollection = (id: string, title: string, descriptio
                 "type": "application/json",
                 "title": `Project: ${project.title}`
             },
+            ...themes.map((t: EarthCODEThemeInfo) => ({
+                "rel": "related",
+                "href": `../../themes/${t.id}/catalog.json`,
+                "type": "application/json",
+                "title": `Theme: ${t.title}`
+            })),
         ]
     }
 }
