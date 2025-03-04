@@ -19,6 +19,7 @@ export interface OpenEOJob {
     progress: number;
     status: string;
     title: string;
+    description: string;
 }
 
 export interface OpenEOJobDetails extends OpenEOJob {
