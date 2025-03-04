@@ -4,10 +4,8 @@ import {getOctokit, GITHUB_OWNER, GITHUB_REPO} from "./index";
 import {EarthCODEProduct, EarthCODEWorkflow} from "../earthcode/concepts.models";
 
 
-export const createFile = async (token: string, branch: string, path: string, message: string, item: EarthCODEProduct | EarthCODEWorkflow) => {
+export const createFile = async (token: string, branch: string, path: string, message: string, content: string) => {
     if (GITHUB_OWNER && GITHUB_REPO) {
-        const content = Buffer.from(JSON.stringify(item, null, 2)).toString('base64');
-
         await getOctokit(token).rest.repos.createOrUpdateFileContents({
             owner: GITHUB_OWNER,
             repo: GITHUB_REPO,
@@ -20,6 +18,12 @@ export const createFile = async (token: string, branch: string, path: string, me
         throw Error('GitHub repository not configured!');
     }
 }
+
+export const createJSONFile = async (token: string, branch: string, path: string, message: string, item: EarthCODEProduct | EarthCODEWorkflow) => {
+    const content = Buffer.from(JSON.stringify(item, null, 2)).toString('base64');
+    await createFile(token, branch, path, message, content);
+}
+
 
 export const getFile = async (token: string, path: string, branch: string) => {
 

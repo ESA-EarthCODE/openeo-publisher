@@ -1,8 +1,8 @@
-import { getOpenEOJobResults } from "lib/openeo/jobs";
-import { ProductInfo } from "../schema.model";
-import { OpenEOBackend } from "lib/openeo/jobs.models";
-import { createProductCollection } from "../schema";
-import { createFile } from "lib/github/files";
+import {getOpenEOJobResults} from "lib/openeo/jobs";
+import {ProductInfo} from "../schema.model";
+import {OpenEOBackend} from "lib/openeo/jobs.models";
+import {createProductCollection} from "../schema";
+import {createJSONFile} from "lib/github/files";
 import {EarthCODEProduct} from "../concepts.models";
 
 export const publishProduct = async (
@@ -16,7 +16,7 @@ export const publishProduct = async (
         schema.id, schema.title, schema.description, schema.project || {id: '', title: ''}, schema.themes, results
     );
 
-    await createFile(
+    await createJSONFile(
         token,
         branch,
         `products/${product.id}/collection.json`,

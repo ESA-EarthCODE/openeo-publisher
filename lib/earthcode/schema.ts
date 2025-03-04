@@ -179,6 +179,18 @@ export const createExperimentCollection = (id: string, title: string, descriptio
                 title: "Experiments"
             },
             {
+                rel: "input",
+                href: "./input.yaml",
+                type: "application/yaml",
+                title: "Input parameters"
+            },
+            {
+                rel: "environment",
+                href: "./environment.yaml",
+                type: "application/yaml",
+                title: "Execution environment"
+            },
+            {
                 rel: "related",
                 href: `../../workflows/${workflow.id}/record.json`,
                 type: "application/json",

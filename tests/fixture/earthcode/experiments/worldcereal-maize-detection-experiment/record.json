@@ -41,6 +41,18 @@
       "title": "Experiments"
     },
     {
+      "rel": "input",
+      "href": "./input.yaml",
+      "type": "application/yaml",
+      "title": "Input parameters"
+    },
+    {
+      "rel": "environment",
+      "href": "./environment.yaml",
+      "type": "application/yaml",
+      "title": "Execution environment"
+    },
+    {
       "rel": "related",
       "href": "../../workflows/worldcereal-maize-detection-workflow/record.json",
       "type": "application/json",

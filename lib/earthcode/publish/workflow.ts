@@ -1,6 +1,6 @@
 import {WorkflowInfo} from "../schema.model";
 import {createWorkflowCollection} from "../schema";
-import { createFile } from "lib/github/files";
+import {createJSONFile} from "lib/github/files";
 import {EarthCODEWorkflow} from "../concepts.models";
 
 export const publishWorkflow = async (
@@ -10,10 +10,13 @@ export const publishWorkflow = async (
     branch: string
 ): Promise<EarthCODEWorkflow> => {
     const workflow = createWorkflowCollection(
-        schema.id, schema.title, schema.description, schema.project || {id: '', title: ''}, schema.themes, schema.url, experiments
+        schema.id, schema.title, schema.description, schema.project || {
+        id: '',
+        title: ''
+    }, schema.themes, schema.url, experiments
     );
 
-    await createFile(
+    await createJSONFile(
         token,
         branch,
         `workflows/${workflow.id}/record.json`,
