@@ -67,7 +67,6 @@ jobs:
           echo "AUTH_TRUST_HOST=true" >> .env
           echo "NEXT_PUBLIC_GITHUB_OWNER=ESA-EarthCODE" >> .env
           echo "NEXT_PUBLIC_GITHUB_REPO=open-science-catalog-metadata-testing" >> .env
-          echo "NEXT_PUBLIC_GITHUB_REF_BRANCH=workflows-experiments-2" >> .env
           echo "NEXT_PUBLIC_OPENEO_BACKENDS=https://openeofed.dataspace.copernicus.eu/openeo" >> .env
       - run: npm install
       - name: Login to Docker repository
