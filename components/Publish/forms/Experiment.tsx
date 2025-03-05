@@ -38,7 +38,7 @@ export const ExperimentForm = ({schema, projects, themes, onFormChange}: Experim
                 <FormControl className='flex w-full flex-col gap-4'>
                     <Autocomplete
                         options={projects}
-                        value={schema.project}
+                        value={schema.project || null}
                         onChange={(event, value) => onFormChange(schema, "project", value)}
                         getOptionLabel={(option) => option.title}
                         getOptionKey={(option) => option.id}

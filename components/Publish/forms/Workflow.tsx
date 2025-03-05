@@ -21,7 +21,7 @@ export const WorkflowForm = ({schema, projects, themes, onFormChange, isChild = 
                 {!isChild &&
                     <Autocomplete
                         options={projects}
-                        value={schema.project}
+                        value={schema.project || null}
                         onChange={(event, value) => onFormChange(schema, "project", value)}
                         getOptionLabel={(option) => option.title}
                         getOptionKey={(option) => option.id}
