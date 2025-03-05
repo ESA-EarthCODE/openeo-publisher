@@ -30,9 +30,9 @@ export const ExperimentForm = ({schema, projects, themes, onFormChange}: Experim
 
 
     return (
-        <div className='flex flex-col gap-5'>
-            <div>
-                <span className='font-bold mb-4 flex items-center'>
+        <div className='flex flex-col'>
+            <div className='p-10'>
+                <span className='font-bold mb-5 text-xl flex items-center'>
                             Experiment
                         </span>
                 <FormControl className='flex w-full flex-col gap-4'>
@@ -45,6 +45,7 @@ export const ExperimentForm = ({schema, projects, themes, onFormChange}: Experim
                         renderInput={(params) => <TextField {...params}
                                                             required
                                                             error={!schema.project}
+                                                            placeholder="Name of the project used to generate the experiment"
                                                             onChange={(e) => onFormChange(schema, "project", e.target.value)}
                                                             data-testid="experiment-schema-project" variant="outlined"
                                                             label="Project"/>}
@@ -55,6 +56,7 @@ export const ExperimentForm = ({schema, projects, themes, onFormChange}: Experim
                         value={schema.id}
                         onChange={(e) => onFormChange(schema, "id", e.target.value)}
                         data-testid="experiment-schema-id"
+                        placeholder="Unique identifier for the experiment"
                         required
                         error={!schema.id}
                     />
@@ -63,6 +65,7 @@ export const ExperimentForm = ({schema, projects, themes, onFormChange}: Experim
                         variant="outlined"
                         value={schema.title}
                         onChange={(e) => onFormChange(schema, "title", e.target.value)}
+                        placeholder="Title of the experiment"
                         data-testid="experiment-schema-title"
                         required
                         error={!schema.title}
@@ -74,6 +77,7 @@ export const ExperimentForm = ({schema, projects, themes, onFormChange}: Experim
                         rows={5}
                         value={schema.description}
                         onChange={(e) => onFormChange(schema, "description", e.target.value)}
+                        placeholder="Short description of the experiment"
                         data-testid="experiment-schema-description"
                         required
                         error={!schema.description}
@@ -83,6 +87,7 @@ export const ExperimentForm = ({schema, projects, themes, onFormChange}: Experim
                         variant="outlined"
                         value={schema.license}
                         onChange={(e) => onFormChange(schema, "license", e.target.value)}
+                        placeholder="Applicable license for the experiment"
                         data-testid="experiment-schema-license"
                     />
                     <Autocomplete
@@ -96,17 +101,16 @@ export const ExperimentForm = ({schema, projects, themes, onFormChange}: Experim
                         renderInput={(params) => <TextField {...params}
                                                             required
                                                             error={schema.themes.length === 0}
+                                                            placeholder="Themes that are applicable for the experiment"
                                                             data-testid="experiment-schema-theme" variant="outlined"
                                                             label="Themes"/>}
                     />
                 </FormControl>
             </div>
-            <hr/>
-            <div>
+            <div className='bg-neutral-50'>
                 <WorkflowForm schema={schema.workflow} themes={themes} projects={[]} onFormChange={handleWorkflowChange}
                               isChild={true}/>
             </div>
-            <hr/>
             <div>
                 <ProductForm schema={schema.product} themes={themes} projects={[]} onFormChange={handleProductChange}
                              isChild={true}/>

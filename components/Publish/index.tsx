@@ -180,7 +180,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                         <JobSummary job={job} selectedSchema={jobSchemas.filter(s => s.job === job).map(s => s.type)[0]}
                                     onSchemaChange={handleJobSchemaChange}/>
                         {jobSchemas.some((s) => s.job.id === job.id) && (
-                            <div className="my-2 mb-5 w-full px-5">
+                            <div className="mb-5 w-full">
                                 {jobSchemas
                                     .filter((s) => s.job.id === job.id)
                                     .map((s) => (

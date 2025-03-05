@@ -13,8 +13,8 @@ interface WorkflowFormProps {
 
 export const WorkflowForm = ({schema, projects, themes, onFormChange, isChild = false}: WorkflowFormProps) => {
     return (
-        <div>
-        <span className='font-bold mb-4 flex items-center'>
+        <div className='p-10'>
+        <span className='font-bold mb-5 text-xl flex items-center'>
                             Workflow
                         </span>
             <FormControl className='flex w-full flex-col gap-4'>
@@ -29,6 +29,7 @@ export const WorkflowForm = ({schema, projects, themes, onFormChange, isChild = 
                                                             required
                                                             error={!schema.project}
                                                             onChange={(e) => onFormChange(schema, "project", e.target.value)}
+                                                            placeholder="Name of the project used to generate the workflow"
                                                             data-testid="workflow-schema-project" variant="outlined"
                                                             label="Project"/>}
                     />
@@ -38,6 +39,7 @@ export const WorkflowForm = ({schema, projects, themes, onFormChange, isChild = 
                     variant="outlined"
                     value={schema.id}
                     onChange={(e) => onFormChange(schema, "id", e.target.value)}
+                    placeholder="Unique identifier for the workflow"
                     data-testid="workflow-schema-id"
                     required
                     error={!schema.id}
@@ -47,6 +49,7 @@ export const WorkflowForm = ({schema, projects, themes, onFormChange, isChild = 
                     variant="outlined"
                     value={schema.url}
                     onChange={(e) => onFormChange(schema, "url", e.target.value)}
+                    placeholder="Public URL pointing to the openEO user defined process"
                     data-testid="workflow-schema-url"
                     required
                     error={!schema.url}
@@ -57,6 +60,7 @@ export const WorkflowForm = ({schema, projects, themes, onFormChange, isChild = 
                     variant="outlined"
                     value={schema.title}
                     onChange={(e) => onFormChange(schema, "title", e.target.value)}
+                    placeholder="Title of the workflow"
                     data-testid="workflow-schema-title"
                     required
                     error={!schema.title}
@@ -68,6 +72,7 @@ export const WorkflowForm = ({schema, projects, themes, onFormChange, isChild = 
                     rows={5}
                     value={schema.description}
                     onChange={(e) => onFormChange(schema, "description", e.target.value)}
+                    placeholder="Short description of the workflow"
                     data-testid="workflow-schema-description"
                     required
                     error={!schema.description}
@@ -84,6 +89,7 @@ export const WorkflowForm = ({schema, projects, themes, onFormChange, isChild = 
                         renderInput={(params) => <TextField {...params}
                                                             required
                                                             error={schema.themes.length === 0}
+                                                            placeholder="Themes that are applicable for the workflow"
                                                             data-testid="workflow-schema-theme" variant="outlined"
                                                             label="Themes"/>}
                     />
