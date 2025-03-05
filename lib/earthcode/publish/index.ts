@@ -132,7 +132,7 @@ export const publishSchemas = async function* (
 
 
         for (const project of groupedProjects) {
-            yield {status: "progress", message: `Registering project ${project.project}`, progress: getProgress()};
+            yield {status: "progress", message: `Registering project ${project.project?.id || 'unknown'}`, progress: getProgress()};
             if (project.project) {
                 await registerProject(token, branch, project.project, project.schemas);
             }
