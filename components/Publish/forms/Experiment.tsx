@@ -3,16 +3,17 @@ import React, {useCallback} from "react";
 import {ExperimentInfo, ProductInfo, WorkflowInfo} from "../../../lib/earthcode/schema.model";
 import {ProductForm} from "@/components/Publish/forms/Product";
 import {WorkflowForm} from "@/components/Publish/forms/Workflow";
-import {EarthCODEProjectInfo, EarthCODEThemeInfo} from "../../../lib/earthcode/concepts.models";
+import {EarthCODEProjectInfo, EarthCODEThemeInfo, EarthCODEWorfklowInfo} from "../../../lib/earthcode/concepts.models";
 
 interface ExperimentFormProps {
     schema: ExperimentInfo;
     projects: EarthCODEProjectInfo[];
     themes: EarthCODEThemeInfo[];
+    workflows: EarthCODEWorfklowInfo[];
     onFormChange: (schema: ExperimentInfo, key: string, value: any) => void;
 }
 
-export const ExperimentForm = ({schema, projects, themes, onFormChange}: ExperimentFormProps) => {
+export const ExperimentForm = ({schema, projects, themes, workflows, onFormChange}: ExperimentFormProps) => {
 
     const handleProductChange = useCallback((product: ProductInfo, key: any, value: string) => {
         onFormChange(schema, "product", {
@@ -108,7 +109,7 @@ export const ExperimentForm = ({schema, projects, themes, onFormChange}: Experim
                 </FormControl>
             </div>
             <div className='bg-neutral-50'>
-                <WorkflowForm schema={schema.workflow} themes={themes} projects={[]} onFormChange={handleWorkflowChange}
+                <WorkflowForm schema={schema.workflow} themes={themes} projects={[]} workflows={workflows} onFormChange={handleWorkflowChange}
                               isChild={true}/>
             </div>
             <div>
