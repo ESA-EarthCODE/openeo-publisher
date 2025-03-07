@@ -3,7 +3,6 @@
 
 import {useToastStore} from "../store/toasts";
 import {useQuery} from "@tanstack/react-query";
-import {getProjects} from "../lib/earthcode/projects";
 import {getThemes} from "../lib/earthcode/themes";
 
 export const useEarthCODEThemes = (token?: string) => {
