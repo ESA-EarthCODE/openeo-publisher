@@ -95,12 +95,15 @@ export const publishSchemas = async function* (
                     }, backend, token, branch);
                     products.push(experimentSchema.product);
 
-                    const workflow = await publishWorkflow({
+                    const { existing, workflow } = await publishWorkflow({
                         ...experimentSchema.workflow,
                         project: experimentSchema.project,
                         themes: experimentSchema.themes
                     }, [schema.id], token, branch);
-                    workflows.push(experimentSchema.workflow);
+
+                    if (!existing) {
+                        workflows.push(experimentSchema.workflow);
+                    }
 
                     await publishExperiment(experimentSchema, workflow, product, token, branch);
                     experiments.push(experimentSchema);

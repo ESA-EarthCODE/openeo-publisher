@@ -15,17 +15,18 @@ interface ExperimentFormProps {
 
 export const ExperimentForm = ({schema, projects, themes, workflows, onFormChange}: ExperimentFormProps) => {
 
-    const handleProductChange = useCallback((product: ProductInfo, key: any, value: string) => {
+    const handleProductChange = useCallback((product: ProductInfo, key: any, value: any) => {
         onFormChange(schema, "product", {
             ...product,
             [key]: value
         });
     }, []);
 
-    const handleWorkflowChange = useCallback((workflow: WorkflowInfo, key: any, value: string) => {
+    const handleWorkflowChange = useCallback((workflow: WorkflowInfo, key: any, value: any) => {
         onFormChange(schema, "workflow", {
             ...workflow,
-            [key]: value
+            id: key === 'isExisting' && value === true ? '' : workflow.id,
+            [key]: value,
         });
     }, []);
 

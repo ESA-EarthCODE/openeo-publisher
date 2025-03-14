@@ -92,7 +92,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             description: job.description || `Workflow of ${job.title}`,
             url: "",
             themes: [],
-            isExisting: true,
+            isExisting: false,
         } as WorkflowInfo;
     }
 

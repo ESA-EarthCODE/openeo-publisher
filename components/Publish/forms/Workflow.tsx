@@ -1,5 +1,5 @@
 import {Autocomplete, FormControl, MenuItem, Select, TextField} from "@mui/material";
-import React, {useState} from "react";
+import React from "react";
 import {WorkflowInfo} from "../../../lib/earthcode/schema.model";
 import {EarthCODEProjectInfo, EarthCODEThemeInfo, EarthCODEWorfklowInfo} from "../../../lib/earthcode/concepts.models";
 
@@ -12,7 +12,14 @@ interface WorkflowFormProps {
     isChild?: boolean;
 }
 
-export const WorkflowForm = ({schema, projects, themes, workflows, onFormChange, isChild = false}: WorkflowFormProps) => {
+export const WorkflowForm = ({
+                                 schema,
+                                 projects,
+                                 themes,
+                                 workflows,
+                                 onFormChange,
+                                 isChild = false
+                             }: WorkflowFormProps) => {
 
     const generateExistingWorfklowForm = () => (
         <>
@@ -120,15 +127,19 @@ export const WorkflowForm = ({schema, projects, themes, workflows, onFormChange,
                             Workflow
                         </span>
             <FormControl className='flex w-full flex-col gap-4'>
-                <Select
-                    data-testid="workflow-schema-mode"
-                    value={schema.isExisting ? 1 : 2}
-                    onChange={(event, value) => onFormChange(schema, "isExisting", event.target.value === 1)}
-                >
-                    <MenuItem value={1}>Select exiting project</MenuItem>
-                    <MenuItem value={2}>Create new project</MenuItem>
-                </Select>
-                { !schema.isExisting ?   generateNewWorkflowForm() : generateExistingWorfklowForm() }
+                {isChild &&
+                    <Select
+                        data-testid="workflow-schema-mode"
+                        value={schema.isExisting ? 1 : 2}
+                        onChange={(event, value) => {
+                            onFormChange(schema, "isExisting", event.target.value === 1);
+                        }}
+                    >
+                        <MenuItem value={1}>Select existing workflow</MenuItem>
+                        <MenuItem value={2}>Create new workflow</MenuItem>
+                    </Select>
+                }
+                {!schema.isExisting ? generateNewWorkflowForm() : generateExistingWorfklowForm()}
             </FormControl>
         </div>
     );

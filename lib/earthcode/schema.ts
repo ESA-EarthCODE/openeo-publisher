@@ -80,6 +80,13 @@ export const createProductCollection = (id: string, title: string, description: 
     }
 }
 
+export const getExperimentLink = (id: string) =>  ({
+    "rel": "related",
+    "href": `../../experiments/${id}/record.json`,
+    "type": "application/json",
+    "title": `Experiment: ${id}`
+})
+
 export const createWorkflowCollection = (id: string, title: string, description: string, project: EarthCODEProjectInfo, themes: EarthCODEThemeInfo[], workflowUrl: string, experimentIds: string[]): EarthCODEWorkflow => {
     return {
         type: "Feature",
@@ -119,13 +126,7 @@ export const createWorkflowCollection = (id: string, title: string, description:
                 "title": "openEO Workflow",
                 "href": workflowUrl,
             },
-            ...experimentIds.map((experiment) => ({
-                "rel": "related",
-                "href": `../../experiments/${experiment}/record.json`,
-                "type": "application/json",
-                "title": `Experiment: ${experiment}`
-
-            }))
+            ...experimentIds.map((experiment) => getExperimentLink(experiment))
         ],
         properties: {
             title,
