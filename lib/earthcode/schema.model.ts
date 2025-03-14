@@ -24,6 +24,7 @@ export interface ProductInfo extends JobSchemaInfo {
 
 export interface WorkflowInfo extends JobSchemaInfo {
     url: string;
+    isExisting: boolean;
 }
 
 export interface ExperimentInfo extends JobSchemaInfo {

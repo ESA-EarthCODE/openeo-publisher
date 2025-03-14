@@ -4,6 +4,7 @@
   "private": false,
   "scripts": {
     "dev": "next dev",
+    "dev:test": "SKIP_AUTH=true next dev",
     "build": "next build",
     "start": "next start",
     "test": "jest --watch",

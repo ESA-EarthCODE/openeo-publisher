@@ -12,6 +12,7 @@ import {useEarthCODEProjects} from "../../hooks/useEarthCODEProjects";
 import {publishSchemas} from "../../lib/earthcode/publish";
 import {useWizardStore} from "../../store/wizard";
 import {useEarthCODEThemes} from "../../hooks/useEarthCODEThemes";
+import {useEarthCODEWorkflows} from "../../hooks/useEarthCODEWorkflows";
 
 interface PublishProps {
     jobs: OpenEOJob[];
@@ -29,6 +30,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     const {data: session} = useSession();
     const {data: projects, loading: projectsLoading} = useEarthCODEProjects(session?.accessToken);
     const {data: themes, loading: themesLoading} = useEarthCODEThemes(session?.accessToken);
+    const {data: workflows, loading: workflowsLoading} = useEarthCODEWorkflows(session?.accessToken);
     const [_, startTransition] = useTransition();
     const {addToast} = useToastStore();
     const { setActiveStep } = useWizardStore();
@@ -89,7 +91,8 @@ export const Publish = ({backend, jobs}: PublishProps) => {
             title: `${job.title} - Workflow`,
             description: job.description || `Workflow of ${job.title}`,
             url: "",
-            themes: []
+            themes: [],
+            isExisting: false,
         } as WorkflowInfo;
     }
 
@@ -124,7 +127,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
     }
 
     const isWorkflowSchemaValid = (schema: WorkflowInfo, isChild: boolean = false): boolean => {
-        return schema && !!schema.id && (isChild || !!schema.project) && !!schema.title && !!schema.description && !!schema.url && (isChild || schema.themes.length > 0);
+        return schema && !!schema.id && (schema.isExisting || (!schema.isExisting && (isChild || !!schema.project) && !!schema.title && !!schema.description && !!schema.url && (isChild || schema.themes.length > 0)));
     }
 
     const isExperimentSchemaValid = (schema: ExperimentInfo): boolean => {
@@ -167,7 +170,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
         );
     }, []);
 
-    return (projectsLoading || themesLoading) ? <Loading/> : (
+    return (projectsLoading || themesLoading || workflowsLoading) ? <Loading/> : (
         <div className="flex flex-col">
             <div className="font-bold">Summary</div>
             <div className="flex flex-col gap-2 my-5">
@@ -187,6 +190,7 @@ export const Publish = ({backend, jobs}: PublishProps) => {
                                         <JobSchemaForm schema={s}
                                                        projects={projects}
                                                        themes={themes}
+                                                       workflows={workflows}
                                                        onFormChange={handleFormChange}
                                                        key={`schema_form_${job.id}`}
                                         />

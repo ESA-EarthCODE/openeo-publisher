@@ -6,11 +6,17 @@ import {signOut, useSession} from "next-auth/react";
 import {Logout} from "@mui/icons-material";
 import {User} from "next-auth";
 import { version } from '../package.json';
+import moment from "moment";
 
 export const NavBar = () => {
     const {data: session, status} = useSession()
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+
+    if (session?.tokenExpired) {
+        console.warn('User session has expired, logging out');
+        signOut().then();
+    }
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);

@@ -64,3 +64,8 @@ export interface EarthCODEThemeInfo{
     id: string;
     title: string;
 }
+
+export interface EarthCODEWorfklowInfo{
+    id: string;
+    title: string;
+}

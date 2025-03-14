@@ -7,7 +7,6 @@ import {EarthCODEProjectInfo} from "./concepts.models";
 
 export const getProjects = async (token: string): Promise<EarthCODEProjectInfo[]> => {
     const {content} = await getFile(token, 'projects/catalog.json', GITHUB_REF_BRANCH);
-    console.log("PROJECTS", content);
     return (content.links || [])
         .filter((p: any) => p.rel === 'child')
         .map((p: any) => ({
