@@ -23,6 +23,25 @@ export const authConfig = {
             if (account) {
                 token.accessToken = account.access_token;
             }
+            if (token.accessToken) {
+                try {
+                    // Validate token by calling GitHub API (check if the token is valid)
+                    const response = await fetch('https://api.github.com/user', {
+                        headers: {
+                            Authorization: `Bearer ${token.accessToken}`,
+                        },
+                    });
+
+                    // If the response status is 401, it means the token is invalid
+                    if (response.status === 401) {
+                        console.error('GitHub token is invalid or expired');
+                        return null;
+                    }
+                } catch (error) {
+                    console.error('Error validating GitHub token:', error);
+                    return null;
+                }
+            }
             return token;
         }
     },
