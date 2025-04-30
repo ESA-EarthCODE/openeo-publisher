@@ -2,7 +2,7 @@ import {test} from "../setup";
 import {expect} from "@playwright/test";
 import {selectJobs, setupRoutes} from "./utils";
 
-test.describe('Test Expirment Publishing', () => {
+test.describe('Test Experiment Publishing', () => {
 
     test('Should publish openEO jobs as an EarthCODE experiment with a new workflow', async ({page}) => {
 
@@ -41,7 +41,7 @@ test.describe('Test Expirment Publishing', () => {
 
         await page.waitForResponse(resp => resp.url().includes('/pulls'));
 
-        expect(createCount).toBe(15); // 2 * 5 (product, workflow experiment, environment.yaml, input.yaml) + 3 parents + 1 project + 1 theme
+        expect(createCount).toBe(17); // 2 * 6 (product, workflow, experiment, process_graph.json environment.yaml, input.yaml) + 3 parents + 1 project + 1 theme
         expect(prCount).toBe(1);
     });
 
@@ -86,7 +86,7 @@ test.describe('Test Expirment Publishing', () => {
 
         await page.waitForResponse(resp => resp.url().includes('/pulls'));
 
-        expect(createCount).toBe(14); // 2 * 5 (product, workflow experiment, environment.yaml, input.yaml) + 2 parents (experiments, products) + 1 project + 1 theme
+        expect(createCount).toBe(16); // 2 * 6 (product, workflow, experiment, process_graph.json, environment.yaml, input.yaml) + 2 parents (experiments, products) + 1 project + 1 theme
         expect(prCount).toBe(1);
     });
 });

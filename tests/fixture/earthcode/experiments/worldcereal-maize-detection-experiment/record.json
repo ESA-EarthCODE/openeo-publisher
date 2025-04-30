@@ -53,6 +53,12 @@
       "title": "Execution environment"
     },
     {
+      "href": "./process_graph.json",
+      "rel": "process_graph",
+      "title": "openEO Process Graph",
+      "type": "application/json"
+    },
+    {
       "rel": "related",
       "href": "../../workflows/worldcereal-maize-detection-workflow/record.json",
       "type": "application/json",
