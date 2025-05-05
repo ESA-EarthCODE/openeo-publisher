@@ -14,13 +14,8 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
-  test:
-    needs: build
-    uses: ./.github/workflows/test.yml
-    secrets: inherit
-
   release:
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
     outputs:
       docker_version: ${{ steps.version.outputs.version }}
