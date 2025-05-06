@@ -1,7 +1,7 @@
 import { test as base } from "@playwright/test";
 
 export const test = base.extend({
-  page: async ({ page, context }: any, use: any) => {
+  page: async ({ page, context }, use) => {
     const { encode } = await import("next-auth/jwt");
     const token = await encode({
       token: {
