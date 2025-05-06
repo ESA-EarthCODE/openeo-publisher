@@ -242,7 +242,7 @@ export const publishSchemas = async function* (
       message: "Creating PR...",
       progress: getProgress(),
     };
-    await createPR(
+    const url = await createPR(
       token,
       branch,
       backend,
@@ -251,7 +251,7 @@ export const publishSchemas = async function* (
 
     yield {
       status: "complete",
-      message: "Publishing complete!",
+      message: `Publishing complete! Click <a href='${url}' target='_blank'>here</a> to access your pull request`,
       progress: 100,
     };
   } catch (error) {
