@@ -8,6 +8,7 @@ import experimentCollection
 
 import { createExperimentCollection, createProductCollection, createWorkflowCollection } from "./schema";
 import { EarthCODEProjectInfo } from "./concepts.models";
+import { ProductAsset } from './schema.model';
 
 describe("Test EarthCODE Schema Conversion", () => {
 
@@ -17,6 +18,9 @@ describe("Test EarthCODE Schema Conversion", () => {
     }
     const testThemes = [{ id: 'test', title: 'TEST' }]
 
+
+    const testAssets: ProductAsset[] = [{ name: 'test1', url: 'https://test-asset-1.test' }];
+
     it("should create a product scheme", () => {
         const product = createProductCollection(
             'worldcereal-maize-detection-product',
@@ -24,6 +28,7 @@ describe("Test EarthCODE Schema Conversion", () => {
             'Results for batch job cdse-j-25020410530548a7aef81c62faebd127',
             testProject,
             testThemes,
+            testAssets,
             jobResults as any
         );
         expect(product).toEqual(productCollection)
@@ -51,6 +56,7 @@ describe("Test EarthCODE Schema Conversion", () => {
             'Results for batch job cdse-j-25020410530548a7aef81c62faebd127',
             testProject,
             testThemes,
+            testAssets,
             jobResults as any
         );
         const workflow = createWorkflowCollection(
@@ -85,6 +91,7 @@ describe("Test EarthCODE Schema Conversion", () => {
             'Results for batch job cdse-j-25020410530548a7aef81c62faebd127',
             testProject,
             testThemes,
+            testAssets,
             jobResults as any
         );
         const workflow = createWorkflowCollection(

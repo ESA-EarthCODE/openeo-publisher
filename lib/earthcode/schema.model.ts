@@ -17,8 +17,13 @@ export interface JobSchemaInfo {
     href?: string;
     themes: EarthCODEThemeInfo[];
 }
+export interface ProductAsset {
+    name: string;
+    url: string;
+}
 
 export interface ProductInfo extends JobSchemaInfo {
+    assets: ProductAsset[];
 }
 
 export interface WorkflowInfo extends JobSchemaInfo {
@@ -33,3 +38,4 @@ export interface ExperimentInfo extends JobSchemaInfo {
     product: ProductInfo;
     workflow: WorkflowInfo;
 }
+

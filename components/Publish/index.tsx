@@ -19,6 +19,7 @@ import { publishSchemas } from "../../lib/earthcode/publish";
 import { useWizardStore } from "../../store/wizard";
 import { useEarthCODEThemes } from "../../hooks/useEarthCODEThemes";
 import { useEarthCODEWorkflows } from "../../hooks/useEarthCODEWorkflows";
+import { getOpenEOJobResults } from "lib/openeo/jobs";
 
 interface PublishProps {
   jobs: OpenEOJob[];
@@ -91,7 +92,8 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
     });
   };
 
-  const initProductSchemaType = (job: OpenEOJob): ProductInfo => {
+  const initProductSchemaType = async (job: OpenEOJob): Promise<ProductInfo> => {
+    const result = await getOpenEOJobResults(backend, job.id);
     return {
       type: SchemaType.PRODUCT,
       job,
@@ -99,10 +101,14 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
       title: `${job.title} - Product`,
       description: job.description || `Product of ${job.title}`,
       themes: [],
+      assets: Object.keys(result.assets).map((asset) => ({
+        name: asset,
+        url: result.assets[asset].href
+      })),
     } as ProductInfo;
   };
 
-  const initWorkflowSchemaType = (job: OpenEOJob): WorkflowInfo => {
+  const initWorkflowSchemaType = async (job: OpenEOJob): Promise<WorkflowInfo> => {
     return {
       type: SchemaType.WORKFLOW,
       job,
@@ -115,7 +121,7 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
     } as WorkflowInfo;
   };
 
-  const initExperimentSchemaType = (job: OpenEOJob): ExperimentInfo => {
+  const initExperimentSchemaType = async (job: OpenEOJob): Promise<ExperimentInfo> => {
     return {
       type: SchemaType.EXPERIMENT,
       job,
@@ -124,23 +130,23 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
       description: job.description || `Experiment of ${job.title}`,
       license: "",
       url: "",
-      product: initProductSchemaType(job),
-      workflow: initWorkflowSchemaType(job),
+      product: await initProductSchemaType(job),
+      workflow: await initWorkflowSchemaType(job),
       themes: [],
       isExisting: false,
     } as ExperimentInfo;
   };
 
-  const initSchemaType = (
+  const initSchemaType = async (
     type: SchemaType,
     job: OpenEOJob
-  ): undefined | ProductInfo | ExperimentInfo => {
+  ): Promise<undefined | ProductInfo | WorkflowInfo | ExperimentInfo> => {
     if (type === SchemaType.PRODUCT) {
-      return initProductSchemaType(job);
+      return await initProductSchemaType(job);
     } else if (type === SchemaType.EXPERIMENT) {
-      return initExperimentSchemaType(job);
+      return await initExperimentSchemaType(job);
     } else if (type === SchemaType.WORKFLOW) {
-      return initWorkflowSchemaType(job);
+      return await initWorkflowSchemaType(job);
     } else {
       return undefined;
     }
@@ -156,7 +162,8 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
       (isChild || !!schema.project) &&
       !!schema.title &&
       !!schema.description &&
-      (isChild || schema.themes.length > 0)
+      (isChild || schema.themes.length > 0) &&
+      schema.assets.length > 0
     );
   };
 
@@ -191,7 +198,7 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
     );
   };
 
-  const isSchemaValid = (schema: ProductInfo | ExperimentInfo): boolean => {
+  const isSchemaValid = (schema: JobSchemaInfo): boolean => {
     if (schema.type === SchemaType.PRODUCT) {
       return isProductSchemaValid(schema as ProductInfo);
     } else if (schema.type === SchemaType.WORKFLOW) {
@@ -204,20 +211,22 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
   };
 
   const handleJobSchemaChange = useCallback(
-    (job: OpenEOJob, type: SchemaType) => {
-      const schema = initSchemaType(type, job);
+    async (job: OpenEOJob, type: SchemaType) => {
+      setLoading(true);
+      const schema = await initSchemaType(type, job);
       if (schema) {
         setJobSchemas((prev) => {
           const existingSchemas = prev.filter((s) => s.job.id !== job.id);
           return [...existingSchemas, schema];
         });
       }
+      setLoading(false);
     },
     []
   );
 
   const handleFormChange = useCallback(
-    (schema: ProductInfo | ExperimentInfo, key: any, value: any) => {
+    (schema: JobSchemaInfo, key: any, value: any) => {
       setJobSchemas((prev) =>
         prev.map((s) =>
           s.job.id === schema.job.id && s.type === schema.type

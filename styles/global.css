@@ -95,3 +95,7 @@ code {
 .MuiAlert-message span a {
   text-decoration: underline !important;
 }
+
+h2 {
+  @apply font-bold
+}

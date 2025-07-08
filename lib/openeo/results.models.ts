@@ -58,7 +58,7 @@ export interface Link {
     href: string
     rel: string
     title?: string
-    type: string
+    type?: string
 }
 
-export interface Summaries {}
+export interface Summaries { }

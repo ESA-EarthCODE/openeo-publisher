@@ -7,6 +7,7 @@ import {
   EarthCODEWorkflow,
 } from "./concepts.models";
 import moment from "moment";
+import { ProductAsset } from "./schema.model";
 
 const getRel = (link: Link) => {
   if (link.rel === "canonical") {
@@ -33,16 +34,16 @@ export const createProductCollection = (
   description: string,
   project: EarthCODEProjectInfo,
   themes: EarthCODEThemeInfo[],
+  assets: ProductAsset[],
   job: OpenEOJobResults
 ): EarthCODEProduct => {
   return {
-    assets: job.assets,
     description: description,
     extent: job.extent,
     id,
     license: job.license,
     links: [
-      ...job.links.map((l: Link) => ({
+      ...job.links.filter((l: Link) => !['item', 'canonical', 'self', 'via'].includes(l.rel)).map((l: Link) => ({
         ...l,
         rel: getRel(l),
       })),
@@ -70,6 +71,11 @@ export const createProductCollection = (
         type: "application/json",
         title: "Open Science Catalog",
       },
+      ...assets.map((asset) => ({
+        rel: "via",
+        href: asset.url,
+        title: `Access ${asset.name}`
+      }))
     ],
     stac_extensions: [
       "https://stac-extensions.github.io/osc/v1.0.0/schema.json",
