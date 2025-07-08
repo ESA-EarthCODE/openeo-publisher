@@ -163,6 +163,7 @@ export const ExperimentForm = ({
                 onChange={(e) => onFormChange(schema, "url", e.target.value)}
                 placeholder="Public URL containing the experiment defintion"
                 data-testid="experiment-schema-url"
+                error={schema.url === ''}
               />
 
             )
