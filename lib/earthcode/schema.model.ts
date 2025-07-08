@@ -1,12 +1,11 @@
-import {OpenEOJob} from "../openeo/jobs.models";
-import {EarthCODEProjectInfo, EarthCODEThemeInfo} from "./concepts.models";
+import { OpenEOJob } from "../openeo/jobs.models";
+import { EarthCODEProjectInfo, EarthCODEThemeInfo } from "./concepts.models";
 
 export enum SchemaType {
     PRODUCT = 'Product',
     WORKFLOW = 'Workflow',
     EXPERIMENT = 'Experiment',
 }
-
 
 export interface JobSchemaInfo {
     type: SchemaType;
@@ -28,6 +27,8 @@ export interface WorkflowInfo extends JobSchemaInfo {
 }
 
 export interface ExperimentInfo extends JobSchemaInfo {
+    url: string;
+    isExisting: boolean;
     license: string;
     product: ProductInfo;
     workflow: WorkflowInfo;

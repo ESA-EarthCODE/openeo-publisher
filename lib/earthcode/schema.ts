@@ -168,7 +168,8 @@ export const createExperimentCollection = (
   project: EarthCODEProjectInfo,
   themes: EarthCODEThemeInfo[],
   workflow: EarthCODEWorkflow,
-  product: EarthCODEProduct
+  product: EarthCODEProduct,
+  url?: string
 ): EarthCODEExperiment => {
   return {
     id,
@@ -217,7 +218,7 @@ export const createExperimentCollection = (
       },
       {
         rel: "process_graph",
-        href: "./process_graph.json",
+        href: url || "./process_graph.json",
         type: "application/json",
         title: "openEO Process Graph",
       },

@@ -123,9 +123,11 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
       title: `${job.title} - Experiment`,
       description: job.description || `Experiment of ${job.title}`,
       license: "",
+      url: "",
       product: initProductSchemaType(job),
       workflow: initWorkflowSchemaType(job),
       themes: [],
+      isExisting: false,
     } as ExperimentInfo;
   };
 
@@ -182,6 +184,7 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
       !!schema.project &&
       !!schema.title &&
       !!schema.description &&
+      (!schema.isExisting || (schema.isExisting && schema.url != '')) &&
       schema.themes.length > 0 &&
       isProductSchemaValid(schema.product, true) &&
       isWorkflowSchemaValid(schema.workflow, true)

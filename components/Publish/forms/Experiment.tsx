@@ -1,17 +1,17 @@
-import { Autocomplete, FormControl, TextField } from "@mui/material";
-import React, { useCallback } from "react";
-import {
-  ExperimentInfo,
-  ProductInfo,
-  WorkflowInfo,
-} from "../../../lib/earthcode/schema.model";
 import { ProductForm } from "@/components/Publish/forms/Product";
 import { WorkflowForm } from "@/components/Publish/forms/Workflow";
+import { Autocomplete, FormControl, MenuItem, Select, TextField } from "@mui/material";
+import { useCallback } from "react";
 import {
   EarthCODEProjectInfo,
   EarthCODEThemeInfo,
   EarthCODEWorfklowInfo,
 } from "../../../lib/earthcode/concepts.models";
+import {
+  ExperimentInfo,
+  ProductInfo,
+  WorkflowInfo,
+} from "../../../lib/earthcode/schema.model";
 
 interface ExperimentFormProps {
   schema: ExperimentInfo;
@@ -21,6 +21,11 @@ interface ExperimentFormProps {
   onFormChange: (schema: ExperimentInfo, key: string, value: any) => void;
 }
 
+export enum ExperimentDefinitionMode {
+  OPENEO,
+  URL
+}
+
 export const ExperimentForm = ({
   schema,
   projects,
@@ -28,6 +33,7 @@ export const ExperimentForm = ({
   workflows,
   onFormChange,
 }: ExperimentFormProps) => {
+
   const handleProductChange = useCallback(
     (product: ProductInfo, key: any, value: any) => {
       onFormChange(schema, "product", {
@@ -136,6 +142,31 @@ export const ExperimentForm = ({
               />
             )}
           />
+          <Select
+            data-testid="experiment-definition-mode"
+            value={schema.isExisting ? 1 : 2}
+            onChange={(event, value) => {
+              onFormChange(schema, "isExisting", event.target.value === 1);
+            }}
+          >
+            <MenuItem value={2}>Use job process graph</MenuItem>
+            <MenuItem value={1}>Set URL to openEO process graph</MenuItem>
+          </Select>
+          {
+            schema.isExisting && (
+              <TextField
+                label="Experiment URL"
+                variant="outlined"
+                value={schema.url || ''}
+                type="url"
+                required
+                onChange={(e) => onFormChange(schema, "url", e.target.value)}
+                placeholder="Public URL containing the experiment defintion"
+                data-testid="experiment-schema-url"
+              />
+
+            )
+          }
         </FormControl>
       </div>
       <div className="bg-neutral-50">
