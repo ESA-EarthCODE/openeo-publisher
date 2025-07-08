@@ -1,4 +1,4 @@
-import {Assets, Extent, Link} from "../openeo/results.models";
+import { Extent, Link } from "../openeo/results.models";
 
 export interface OSCProps {
     "osc:type"?: string;
@@ -11,10 +11,10 @@ export interface OSCProps {
 
 export interface OSCExperimentProps extends OSCProps {
     "osc:workflow": string;
-    "osc:product":  string;
+    "osc:product": string;
 }
 
-export  interface RecordProperties {
+export interface RecordProperties {
     title: string;
     description: string;
     type: string;
@@ -43,7 +43,6 @@ export interface EarthCODEProduct extends OSCProps {
     stac_extensions: string[]
     extent: Extent
     links: Link[]
-    assets: Assets
     themes: any[];
 }
 
@@ -51,7 +50,7 @@ export interface EarthCODEWorkflow extends RecordHeaders {
     properties: RecordProperties & OSCProps;
 
 }
-export interface EarthCODEExperiment extends RecordHeaders{
+export interface EarthCODEExperiment extends RecordHeaders {
     properties: RecordProperties & OSCExperimentProps;
 }
 
@@ -60,12 +59,12 @@ export interface EarthCODEProjectInfo {
     title: string;
 }
 
-export interface EarthCODEThemeInfo{
+export interface EarthCODEThemeInfo {
     id: string;
     title: string;
 }
 
-export interface EarthCODEWorfklowInfo{
+export interface EarthCODEWorfklowInfo {
     id: string;
     title: string;
 }

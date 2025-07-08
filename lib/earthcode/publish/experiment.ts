@@ -26,16 +26,19 @@ export const publishExperiment = async (
     schema.project || { id: "", title: "" },
     schema.themes,
     workflow,
-    product
+    product,
+    schema.url !== '' ? schema.url : undefined
   );
 
-  await createJSONFile(
-    token,
-    branch,
-    `experiments/${experiment.id}/process_graph.json`,
-    `Added experiment based on openEO job ${schema.job.title} (${schema.job.id})`,
-    results.process
-  );
+  if (schema.url === '') {
+    await createJSONFile(
+      token,
+      branch,
+      `experiments/${experiment.id}/process_graph.json`,
+      `Added experiment based on openEO job ${schema.job.title} (${schema.job.id})`,
+      results.process
+    );
+  }
 
   await createJSONFile(
     token,

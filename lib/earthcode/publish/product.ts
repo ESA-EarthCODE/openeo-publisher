@@ -13,7 +13,7 @@ export const publishProduct = async (
 ): Promise<EarthCODEProduct> => {
     const results = await getOpenEOJobResults(backend, schema.job.id);
     const product = createProductCollection(
-        schema.id, schema.title, schema.description, schema.project || {id: '', title: ''}, schema.themes, results
+        schema.id, schema.title, schema.description, schema.project || {id: '', title: ''}, schema.themes, schema.assets, results
     );
 
     await createJSONFile(

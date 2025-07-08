@@ -12,7 +12,7 @@ export const test = base.extend({
         exp: Date.now() + 3 * 1000 * 60 * 60,
         jti: "dummy-jti",
       },
-      secret: process.env.AUTH_SECRET || "",
+      secret: process.env.AUTH_SECRET || "foobar",
       salt: "authjs.session-token",
     });
 
