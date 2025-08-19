@@ -53,7 +53,7 @@
       "title": "Execution environment"
     },
     {
-      "href": "./process_graph.json",
+      "href": "https://foo.bar/process_graph.json",
       "rel": "process_graph",
       "title": "openEO Process Graph",
       "type": "application/json"
@@ -75,6 +75,12 @@
       "rel": "related",
       "title": "Project: ESA WorldCereal",
       "type": "application/json"
+    },
+    {
+      "href": "https://editor.openeo.org/?process=https://foo.bar/process_graph.json&server=https://openeofed.dataspace.copernicus.eu",
+      "rel": "related",
+      "title": "openEO Web Editor execution URL for experiment",
+      "type": "text/html"
     },
     {
       "rel": "related",

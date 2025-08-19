@@ -195,9 +195,10 @@ export const createExperimentCollection = (
   license: string,
   project: EarthCODEProjectInfo,
   themes: EarthCODEThemeInfo[],
+  backend: OpenEOBackend,
   workflow: EarthCODEWorkflow,
   product: EarthCODEProduct,
-  url?: string
+  processGraphUrl: string
 ): EarthCODEExperiment => {
   return {
     id,
@@ -246,7 +247,7 @@ export const createExperimentCollection = (
       },
       {
         rel: "process_graph",
-        href: url || "./process_graph.json",
+        href: processGraphUrl,
         type: "application/json",
         title: "openEO Process Graph",
       },
@@ -267,6 +268,12 @@ export const createExperimentCollection = (
         href: `../../projects/${project.id}/collection.json`,
         type: "application/json",
         title: `Project: ${project.title}`,
+      },
+      {
+        rel: "related",
+        href: `https://editor.openeo.org/?process=${processGraphUrl}&server=${backend.url}`,
+        type: "text/html",
+        title: "openEO Web Editor execution URL for experiment",
       },
       ...themes.map((t: EarthCODEThemeInfo) => ({
         rel: "related",
