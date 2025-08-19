@@ -16,7 +16,6 @@ export const test = base.extend({
       salt: "authjs.session-token",
     });
 
-    console.log(token);
     await context.addCookies([
       {
         name: "authjs.session-token",
@@ -27,6 +26,26 @@ export const test = base.extend({
         secure: false, // Set to `true` if using HTTPS
       },
     ]);
+
+    await page.route("https://workflow-url-1.test", async (route: any) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          id: "test-workflow-id-1",
+        }),
+      });
+    });
+
+    await page.route("https://workflow-url-2.test", async (route: any) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          id: "test-workflow-id-2",
+        }),
+      });
+    });
 
     await page.route("/api/auth/session", async (route: any) => {
       await route.fulfill({

@@ -121,7 +121,13 @@ export const publishSchemas = async function* (
             message: `Processing workflow ${schema.id}`,
             progress: getProgress(),
           };
-          await publishWorkflow(schema as WorkflowInfo, [], token, branch);
+          await publishWorkflow(
+            schema as WorkflowInfo,
+            backend,
+            [],
+            token,
+            branch
+          );
           workflows.push(schema as WorkflowInfo);
           break;
 
@@ -152,6 +158,7 @@ export const publishSchemas = async function* (
               project: experimentSchema.project,
               themes: experimentSchema.themes,
             },
+            backend,
             [schema.id],
             token,
             branch

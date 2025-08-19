@@ -54,10 +54,16 @@
       "title": "Theme: TEST"
     },
     {
-      "rel": "application",
+      "rel": "related",
       "type": "application/json",
       "title": "openEO Workflow",
       "href": "https://raw.githubusercontent.com/WorldCereal/worldcereal-classification/refs/tags/worldcereal_crop_type_v1.0.0/src/worldcereal/udp/worldcereal_crop_type.json"
+    },
+    {
+      "href": "https://editor.openeo.org/?wizard=UDP&wizard~process=worldcereal_crop_type&wizard~processUrl=https://raw.githubusercontent.com/WorldCereal/worldcereal-classification/refs/tags/worldcereal_crop_type_v1.0.0/src/worldcereal/udp/worldcereal_crop_type.json&server=https://openeofed.dataspace.copernicus.eu",
+      "rel": "related",
+      "title": "openEO Web Editor execution URL for experiment",
+      "type": "text/html"
     },
     {
       "href": "../../experiments/foobar/record.json",

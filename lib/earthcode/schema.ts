@@ -8,6 +8,7 @@ import {
 } from "./concepts.models";
 import moment from "moment";
 import { ProductAsset } from "./schema.model";
+import { OpenEOBackend } from "lib/openeo/jobs.models";
 
 const getRel = (link: Link) => {
   if (link.rel === "canonical") {
@@ -43,10 +44,14 @@ export const createProductCollection = (
     id,
     license: job.license,
     links: [
-      ...job.links.filter((l: Link) => !['item', 'canonical', 'self', 'via'].includes(l.rel)).map((l: Link) => ({
-        ...l,
-        rel: getRel(l),
-      })),
+      ...job.links
+        .filter(
+          (l: Link) => !["item", "canonical", "self", "via"].includes(l.rel)
+        )
+        .map((l: Link) => ({
+          ...l,
+          rel: getRel(l),
+        })),
       ...themes.map((t: EarthCODEThemeInfo) => ({
         rel: "related",
         href: `../../themes/${t.id}/catalog.json`,
@@ -74,8 +79,8 @@ export const createProductCollection = (
       ...assets.map((asset) => ({
         rel: "via",
         href: asset.url,
-        title: `Access ${asset.name}`
-      }))
+        title: `Access ${asset.name}`,
+      })),
     ],
     stac_extensions: [
       "https://stac-extensions.github.io/osc/v1.0.0/schema.json",
@@ -100,15 +105,26 @@ export const getExperimentLink = (id: string) => ({
   title: `Experiment: ${id}`,
 });
 
-export const createWorkflowCollection = (
+export const getProcessIdFromUDP = async (url: string): Promise<string> => {
+  const response = await fetch(url);
+  const json = await response.json();
+  if (!json || !json.id) {
+    throw new Error(`Invalid UDP JSON at ${url}`);
+  }
+  return json.id;
+};
+
+export const createWorkflowCollection = async (
   id: string,
   title: string,
   description: string,
   project: EarthCODEProjectInfo,
   themes: EarthCODEThemeInfo[],
+  backend: OpenEOBackend,
   workflowUrl: string,
   experimentIds: string[]
-): EarthCODEWorkflow => {
+): Promise<EarthCODEWorkflow> => {
+  const processId = await getProcessIdFromUDP(workflowUrl);
   return {
     type: "Feature",
     conformsTo: [
@@ -142,10 +158,16 @@ export const createWorkflowCollection = (
         title: `Theme: ${t.title}`,
       })),
       {
-        rel: "application",
+        rel: "related",
         type: "application/json",
         title: "openEO Workflow",
         href: workflowUrl,
+      },
+      {
+        rel: "related",
+        href: `https://editor.openeo.org/?wizard=UDP&wizard~process=${processId}&wizard~processUrl=${workflowUrl}&server=${backend.url}`,
+        type: "text/html",
+        title: "openEO Web Editor execution URL for experiment",
       },
       ...experimentIds.map((experiment) => getExperimentLink(experiment)),
     ],
