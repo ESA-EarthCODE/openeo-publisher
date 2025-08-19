@@ -8,6 +8,7 @@ import {
 } from "../concepts.models";
 import { getOpenEOJobDetails, getOpenEOJobResults } from "lib/openeo/jobs";
 import { OpenEOBackend } from "lib/openeo/jobs.models";
+import { getRawGitHubBaseUrl } from "lib/github";
 
 export const publishExperiment = async (
   schema: ExperimentInfo,
@@ -18,6 +19,21 @@ export const publishExperiment = async (
   branch: string
 ): Promise<EarthCODEExperiment> => {
   const results = await getOpenEOJobDetails(backend, schema.job.id);
+  let progressGraphUrl = schema.url;
+
+  // Create the process graph URL
+  if (schema.url === "") {
+    const filePath = `experiments/${schema.id}/process_graph.json`;
+    await createJSONFile(
+      token,
+      branch,
+      filePath,
+      `Added experiment based on openEO job ${schema.job.title} (${schema.job.id})`,
+      results.process
+    );
+    progressGraphUrl = `${getRawGitHubBaseUrl()}/${filePath}`;
+  }
+
   const experiment = createExperimentCollection(
     schema.id,
     schema.title,
@@ -25,20 +41,11 @@ export const publishExperiment = async (
     schema.license,
     schema.project || { id: "", title: "" },
     schema.themes,
+    backend,
     workflow,
     product,
-    schema.url !== '' ? schema.url : undefined
+    progressGraphUrl
   );
-
-  if (schema.url === '') {
-    await createJSONFile(
-      token,
-      branch,
-      `experiments/${experiment.id}/process_graph.json`,
-      `Added experiment based on openEO job ${schema.job.title} (${schema.job.id})`,
-      results.process
-    );
-  }
 
   await createJSONFile(
     token,

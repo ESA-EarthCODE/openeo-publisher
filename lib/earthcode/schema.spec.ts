@@ -62,42 +62,6 @@ describe("Test EarthCODE Schema Conversion", () => {
     expect(workflow).toEqual(workflowCollection);
   });
 
-  it("should create an experiment scheme without an url", async () => {
-    const product = createProductCollection(
-      "worldcereal-maize-detection-product",
-      "WorldCereal Crop Extent - Belgium",
-      "Results for batch job cdse-j-25020410530548a7aef81c62faebd127",
-      testProject,
-      testThemes,
-      testAssets,
-      jobResults as any
-    );
-    const workflow = await createWorkflowCollection(
-      "worldcereal-maize-detection-workflow",
-      "ESA worldcereal global maize detector",
-      "A maize detection algorithm",
-      testProject,
-      testThemes,
-      testBackend,
-      "https://raw.githubusercontent.com/WorldCereal/worldcereal-classification/refs/tags/worldcereal_crop_type_v1.0.0/src/worldcereal/udp/worldcereal_crop_type.json",
-      ["foobar"]
-    );
-
-    const experiment = createExperimentCollection(
-      "worldcereal-maize-detection-experiment",
-      "ESA worldcereal global maize detector for Belgium",
-      "A test experiment",
-      "CC-BY-SA-4.0",
-      testProject,
-      testThemes,
-      workflow,
-      product
-    );
-    experiment.properties.created = "2025-02-19T23:00:00Z";
-    experiment.properties.updated = "2025-02-19T23:00:00Z";
-    expect(experiment).toEqual(experimentCollection);
-  });
-
   it("should create an experiment scheme with an url", async () => {
     const product = createProductCollection(
       "worldcereal-maize-detection-product",
@@ -126,18 +90,13 @@ describe("Test EarthCODE Schema Conversion", () => {
       "CC-BY-SA-4.0",
       testProject,
       testThemes,
+      testBackend,
       workflow,
       product,
-      "https://foo.bar"
+      "https://foo.bar/process_graph.json"
     );
     experiment.properties.created = "2025-02-19T23:00:00Z";
     experiment.properties.updated = "2025-02-19T23:00:00Z";
-    expect(experiment).toEqual({
-      ...experimentCollection,
-      links: experimentCollection.links.map((l) => ({
-        ...l,
-        href: l.rel === "process_graph" ? "https://foo.bar" : l.href,
-      })),
-    });
+    expect(experiment).toEqual(experimentCollection);
   });
 });
