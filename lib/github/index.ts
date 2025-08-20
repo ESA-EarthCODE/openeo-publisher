@@ -17,5 +17,5 @@ export const GITHUB_REF_BRANCH =
   process.env.NEXT_PUBLIC_GITHUB_REF_BRANCH || "main";
 
 export const getRawGitHubBaseUrl = () => {
-  return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_REF_BRANCH}`;
+  return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/refs/heads/${GITHUB_REF_BRANCH}`;
 };
