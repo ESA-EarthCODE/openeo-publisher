@@ -36,7 +36,7 @@ export const createProductCollection = (
   project: EarthCODEProjectInfo,
   themes: EarthCODEThemeInfo[],
   assets: ProductAsset[],
-  job: OpenEOJobResults
+  job: OpenEOJobResults,
 ): EarthCODEProduct => {
   return {
     description: description,
@@ -46,7 +46,7 @@ export const createProductCollection = (
     links: [
       ...job.links
         .filter(
-          (l: Link) => !["item", "canonical", "self", "via"].includes(l.rel)
+          (l: Link) => !["item", "canonical", "self", "via"].includes(l.rel),
         )
         .map((l: Link) => ({
           ...l,
@@ -106,12 +106,17 @@ export const getExperimentLink = (id: string) => ({
 });
 
 export const getProcessIdFromUDP = async (url: string): Promise<string> => {
-  const response = await fetch(url);
-  const json = await response.json();
-  if (!json || !json.id) {
-    throw new Error(`Invalid UDP JSON at ${url}`);
+  try {
+    const response = await fetch(url);
+    const json = await response.json();
+    if (!json || !json.id) {
+      throw new Error(`Invalid UDP JSON at ${url}`);
+    }
+    return json.id;
+  } catch (error) {
+    console.warn(`Failed to fetch UDP from ${url}: ${error}`);
+    throw Error(`Failed to fetch UDP from ${url}`);
   }
-  return json.id;
 };
 
 export const createWorkflowCollection = async (
@@ -122,7 +127,7 @@ export const createWorkflowCollection = async (
   themes: EarthCODEThemeInfo[],
   backend: OpenEOBackend,
   workflowUrl: string,
-  experimentIds: string[]
+  experimentIds: string[],
 ): Promise<EarthCODEWorkflow> => {
   const processId = await getProcessIdFromUDP(workflowUrl);
   return {
@@ -198,7 +203,7 @@ export const createExperimentCollection = (
   backend: OpenEOBackend,
   workflow: EarthCODEWorkflow,
   product: EarthCODEProduct,
-  processGraphUrl: string
+  processGraphUrl: string,
 ): EarthCODEExperiment => {
   return {
     id,
