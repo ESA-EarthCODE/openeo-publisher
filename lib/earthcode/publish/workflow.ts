@@ -4,6 +4,7 @@ import { createJSONFile, getFile, updateFile } from "lib/github/files";
 import { EarthCODEWorkflow } from "../concepts.models";
 import { workflowsExists } from "../workflows";
 import { OpenEOBackend } from "lib/openeo/jobs.models";
+import { uploadPublicFileToS3 } from "./storage";
 
 const getWorkflowRecordPath = (id: string) => `workflows/${id}/record.json`;
 
@@ -53,6 +54,13 @@ export const publishWorkflow = async (
 
     return { existing: true, workflow };
   } else {
+    const workflowUrl = await uploadPublicFileToS3(
+      schema.url,
+      `${schema.id}`,
+      "workflows",
+      true
+    );
+
     const workflow = await createWorkflowCollection(
       schema.id,
       schema.title,
@@ -63,7 +71,7 @@ export const publishWorkflow = async (
       },
       schema.themes,
       backend,
-      schema.url,
+      workflowUrl,
       experiments
     );
     await createJSONFile(

@@ -31,6 +31,12 @@ To ensure proper functionality, create a `.env` file in the root directory with 
 | `NEXT_PUBLIC_GITHUB_OWNER`    | The owner (organization or user) of the EarthCODE Catalogue GitHub repository.                |  
 | `NEXT_PUBLIC_GITHUB_REPO`     | The name of the EarthCODE Catalogue GitHub repository.                                        |  
 | `NEXT_PUBLIC_OPENEO_BACKENDS` | A comma-separated list of openEO backend endpoints to support.                                |  
+| `S3_REGION`                   | S3 region for the bucket (defaults to `us-east-1` when omitted).                             |  
+| `S3_ACCESS_KEY_ID`            | Access key ID used for S3 uploads.                                                            |  
+| `S3_SECRET_ACCESS_KEY`        | Secret access key used for S3 uploads.                                                        |  
+| `S3_ENDPOINT`                 | Optional custom S3 endpoint (for S3-compatible storage).                                      |  
+| `S3_PUBLIC_BASE_URL`          | Optional public HTTP base URL for uploaded objects (recommended).                             |  
+| `S3_PUBLIC_URL_STYLE`         | Optional URL style when `S3_ENDPOINT` is used: `path` (default) or `virtual-host`.           |  
 
 Example `.env` file:
 
@@ -39,5 +45,12 @@ NEXT_PUBLIC_GITHUB_TOKEN=your_github_token_here
 NEXT_PUBLIC_GITHUB_OWNER=earthcode_org  
 NEXT_PUBLIC_GITHUB_REPO=earthcode-catalogue  
 NEXT_PUBLIC_OPENEO_BACKENDS=https://backend1.openeo.org/openeo,https://backend2.openeo.org/openeo
+S3_BUCKET=earthcode-workflows
+S3_REGION=eu-central-1
+S3_ACCESS_KEY_ID=your_access_key
+S3_SECRET_ACCESS_KEY=your_secret_key
+S3_ENDPOINT=https://s3.waw3-1.cloudferro.com
+S3_PUBLIC_BASE_URL=https://cdn.your-provider.example/earthcode-workflows
+S3_PUBLIC_URL_STYLE=path
 ```  
 
