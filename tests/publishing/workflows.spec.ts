@@ -8,8 +8,9 @@ test.describe('Test Workflow Publishing', () => {
 
         let createCount = 0;
         let prCount = 0;
+        const s3Uploads: any[] = [];
 
-        await setupRoutes(page, () => createCount++, () => prCount++);
+        await setupRoutes(page, () => createCount++, () => prCount++, (payload) => s3Uploads.push(payload));
         await selectJobs(page, 'Copernicus Data Space Ecosystem openEO Aggregator', [0, 5])
 
 
@@ -39,5 +40,7 @@ test.describe('Test Workflow Publishing', () => {
 
         expect(createCount).toBe(5); // 2 workflows + 1 parent + 1 project + 1 theme
         expect(prCount).toBe(1);
+        expect(s3Uploads).toHaveLength(2);
+        expect(s3Uploads.every((upload) => upload.bucket === 'workflows')).toBeTruthy();
     });
 });

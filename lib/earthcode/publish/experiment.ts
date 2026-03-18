@@ -6,9 +6,11 @@ import {
   EarthCODEProduct,
   EarthCODEWorkflow,
 } from "../concepts.models";
-import { getOpenEOJobDetails, getOpenEOJobResults } from "lib/openeo/jobs";
+import { getOpenEOJobDetails } from "lib/openeo/jobs";
 import { OpenEOBackend } from "lib/openeo/jobs.models";
-import { getRawGitHubBaseUrl } from "lib/github";
+import { uploadJsonToS3, uploadPublicFileToS3 } from "./storage";
+
+const EXPERIMENTS_BUCKET = "experiments";
 
 export const publishExperiment = async (
   schema: ExperimentInfo,
@@ -19,19 +21,23 @@ export const publishExperiment = async (
   branch: string
 ): Promise<EarthCODEExperiment> => {
   const results = await getOpenEOJobDetails(backend, schema.job.id);
-  let progressGraphUrl = schema.url;
+  let progressGraphUrl: string;
 
-  // Create the process graph URL
-  if (schema.url === "") {
-    const filePath = `experiments/${schema.id}/process_graph.json`;
-    await createJSONFile(
-      token,
-      branch,
-      filePath,
-      `Added experiment based on openEO job ${schema.job.title} (${schema.job.id})`,
-      results.process
+  if (schema.url) {
+    progressGraphUrl = await uploadPublicFileToS3(
+      schema.url,
+      `${schema.id}`,
+      EXPERIMENTS_BUCKET,
+      true
     );
-    progressGraphUrl = `${getRawGitHubBaseUrl()}/${filePath}`;
+  } else {
+    progressGraphUrl = await uploadJsonToS3(
+      results.process,
+      `${schema.id}`,
+      EXPERIMENTS_BUCKET,
+      "process_graph.json",
+      true
+    );
   }
 
   const experiment = createExperimentCollection(

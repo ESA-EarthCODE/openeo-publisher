@@ -8,8 +8,9 @@ test.describe('Test Product Publishing', () => {
 
         let createCount = 0;
         let prCount = 0;
+        const s3Uploads: any[] = [];
 
-        await setupRoutes(page, () => createCount++, () => prCount++);
+        await setupRoutes(page, () => createCount++, () => prCount++, (payload) => s3Uploads.push(payload));
         await selectJobs(page, 'Copernicus Data Space Ecosystem openEO Aggregator', [0, 5])
 
 
@@ -49,5 +50,7 @@ test.describe('Test Product Publishing', () => {
 
         expect(createCount).toBe(5); // 2 product + 1 parent catalogue + 1 theme + 1 project
         expect(prCount).toBe(1);
+        expect(s3Uploads).toHaveLength(6); // 4 assets in first product, 2 in second product
+        expect(s3Uploads.every((upload) => upload.bucket === 'products')).toBeTruthy();
     });
 });
