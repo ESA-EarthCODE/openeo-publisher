@@ -77,6 +77,20 @@ const getFileNameFromUrl = (sourceUrl: string): string => {
   return fileName;
 };
 
+const normalizeFileName = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "asset.json";
+  }
+
+  const clean = trimmed.split("/").pop();
+  if (!clean || clean.trim() === "") {
+    return "asset.json";
+  }
+
+  return clean;
+};
+
 const objectExists = async (
   s3: S3Client,
   bucket: string,
@@ -125,20 +139,32 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const sourceUrl = body?.sourceUrl;
+    const rawJson = body?.rawJson;
+    const fileName = body?.fileName;
     const keyPrefix = body?.keyPrefix;
     const bucket = body?.bucket || undefined;
     const overrideExisting = body?.overrideExisting !== false;
 
     console.info(
-      `[S3 upload] [${requestId}] Input parsed: sourceUrl=${sourceUrl || "<missing>"}, keyPrefix=${keyPrefix || "<missing>"}, bucket=${bucket || "<missing>"}, overrideExisting=${overrideExisting}`
+      `[S3 upload] [${requestId}] Input parsed: sourceUrl=${sourceUrl || "<missing>"}, rawJson=${rawJson !== undefined}, fileName=${fileName || "<missing>"}, keyPrefix=${keyPrefix || "<missing>"}, bucket=${bucket || "<missing>"}, overrideExisting=${overrideExisting}`
     );
 
-    if (!sourceUrl || !keyPrefix) {
+    if (!keyPrefix) {
       console.warn(
-        `[S3 upload] [${requestId}] Validation failed: sourceUrl and/or keyPrefix missing`
+        `[S3 upload] [${requestId}] Validation failed: keyPrefix missing`
       );
       return NextResponse.json(
-        { error: "sourceUrl and keyPrefix are required" },
+        { error: "keyPrefix is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!sourceUrl && rawJson === undefined) {
+      console.warn(
+        `[S3 upload] [${requestId}] Validation failed: sourceUrl or rawJson must be provided`
+      );
+      return NextResponse.json(
+        { error: "Provide either sourceUrl or rawJson" },
         { status: 400 }
       );
     }
@@ -170,29 +196,45 @@ export async function POST(request: Request) {
       );
     }
 
-    console.info(
-      `[S3 upload] [${requestId}] Downloading source file from ${sourceUrl}`
-    );
+    let bodyBuffer: Buffer;
+    let contentType: string;
+    let key: string;
 
-    const fileResponse = await fetch(sourceUrl);
-    if (!fileResponse.ok) {
-      console.error(
-        `[S3 upload] [${requestId}] Source download failed with status ${fileResponse.status} ${fileResponse.statusText}`
+    if (sourceUrl) {
+      console.info(
+        `[S3 upload] [${requestId}] Downloading source file from ${sourceUrl}`
       );
-      return NextResponse.json(
-        {
-          error: `Failed to download source file: ${fileResponse.status} ${fileResponse.statusText}`,
-        },
-        { status: 400 }
+
+      const fileResponse = await fetch(sourceUrl);
+      if (!fileResponse.ok) {
+        console.error(
+          `[S3 upload] [${requestId}] Source download failed with status ${fileResponse.status} ${fileResponse.statusText}`
+        );
+        return NextResponse.json(
+          {
+            error: `Failed to download source file: ${fileResponse.status} ${fileResponse.statusText}`,
+          },
+          { status: 400 }
+        );
+      }
+
+      const bytes = await fileResponse.arrayBuffer();
+      bodyBuffer = Buffer.from(bytes);
+      contentType =
+        fileResponse.headers.get("content-type") || "application/octet-stream";
+      key = `${trimSlashes(keyPrefix)}/${getFileNameFromUrl(sourceUrl)}`;
+    } else {
+      contentType = "application/json";
+      bodyBuffer = Buffer.from(JSON.stringify(rawJson, null, 2), "utf-8");
+      key = `${trimSlashes(keyPrefix)}/${normalizeFileName(
+        typeof fileName === "string" ? fileName : "asset.json"
+      )}`;
+      console.info(
+        `[S3 upload] [${requestId}] Using rawJson upload with fileName=${normalizeFileName(
+          typeof fileName === "string" ? fileName : "asset.json"
+        )}`
       );
     }
-
-    const bytes = await fileResponse.arrayBuffer();
-    const bodyBuffer = Buffer.from(bytes);
-    const contentType =
-      fileResponse.headers.get("content-type") || "application/octet-stream";
-
-    const key = `${trimSlashes(keyPrefix)}/${getFileNameFromUrl(sourceUrl)}`;
 
     console.info(
       `[S3 upload] [${requestId}] Prepared upload target bucket=${bucket}, key=${key}, contentType=${contentType}, sizeBytes=${bodyBuffer.length}`
