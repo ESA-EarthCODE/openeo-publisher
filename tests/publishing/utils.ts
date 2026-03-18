@@ -9,7 +9,8 @@ import earthCODEProductCatalog from '../fixture/earthcode/products/catalog.json'
 export const setupRoutes = async (
     page: Page,
     callBackCreateFile: () => void,
-    callbackCreatePR: () => void) => {
+    callbackCreatePR: () => void,
+    callbackS3Upload?: (payload: any) => void) => {
 
     await page.route('https://openeofed.dataspace.copernicus.eu/openeo', async route => {
         await route.fulfill({json: openEOFedResponse});
@@ -153,6 +154,53 @@ export const setupRoutes = async (
         } else {
             await route.continue();
         }
+    });
+
+    await page.route('**/api/storage/upload', async route => {
+        if (route.request().method() !== 'POST') {
+            await route.continue();
+            return;
+        }
+
+        const payload = route.request().postDataJSON() as {
+            sourceUrl?: string;
+            rawJson?: unknown;
+            fileName?: string;
+            keyPrefix?: string;
+            bucket?: string;
+            overrideExisting?: boolean;
+        };
+
+        callbackS3Upload?.(payload);
+
+        const sourceFileName = payload.sourceUrl
+            ? (() => {
+                try {
+                    const pathname = new URL(payload.sourceUrl as string).pathname;
+                    const name = pathname.split('/').pop();
+                    return name && name.trim() !== '' ? name : 'asset.json';
+                } catch {
+                    return 'asset.json';
+                }
+            })()
+            : undefined;
+
+        const fileName = sourceFileName || payload.fileName || 'asset.json';
+        const bucket = payload.bucket || 'missing-bucket';
+        const keyPrefix = payload.keyPrefix || 'missing-key-prefix';
+        const mockedUrl =
+            bucket === 'workflows' && payload.sourceUrl
+                ? payload.sourceUrl
+                : `https://mock-s3.test/${bucket}/${keyPrefix}/${fileName}`;
+
+        await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+                url: mockedUrl,
+                overwritten: false,
+            }),
+        });
     });
 }
 

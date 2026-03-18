@@ -8,8 +8,9 @@ test.describe('Test Experiment Publishing', () => {
 
         let createCount = 0;
         let prCount = 0;
+        const s3Uploads: any[] = [];
 
-        await setupRoutes(page, () => createCount++, () => prCount++);
+        await setupRoutes(page, () => createCount++, () => prCount++, (payload) => s3Uploads.push(payload));
         await selectJobs(page, 'Copernicus Data Space Ecosystem openEO Aggregator', [0, 5])
 
 
@@ -41,16 +42,21 @@ test.describe('Test Experiment Publishing', () => {
 
         await page.waitForResponse(resp => resp.url().includes('/pulls'));
 
-        expect(createCount).toBe(17); // 2 * 6 (product, workflow, experiment, process_graph.json environment.yaml, input.yaml) + 3 parents + 1 project + 1 theme
+        expect(createCount).toBe(15); // 2 * 5 (product, workflow, experiment, environment.yaml, input.yaml) + 3 parents + 1 project + 1 theme
         expect(prCount).toBe(1);
+        expect(s3Uploads).toHaveLength(10); // 6 product assets + 2 workflows + 2 process graphs
+        expect(s3Uploads.filter((upload) => upload.bucket === 'products')).toHaveLength(6);
+        expect(s3Uploads.filter((upload) => upload.bucket === 'workflows')).toHaveLength(2);
+        expect(s3Uploads.filter((upload) => upload.bucket === 'experiments')).toHaveLength(2);
     });
 
     test('Should publish openEO jobs as an EarthCODE experiment as an existing workflow', async ({ page }) => {
 
         let createCount = 0;
         let prCount = 0;
+        const s3Uploads: any[] = [];
 
-        await setupRoutes(page, () => createCount++, () => prCount++);
+        await setupRoutes(page, () => createCount++, () => prCount++, (payload) => s3Uploads.push(payload));
         await selectJobs(page, 'Copernicus Data Space Ecosystem openEO Aggregator', [0, 5])
 
 
@@ -86,16 +92,21 @@ test.describe('Test Experiment Publishing', () => {
 
         await page.waitForResponse(resp => resp.url().includes('/pulls'));
 
-        expect(createCount).toBe(16); // 2 * 6 (product, workflow, experiment, process_graph.json, environment.yaml, input.yaml) + 2 parents (experiments, products) + 1 project + 1 theme
+        expect(createCount).toBe(14); // 2 * 5 (product, workflow, experiment, environment.yaml, input.yaml) + 2 parents (experiments, products) + 1 project + 1 theme
         expect(prCount).toBe(1);
+        expect(s3Uploads).toHaveLength(8); // 6 product assets + 2 process graphs
+        expect(s3Uploads.filter((upload) => upload.bucket === 'products')).toHaveLength(6);
+        expect(s3Uploads.filter((upload) => upload.bucket === 'workflows')).toHaveLength(0);
+        expect(s3Uploads.filter((upload) => upload.bucket === 'experiments')).toHaveLength(2);
     });
 
     test('Should publish openEO jobs as an EarthCODE experiment with an existing experiment process graph', async ({ page }) => {
 
         let createCount = 0;
         let prCount = 0;
+        const s3Uploads: any[] = [];
 
-        await setupRoutes(page, () => createCount++, () => prCount++);
+        await setupRoutes(page, () => createCount++, () => prCount++, (payload) => s3Uploads.push(payload));
         await selectJobs(page, 'Copernicus Data Space Ecosystem openEO Aggregator', [0, 5])
 
 
@@ -131,7 +142,11 @@ test.describe('Test Experiment Publishing', () => {
 
         await page.waitForResponse(resp => resp.url().includes('/pulls'));
 
-        expect(createCount).toBe(16); // 2 * 6 (product, workflow, experiment, process_graph.json environment.yaml, input.yaml) + 3 parents + 1 project + 1 theme - 1 process_graph.json
+        expect(createCount).toBe(15); // 2 * 5 (product, workflow, experiment, environment.yaml, input.yaml) + 3 parents + 1 project + 1 theme
         expect(prCount).toBe(1);
+        expect(s3Uploads).toHaveLength(10); // 6 product assets + 2 workflows + 2 process graphs
+        expect(s3Uploads.filter((upload) => upload.bucket === 'products')).toHaveLength(6);
+        expect(s3Uploads.filter((upload) => upload.bucket === 'workflows')).toHaveLength(2);
+        expect(s3Uploads.filter((upload) => upload.bucket === 'experiments')).toHaveLength(2);
     });
 });
