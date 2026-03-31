@@ -13,6 +13,7 @@ type S3UploadConfig = {
   endpoint?: string;
   accessKeyId: string;
   secretAccessKey: string;
+  baseFolder: string;
   publicBaseUrl?: string;
   publicUrlStyle: "path" | "virtual-host";
 };
@@ -20,10 +21,27 @@ type S3UploadConfig = {
 const trimSlashes = (value: string): string =>
   value.replace(/^\/+|\/+$/g, "");
 
+const buildScopedObjectKey = (
+  baseFolder: string,
+  keyPrefix: string,
+  fileName: string
+): string => {
+  const normalizedBaseFolder = trimSlashes(baseFolder);
+  const normalizedPrefix = trimSlashes(keyPrefix);
+  const normalizedFileName = trimSlashes(fileName);
+
+  const parts = [normalizedBaseFolder, normalizedPrefix, normalizedFileName].filter(
+    (part) => part.length > 0
+  );
+
+  return parts.join("/");
+};
+
 const readS3UploadConfig = (): S3UploadConfig | null => {
   const region = process.env.S3_REGION || "us-east-1";
   const accessKeyId = process.env.S3_ACCESS_KEY_ID;
   const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY;
+  const baseFolder = process.env.S3_ENV ? `${process.env.S3_ENV}` : "dev";
 
   if (!accessKeyId || !secretAccessKey) {
     return null;
@@ -34,6 +52,7 @@ const readS3UploadConfig = (): S3UploadConfig | null => {
     endpoint: process.env.S3_ENDPOINT,
     accessKeyId,
     secretAccessKey,
+    baseFolder,
     publicBaseUrl: process.env.S3_PUBLIC_BASE_URL,
     publicUrlStyle:
       process.env.S3_PUBLIC_URL_STYLE === "virtual-host"
@@ -222,13 +241,19 @@ export async function POST(request: Request) {
       bodyBuffer = Buffer.from(bytes);
       contentType =
         fileResponse.headers.get("content-type") || "application/octet-stream";
-      key = `${trimSlashes(keyPrefix)}/${getFileNameFromUrl(sourceUrl)}`;
+      key = buildScopedObjectKey(
+        config.baseFolder,
+        keyPrefix,
+        getFileNameFromUrl(sourceUrl)
+      );
     } else {
       contentType = "application/json";
       bodyBuffer = Buffer.from(JSON.stringify(rawJson, null, 2), "utf-8");
-      key = `${trimSlashes(keyPrefix)}/${normalizeFileName(
-        typeof fileName === "string" ? fileName : "asset.json"
-      )}`;
+      key = buildScopedObjectKey(
+        config.baseFolder,
+        keyPrefix,
+        normalizeFileName(typeof fileName === "string" ? fileName : "asset.json")
+      );
       console.info(
         `[S3 upload] [${requestId}] Using rawJson upload with fileName=${normalizeFileName(
           typeof fileName === "string" ? fileName : "asset.json"
