@@ -20,7 +20,7 @@ export const publishSchemas = async function* (
   token: string,
   branch: string,
   backend: OpenEOBackend,
-  schemas: JobSchemaInfo[]
+  schemas: JobSchemaInfo[],
 ) {
   if (!token || !branch || !backend || !schemas.length) {
     yield {
@@ -126,7 +126,7 @@ export const publishSchemas = async function* (
             backend,
             [],
             token,
-            branch
+            branch,
           );
           workflows.push(schema as WorkflowInfo);
           break;
@@ -148,7 +148,7 @@ export const publishSchemas = async function* (
             },
             backend,
             token,
-            branch
+            branch,
           );
           products.push(experimentSchema.product);
 
@@ -161,7 +161,7 @@ export const publishSchemas = async function* (
             backend,
             [schema.id],
             token,
-            branch
+            branch,
           );
 
           if (!existing) {
@@ -174,7 +174,7 @@ export const publishSchemas = async function* (
             product,
             backend,
             token,
-            branch
+            branch,
           );
           experiments.push(experimentSchema);
           break;
@@ -195,7 +195,7 @@ export const publishSchemas = async function* (
       "products",
       "collection.json",
       products,
-      "child"
+      "child",
     );
     yield {
       status: "progress",
@@ -208,7 +208,7 @@ export const publishSchemas = async function* (
       "workflows",
       "record.json",
       workflows,
-      "item"
+      "item",
     );
     yield {
       status: "progress",
@@ -221,7 +221,7 @@ export const publishSchemas = async function* (
       "experiments",
       "record.json",
       experiments,
-      "item"
+      "item",
     );
 
     for (const project of groupedProjects) {
@@ -253,7 +253,7 @@ export const publishSchemas = async function* (
       token,
       branch,
       backend,
-      schemas.map((s) => s.job)
+      schemas.map((s) => s.job),
     );
 
     yield {
@@ -278,7 +278,7 @@ const registerSchemas = async (
   category: string,
   filename: string,
   schemas: JobSchemaInfo[],
-  rel: string
+  rel: string,
 ) => {
   if (!schemas.length) {
     return;
@@ -289,7 +289,7 @@ const registerSchemas = async (
     filename,
     branch,
     schemas,
-    rel
+    rel,
   );
 };
 
@@ -299,7 +299,7 @@ const registerParentCatalogue = async (
   filename: string,
   branch: string,
   schemas: JobSchemaInfo[],
-  rel: string
+  rel: string,
 ) => {
   const { sha, content } = await getFile(token, path, branch);
 
@@ -318,7 +318,7 @@ const registerParentCatalogue = async (
     branch,
     sha,
     "Updated parent collection",
-    content
+    content,
   );
 };
 
@@ -331,23 +331,35 @@ const registerProject = async (
   token: string,
   branch: string,
   project: EarthCODEProjectInfo,
-  schemas: JobSchemaInfo[]
+  schemas: JobSchemaInfo[],
 ) => {
   if (!(await projectExists(token, project.id))) {
     console.warn(`Trying to register non existing project ${project.id}`);
   } else {
-    await registerParentCatalogue(
+    const path = `projects/${project.id}/collection.json`;
+    const { sha, content } = await getFile(token, path, branch);
+
+    for (const schema of schemas) {
+      content.links.push({
+        rel: schema.type === SchemaType.PRODUCT ? "child" : "related",
+        href:  getSelfRefLink(schema),
+        type: "application/json",
+        title: schema.type == SchemaType.PRODUCT ? schema.title : `${schema.type}: ${schema.title}`,
+      });
+    }
+
+    content["osc:workflows"] = [
+      ...(content["osc:workflows"] || []),
+      ...schemas.filter((s) => s.type === SchemaType.WORKFLOW).map((s) => s.id),
+    ];
+
+    await updateFile(
       token,
-      `projects/${project.id}/collection.json`,
-      "",
+      path,
       branch,
-      schemas
-        .filter((s) => s.type === SchemaType.PRODUCT)
-        .map((s) => ({
-          ...s,
-          href: getSelfRefLink(s),
-        })),
-      "child"
+      sha,
+      "Updated parent collection",
+      content,
     );
   }
 };
@@ -356,7 +368,7 @@ const registerTheme = async (
   token: string,
   branch: string,
   theme: EarthCODEThemeInfo,
-  schemas: JobSchemaInfo[]
+  schemas: JobSchemaInfo[],
 ) => {
   if (!(await themeExists(token, theme.id))) {
     console.warn(`Trying to register non existing theme ${theme.id}`);
@@ -372,7 +384,7 @@ const registerTheme = async (
           ...s,
           href: getSelfRefLink(s),
         })),
-      "child"
+      "child",
     );
   }
 };
