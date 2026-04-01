@@ -12,6 +12,7 @@ import {
   EarthCODEThemeInfo,
   EarthCODEWorfklowInfo,
 } from "../../../lib/earthcode/concepts.models";
+import { normalizeIdentifier } from "lib/utils/utils";
 
 interface WorkflowFormProps {
   schema: WorkflowInfo;
@@ -81,7 +82,7 @@ export const WorkflowForm = ({
         label="ID"
         variant="outlined"
         value={schema.id}
-        onChange={(e) => onFormChange(schema, "id", e.target.value)}
+        onChange={(e) => onFormChange(schema, "id", normalizeIdentifier(e.target.value))}
         placeholder="Unique identifier for the workflow"
         data-testid="workflow-schema-id"
         required

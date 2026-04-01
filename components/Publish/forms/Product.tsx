@@ -19,6 +19,7 @@ import {
   EarthCODEProjectInfo,
   EarthCODEThemeInfo,
 } from "../../../lib/earthcode/concepts.models";
+import { normalizeIdentifier } from "lib/utils/utils";
 
 interface ProductFormProps {
   schema: ProductInfo;
@@ -101,7 +102,7 @@ export const ProductForm = ({
           label="ID"
           variant="outlined"
           value={schema.id}
-          onChange={(e) => onFormChange(schema, "id", e.target.value)}
+          onChange={(e) => onFormChange(schema, "id", normalizeIdentifier(e.target.value))}
           placeholder="Unique identifier for the product"
           data-testid="product-schema-id"
           required

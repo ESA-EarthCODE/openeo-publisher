@@ -12,6 +12,7 @@ import {
   ProductInfo,
   WorkflowInfo,
 } from "../../../lib/earthcode/schema.model";
+import { normalizeIdentifier } from "lib/utils/utils";
 
 interface ExperimentFormProps {
   schema: ExperimentInfo;
@@ -84,7 +85,7 @@ export const ExperimentForm = ({
             label="ID"
             variant="outlined"
             value={schema.id}
-            onChange={(e) => onFormChange(schema, "id", e.target.value)}
+            onChange={(e) => onFormChange(schema, "id", normalizeIdentifier(e.target.value))}
             data-testid="experiment-schema-id"
             placeholder="Unique identifier for the experiment"
             required

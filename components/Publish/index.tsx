@@ -20,6 +20,7 @@ import { useWizardStore } from "../../store/wizard";
 import { useEarthCODEThemes } from "../../hooks/useEarthCODEThemes";
 import { useEarthCODEWorkflows } from "../../hooks/useEarthCODEWorkflows";
 import { getOpenEOJobResults } from "lib/openeo/jobs";
+import { normalizeIdentifier } from "lib/utils/utils";
 
 interface PublishProps {
   jobs: OpenEOJob[];
@@ -97,7 +98,7 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
     return {
       type: SchemaType.PRODUCT,
       job,
-      id: job.title.toLowerCase().replaceAll(" ", "_"),
+      id: normalizeIdentifier(job.title.toLowerCase()),
       title: `${job.title} - Product`,
       description: job.description || `Product of ${job.title}`,
       themes: [],
@@ -112,7 +113,7 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
     return {
       type: SchemaType.WORKFLOW,
       job,
-      id: job.title.toLowerCase().replaceAll(" ", "_"),
+      id: normalizeIdentifier(job.title.toLowerCase()),
       title: `${job.title} - Workflow`,
       description: job.description || `Workflow of ${job.title}`,
       url: "",
@@ -125,7 +126,7 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
     return {
       type: SchemaType.EXPERIMENT,
       job,
-      id: job.title.toLowerCase().replaceAll(" ", "_"),
+      id: normalizeIdentifier(job.title.toLowerCase()),
       title: `${job.title} - Experiment`,
       description: job.description || `Experiment of ${job.title}`,
       license: "",
@@ -227,10 +228,15 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
 
   const handleFormChange = useCallback(
     (schema: JobSchemaInfo, key: any, value: any) => {
+      const normalizedValue =
+        key === "id" && typeof value === "string"
+          ? normalizeIdentifier(value)
+          : value;
+
       setJobSchemas((prev) =>
         prev.map((s) =>
           s.job.id === schema.job.id && s.type === schema.type
-            ? { ...s, [key]: value }
+            ? { ...s, [key]: normalizedValue }
             : s
         )
       );
