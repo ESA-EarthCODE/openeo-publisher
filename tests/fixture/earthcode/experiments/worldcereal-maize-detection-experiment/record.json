@@ -78,7 +78,7 @@
     },
     {
       "href": "https://editor.openeo.org/?process=https://foo.bar/process_graph.json&server=https://openeofed.dataspace.copernicus.eu",
-      "rel": "related",
+      "rel": "via",
       "title": "openEO Web Editor execution URL for experiment",
       "type": "text/html"
     },

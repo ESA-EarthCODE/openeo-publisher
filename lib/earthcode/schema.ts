@@ -46,7 +46,7 @@ export const createProductCollection = (
     links: [
       ...job.links
         .filter(
-          (l: Link) => !["item", "canonical", "self", "via"].includes(l.rel),
+          (l: Link) => !["item", "canonical", "self", "via", "derived_from"].includes(l.rel),
         )
         .map((l: Link) => ({
           ...l,
@@ -169,7 +169,7 @@ export const createWorkflowCollection = async (
         href: workflowUrl,
       },
       {
-        rel: "related",
+        rel: "via",
         href: `https://editor.openeo.org/?wizard=UDP&wizard~process=${processId}&wizard~processUrl=${workflowUrl}&server=${backend.url}`,
         type: "text/html",
         title: "openEO Web Editor execution URL for experiment",
@@ -275,7 +275,7 @@ export const createExperimentCollection = (
         title: `Project: ${project.title}`,
       },
       {
-        rel: "related",
+        rel: "via",
         href: `https://editor.openeo.org/?process=${processGraphUrl}&server=${backend.url}`,
         type: "text/html",
         title: "openEO Web Editor execution URL for experiment",
