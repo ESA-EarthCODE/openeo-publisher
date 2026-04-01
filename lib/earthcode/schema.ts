@@ -275,7 +275,7 @@ export const createExperimentCollection = (
         title: `Project: ${project.title}`,
       },
       {
-        rel: "related",
+        rel: "via",
         href: `https://editor.openeo.org/?process=${processGraphUrl}&server=${backend.url}`,
         type: "text/html",
         title: "openEO Web Editor execution URL for experiment",
