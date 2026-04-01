@@ -46,7 +46,7 @@ export const createProductCollection = (
     links: [
       ...job.links
         .filter(
-          (l: Link) => !["item", "canonical", "self", "via"].includes(l.rel),
+          (l: Link) => !["item", "canonical", "self", "via", "derived_from"].includes(l.rel),
         )
         .map((l: Link) => ({
           ...l,
