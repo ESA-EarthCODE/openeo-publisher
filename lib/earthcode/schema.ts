@@ -169,7 +169,7 @@ export const createWorkflowCollection = async (
         href: workflowUrl,
       },
       {
-        rel: "related",
+        rel: "via",
         href: `https://editor.openeo.org/?wizard=UDP&wizard~process=${processId}&wizard~processUrl=${workflowUrl}&server=${backend.url}`,
         type: "text/html",
         title: "openEO Web Editor execution URL for experiment",

@@ -61,7 +61,7 @@
     },
     {
       "href": "https://editor.openeo.org/?wizard=UDP&wizard~process=worldcereal_crop_type&wizard~processUrl=https://raw.githubusercontent.com/WorldCereal/worldcereal-classification/refs/tags/worldcereal_crop_type_v1.0.0/src/worldcereal/udp/worldcereal_crop_type.json&server=https://openeofed.dataspace.copernicus.eu",
-      "rel": "related",
+      "rel": "via",
       "title": "openEO Web Editor execution URL for experiment",
       "type": "text/html"
     },
