@@ -23,6 +23,7 @@ export interface ProductAsset {
 }
 
 export interface ProductInfo extends JobSchemaInfo {
+    license: string;
     assets: ProductAsset[];
 }
 

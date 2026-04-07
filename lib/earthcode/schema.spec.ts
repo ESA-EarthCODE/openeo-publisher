@@ -34,7 +34,7 @@ describe("Test EarthCODE Schema Conversion", () => {
   };
 
   it("should create a product scheme", () => {
-    const product = createProductCollection(
+    let product = createProductCollection(
       "worldcereal-maize-detection-product",
       "WorldCereal Crop Extent - Belgium",
       "Results for batch job cdse-j-25020410530548a7aef81c62faebd127",
@@ -43,7 +43,25 @@ describe("Test EarthCODE Schema Conversion", () => {
       testAssets,
       jobResults as any
     );
-    expect(product).toEqual(productCollection);
+    expect(product).toEqual({
+      ...productCollection,
+      license: jobResults.license,
+  });
+
+    product = createProductCollection(
+      "worldcereal-maize-detection-product",
+      "WorldCereal Crop Extent - Belgium",
+      "Results for batch job cdse-j-25020410530548a7aef81c62faebd127",
+      testProject,
+      testThemes,
+      testAssets,
+      jobResults as any,
+      "MIT"
+    );
+    expect(product).toEqual({
+      ...productCollection,
+      license: "MIT",
+    });
   });
 
   it("should create a workflow scheme", async () => {

@@ -33,7 +33,7 @@ export const publishProduct = async (
     );
 
     const product = createProductCollection(
-        schema.id, schema.title, schema.description, schema.project || {id: '', title: ''}, schema.themes, copiedAssets, results
+        schema.id, schema.title, schema.description, schema.project || {id: '', title: ''}, schema.themes, copiedAssets, results, schema.license
     );
     await createJSONFile(
         token,

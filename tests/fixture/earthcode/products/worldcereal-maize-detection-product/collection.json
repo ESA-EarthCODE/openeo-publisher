@@ -14,7 +14,7 @@
   ],
   "description": "Results for batch job cdse-j-25020410530548a7aef81c62faebd127",
   "title": "WorldCereal Crop Extent - Belgium",
-  "license": "proprietary",
+  "license": "MIT",
   "stac_extensions": [
     "https://stac-extensions.github.io/osc/v1.0.0/schema.json",
     "https://stac-extensions.github.io/themes/v1.0.0/schema.json"

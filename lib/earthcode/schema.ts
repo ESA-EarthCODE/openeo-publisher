@@ -37,12 +37,13 @@ export const createProductCollection = (
   themes: EarthCODEThemeInfo[],
   assets: ProductAsset[],
   job: OpenEOJobResults,
+  license?: string
 ): EarthCODEProduct => {
   return {
     description: description,
     extent: job.extent,
     id,
-    license: job.license,
+    license: license || job.license,
     links: [
       ...job.links
         .filter(
