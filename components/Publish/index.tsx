@@ -106,6 +106,7 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
         name: asset,
         url: result.assets[asset].href
       })),
+        license: result.license || ""
     } as ProductInfo;
   };
 
@@ -164,7 +165,8 @@ export const Publish = ({ backend, jobs }: PublishProps) => {
       !!schema.title &&
       !!schema.description &&
       (isChild || schema.themes.length > 0) &&
-      schema.assets.length > 0
+      schema.assets.length > 0 &&
+      !!schema.license
     );
   };
 

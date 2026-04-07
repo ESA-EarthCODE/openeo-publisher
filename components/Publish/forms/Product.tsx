@@ -130,6 +130,15 @@ export const ProductForm = ({
           required
           error={!schema.description}
         />
+        <TextField
+          label="License"
+          variant="outlined"
+          value={schema.license}
+          onChange={(e) => onFormChange(schema, "license", e.target.value)}
+          placeholder="Applicable license for the products"
+          data-testid="product-schema-license"
+          required
+        />
         {!isChild && (
           <Autocomplete
             options={themes}
